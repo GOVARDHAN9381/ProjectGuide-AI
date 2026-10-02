@@ -1,0 +1,82 @@
+{
+  "idea_1789293629_6e6790": {
+    "student_id": "ngovardhanreddy9381@gmail.com",
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "title": "flipkart clone",
+    "desc": "just i need too build flip kart clone ,which works as it is as working module",
+    "domain": "aiml",
+    "team_size": "5",
+    "duration_days": 210,
+    "duration_unit": "weeks",
+    "tech_ideas": "",
+    "refLink": "",
+    "features": [],
+    "uploaded_files": [],
+    "status": "reviewed",
+    "created_at": "2026-09-13T15:30:29.149614",
+    "idea_id": "idea_1789293629_6e6790",
+    "id": "idea_1789293629_6e6790",
+    "feasibility": 77,
+    "feasibilityReport": {
+      "overallScore": 77,
+      "verdict": "Feasible with Guidance",
+      "metrics": {
+        "technical": 78,
+        "timeline": 95,
+        "resource": 82,
+        "skillMatch": 48
+      },
+      "strengths": [
+        "Project aligns with current AIML academic research trends.",
+        "Team of 5 enables parallel development across modules.",
+        "Rich open-source ecosystem and community resources are available."
+      ],
+      "bottlenecks": [
+        "Integration testing between system components needs early milestone validation.",
+        "Clear scope definition and feature prioritisation are critical to prevent overruns."
+      ],
+      "filesAnalyzed": [],
+      "aiGenerated": false
+    },
+    "updated_at": "2026-09-13T15:47:38.935532",
+    "scopeReport": {
+      "problemStatement": "The project aims to design and develop a functional, multi-vendor e-commerce web application that replicates the core user journey of Flipkart, specifically focusing on product discovery, cart management, and order processing, while integrating a lightweight AI/ML module for personalized product recommendations to enhance user engagement.",
+      "objectives": [
+        "Develop a responsive web interface using React.js for the frontend and Python (Django/Flask) for the backend to handle user authentication, product catalog browsing, and shopping cart functionality.",
+        "Implement a basic AI/ML recommendation engine using Python (scikit-learn or TensorFlow) that suggests products based on user browsing history and purchase patterns.",
+        "Establish a secure database architecture using PostgreSQL or MySQL to store user profiles, product details, and transaction records, ensuring data integrity and efficient query performance."
+      ],
+      "inScope": [
+        "User Authentication: Registration, login, and profile management using JWT or Session-based authentication.",
+        "Product Catalog: Search, filter, and sort products by category, price, and rating; display product details with images and descriptions.",
+        "Shopping Cart & Checkout: Add/remove items, calculate total price, and simulate a checkout process with a mock payment gateway integration.",
+        "AI Recommendation Module: A 'Recommended for You' section on the homepage and product pages using a collaborative filtering or content-based filtering algorithm trained on a static dataset.",
+        "Admin Dashboard: A basic interface for administrators to add, edit, or delete products and view recent orders."
+      ],
+      "outOfScope": [
+        "Real-time Inventory Management: No integration with physical warehouse systems or real-time stock updates from suppliers.",
+        "Complex Payment Processing: No integration with real banking APIs (like Razorpay or Stripe live mode); only mock/sandbox payment flows are allowed.",
+        "Mobile Native Apps: No development of iOS or Android native applications; the web app must be mobile-responsive only.",
+        "Advanced Logistics & Tracking: No real-time courier tracking, delivery scheduling, or reverse logistics (returns) management system.",
+        "Multi-language Support: The application will be built in English only; no localization or multi-language support is required."
+      ],
+      "targetUsers": "Students and academic evaluators who need a demonstration of full-stack web development combined with a practical AI/ML application in an e-commerce context.",
+      "keyDeliverables": [
+        "A fully functional web application deployed on a cloud platform (e.g., AWS EC2, Heroku, or Vercel) with a live URL.",
+        "Source code repository with clear documentation, including setup instructions, API documentation, and a README explaining the AI model architecture.",
+        "A final project report detailing the system design, database schema, AI/ML methodology, and test results."
+      ],
+      "assumptions": [
+        "The team has access to a public e-commerce dataset (e.g., from Kaggle) to train the recommendation engine, as collecting real-time user data is not feasible in this timeline.",
+        "The 'working module' refers to the core transactional flow (browse -> cart -> checkout) and does not imply a fully operational business with real money transactions.",
+        "The AI/ML component is a standalone module that can be tested independently and integrated via API, rather than being deeply embedded into every backend function."
+      ],
+      "constraints": [
+        "The project must be completed within 210 days (30 weeks) with a team of 5 students, requiring strict adherence to a phased development schedule (MVP in 10 weeks, AI integration in 10 weeks, testing/deployment in 10 weeks).",
+        "The technology stack is limited to Python, JavaScript/React, and a relational database to align with the team's existing skill profile and ensure maintainability.",
+        "The AI/ML model must be lightweight enough to run on standard cloud instances without requiring high-end GPU resources, focusing on accuracy over complexity."
+      ],
+      "aiGenerated": true
+    }
+  }
+}

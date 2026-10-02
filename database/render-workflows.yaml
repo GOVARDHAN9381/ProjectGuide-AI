@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: agrisight-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: PYTHONUTF8
+        value: "1"
+      - key: TRANSFORMERS_OFFLINE
+        value: "1"
+      - key: HF_HUB_OFFLINE
+        value: "1"
+
+  - type: workflow
+    name: agrisight-rag-workflow
+    env: python
+    plan: standard
+    buildCommand: pip install -r workflow_requirements.txt
+    startCommand: python workflows.py
+    envVars:
+      - key: PYTHONUTF8
+        value: "1"
+      - key: RAG_VECTOR_STORE_DIR
+        value: ./rag/vector_store

@@ -1,0 +1,18 @@
+# Render deployment configuration for AgriSight
+services:
+  - type: web
+    name: agrisight-app
+    branch: agents/vector-ai-database-integration
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: TRANSFORMERS_OFFLINE
+        value: "1"
+      - key: HF_HUB_OFFLINE
+        value: "1"
+      - key: PYTHONUTF8
+        value: "1"

@@ -1,0 +1,276 @@
+{
+  "arjun.sharma@college.edu.in": {
+    "email": "arjun.sharma@college.edu.in",
+    "password": "password123",
+    "name": "Arjun Sharma",
+    "role": "student",
+    "rollNo": "21CS101",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 3,
+      "opencv": 2,
+      "react": 2,
+      "flask": 2
+    },
+    "domains": [
+      "aiml",
+      "web"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-08-01T00:00:00Z"
+  },
+  "prof.verma@college.edu.in": {
+    "email": "prof.verma@college.edu.in",
+    "password": "faculty123",
+    "name": "Prof. Rajesh Verma",
+    "role": "faculty",
+    "rollNo": "FAC001",
+    "branch": "CSE",
+    "year": "Faculty",
+    "skills": {},
+    "domains": [],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-08-01T00:00:00Z"
+  },
+  "student_1789212432@college.edu.in": {
+    "email": "student_1789212432@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-12T11:27:12.317138"
+  },
+  "student_1789212445@college.edu.in": {
+    "email": "student_1789212445@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-12T11:27:26.096251"
+  },
+  "student_1789213751@college.edu.in": {
+    "email": "student_1789213751@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-12T11:49:11.223707"
+  },
+  "student_1789310290@college.edu.in": {
+    "email": "student_1789310290@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-13T14:38:10.975059"
+  },
+  "student_1789310578@college.edu.in": {
+    "email": "student_1789310578@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-13T14:42:59.201303"
+  },
+  "ngovardhanreddy9381@gmail.com": {
+    "email": "ngovardhanreddy9381@gmail.com",
+    "password": "Govardhan@26",
+    "name": "Govardhan Reddy",
+    "role": "student",
+    "rollNo": "192411137",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 3,
+      "javascript": 2,
+      "java": 3,
+      "c_cpp": 3,
+      "react": 3,
+      "webdev": 3,
+      "devops": 3,
+      "cyber": 2,
+      "git": 3,
+      "dsa": 2
+    },
+    "domains": [
+      "aiml",
+      "web",
+      "cloud"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-13T14:57:23.667220",
+    "teamSize": "5"
+  },
+  "student_1789312535@college.edu.in": {
+    "email": "student_1789312535@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-13T15:15:35.722857"
+  },
+  "student_1789313071@college.edu.in": {
+    "email": "student_1789313071@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-13T15:24:31.252033"
+  },
+  "student_1789313120@college.edu.in": {
+    "email": "student_1789313120@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-13T15:25:20.730016"
+  },
+  "student_1789314888@college.edu.in": {
+    "email": "student_1789314888@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-13T15:54:48.449536"
+<<<<<<< HEAD
+  },
+  "hemapriyas047@gmail.com": {
+    "email": "hemapriyas047@gmail.com",
+    "password": "hemz18",
+    "name": "hema s",
+    "role": "student",
+    "rollNo": "21cs101",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 3,
+      "javascript": 2,
+      "react": 2,
+      "webdev": 3,
+      "nlp": 2,
+      "mongodb": 3,
+      "devops": 3,
+      "flutter": 2,
+      "cyber": 2
+    },
+    "domains": [
+      "aiml",
+      "web",
+      "ds"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-09-16T16:19:01.299402",
+    "teamSize": "3"
+=======
+>>>>>>> 4a642e878f362a881e451424b7b7a885d9dca796
+  }
+}

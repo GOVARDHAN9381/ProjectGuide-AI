@@ -1,0 +1,72 @@
+# ═══════════════════════════════════════════════════════
+# AGRI VISION — docker-compose.yml
+#
+# Services:
+#   qdrant        → port 6333  (vector database)
+#   ai-service    → one-shot ingestor (runs then exits)
+#   trace-service → port 8001  (SQLite trace store + dashboard)
+#
+# Ollama stays on the HOST — not containerised.
+# ═══════════════════════════════════════════════════════
+
+version: "3.9"
+
+services:
+
+  # ── Qdrant vector database ─────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: agrisight-qdrant
+    ports:
+      - "6333:6333"       # REST API  (PHP + Python clients)
+      - "6334:6334"       # gRPC      (optional)
+    volumes:
+      - qdrant_data:/qdrant/storage   # vectors persist across restarts
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:6333/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ── AI-service: knowledge ingestor ────────────────
+  # Builds from ./ai-service, embeds crop_diseases.txt,
+  # uploads vectors to Qdrant, then exits (restart: no).
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: agrisight-ingestor
+    environment:
+      - QDRANT_URL=http://qdrant:6333       # container-to-container
+      - COLLECTION_NAME=agrisight_knowledge
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    restart: "no"                            # run once, then exit
+
+  # ── Trace AI microservice ──────────────────────────
+  trace-service:
+    build:
+      context: ./trace-service
+      dockerfile: Dockerfile
+    container_name: agrisight-trace
+    ports:
+      - "8001:8001"
+    volumes:
+      - trace_data:/data        # SQLite DB persists across restarts
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+# ── Named volumes ──────────────────────────────────────
+volumes:
+  qdrant_data:
+    driver: local
+  trace_data:
+    driver: local
