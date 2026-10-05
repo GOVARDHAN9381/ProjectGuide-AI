@@ -15,29 +15,57 @@ client = None
 db = None
 
 
+# Fix Windows dnspython resolver initialization if needed
+try:
+    import dns.resolver
+    if dns.resolver.default_resolver is None:
+        res = dns.resolver.Resolver()
+        res.nameservers = ['8.8.8.8', '1.1.1.1', '8.8.4.4']
+        dns.resolver.default_resolver = res
+except Exception:
+    pass
+
+
 def get_database():
     global client, db
     if db is None:
         try:
+            import dns.resolver
+            if dns.resolver.default_resolver is None:
+                res = dns.resolver.Resolver()
+                res.nameservers = ['8.8.8.8', '1.1.1.1', '8.8.4.4']
+                dns.resolver.default_resolver = res
+        except Exception:
+            pass
+
+        try:
             import certifi
             client = MongoClient(
                 MONGO_URI,
-                serverSelectionTimeoutMS=2000,
-                connectTimeoutMS=2000,
+                serverSelectionTimeoutMS=4000,
+                connectTimeoutMS=4000,
                 tlsCAFile=certifi.where()
             )
         except Exception:
-            client = MongoClient(
-                MONGO_URI,
-                serverSelectionTimeoutMS=2000,
-                connectTimeoutMS=2000
-            )
+            try:
+                client = MongoClient(
+                    MONGO_URI,
+                    serverSelectionTimeoutMS=4000,
+                    connectTimeoutMS=4000
+                )
+            except Exception as conn_err:
+                print(f"[DB] Notice: MongoClient init error: {conn_err}")
+                client = MongoClient(
+                    "mongodb://localhost:27017",
+                    serverSelectionTimeoutMS=1000
+                )
         db = client[DB_NAME]
         try:
             _ensure_indexes(db)
         except Exception as e:
             print(f"[DB] Notice: Could not ensure indexes on MongoDB Atlas: {e}")
     return db
+
 
 
 def _ensure_indexes(database):
@@ -93,7 +121,7 @@ def check_db_connection():
 
 
 # ---------------------------------------------------------------------------
-# Collection helper getters
+# Collection helper getters & Lazy Proxies
 # ---------------------------------------------------------------------------
 
 def get_students_collection():
@@ -110,3 +138,83 @@ def get_feasibility_reports_collection():
 
 def get_scope_reports_collection():
     return get_database()["scope_reports"]
+
+
+def get_tech_stack_reports_collection():
+    return get_database()["tech_stack_reports"]
+
+
+def get_risk_reports_collection():
+    return get_database()["risk_reports"]
+
+
+def get_tracking_reports_collection():
+    return get_database()["tracking_reports"]
+
+
+def get_skill_profiles_collection():
+    return get_database()["skill_profiles"]
+
+
+def get_project_milestones_collection():
+    return get_database()["project_milestones"]
+
+
+def get_project_analyses_collection():
+    return get_database()["project_analyses"]
+
+
+def get_faculty_reviews_collection():
+    return get_database()["faculty_reviews"]
+
+
+def get_announcements_collection():
+    return get_database()["announcements"]
+
+
+class _LazyCollection:
+    def __init__(self, name: str):
+        self._name = name
+
+    def _col(self):
+        return get_database()[self._name]
+
+    def __getattr__(self, name):
+        return getattr(self._col(), name)
+
+    def __getitem__(self, item):
+        return self._col()[item]
+
+
+students_col = _LazyCollection("students")
+skill_profiles_col = _LazyCollection("skill_profiles")
+project_ideas_col = _LazyCollection("project_ideas")
+project_analyses_col = _LazyCollection("project_analyses")
+project_milestones_col = _LazyCollection("project_milestones")
+faculty_reviews_col = _LazyCollection("faculty_reviews")
+announcements_col = _LazyCollection("announcements")
+counters_col = _LazyCollection("counters")
+
+
+def get_next_id(sequence_name: str) -> int:
+    """Generate an auto-incrementing integer ID for a given sequence name."""
+    try:
+        from pymongo import ReturnDocument
+        counters = get_database()["counters"]
+        ret = counters.find_one_and_update(
+            {"_id": sequence_name},
+            {"$inc": {"seq": 1}},
+            upsert=True,
+            return_document=ReturnDocument.AFTER
+        )
+        if ret and "seq" in ret:
+            return int(ret["seq"])
+    except Exception:
+        pass
+
+    try:
+        return get_database()[sequence_name].count_documents({}) + 1
+    except Exception:
+        import time
+        return int(time.time() % 100000)
+

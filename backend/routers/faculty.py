@@ -23,16 +23,29 @@ def get_cohort_students():
     students = list(students_col.find().sort("id", 1))
     results = []
 
-    for s in students:
-        s_id = s["id"]
+    for idx, s in enumerate(students, start=1):
+        s_id = s.get("id") or idx
         profile = skill_profiles_col.find_one({"student_id": s_id}) or {}
         skills = profile.get("skills", {})
 
-        projects_cursor = project_ideas_col.find({"student_id": s_id}).sort("created_at", -1)
+        s_query = []
+        if isinstance(s_id, int) or (isinstance(s_id, str) and str(s_id).isdigit()):
+            s_query.append({"student_id": int(s_id)})
+        s_query.append({"student_id": str(s_id)})
+        if "email" in s:
+            s_query.append({"student_email": s["email"].lower()})
+
+        projects_cursor = project_ideas_col.find({"$or": s_query}).sort("created_at", -1)
         projs = []
         for p in projects_cursor:
-            p_id = p["id"]
-            ms_cursor = project_milestones_col.find({"project_id": p_id}).sort("phase_index", 1)
+            p_id = p.get("id") or p.get("idea_id") or p.get("_id")
+            
+            p_ms_query = []
+            if isinstance(p_id, int) or (isinstance(p_id, str) and str(p_id).isdigit()):
+                p_ms_query.append({"project_id": int(p_id)})
+            p_ms_query.append({"project_id": str(p_id)})
+
+            ms_cursor = list(project_milestones_col.find({"$or": p_ms_query}).sort("phase_index", 1))
             p_milestones = []
             for ms in ms_cursor:
                 p_milestones.append({
@@ -49,16 +62,16 @@ def get_cohort_students():
             p_created_str = p_created.isoformat() if isinstance(p_created, datetime) else (p_created or datetime.utcnow().isoformat())
 
             projs.append({
-                "id": p["id"],
-                "title": p["title"],
-                "desc": p["desc"],
+                "id": p.get("id", p_id),
+                "title": p.get("title", "Project"),
+                "desc": p.get("desc", ""),
                 "domain": p.get("domain", "web"),
-                "teamSize": str(p.get("team_size", "3")),
-                "durationDays": int(p.get("duration_days", 30)),
+                "teamSize": str(p.get("team_size") or p.get("teamSize", "3")),
+                "durationDays": int(p.get("duration_days") or p.get("durationDays", 30)),
                 "status": p.get("status", "pending_review"),
-                "feasibility": int(p.get("feasibility_score", 85)),
-                "techStack": p.get("tech_stack", []),
-                "milestonesDone": int(p.get("milestones_done", 0)),
+                "feasibility": int(p.get("feasibility_score") or p.get("feasibility", 85)),
+                "techStack": p.get("tech_stack") or p.get("techStack", []),
+                "milestonesDone": int(p.get("milestones_done") or p.get("milestonesDone", 0)),
                 "submittedAt": p_created_str,
                 "milestones": p_milestones
             })
@@ -69,13 +82,17 @@ def get_cohort_students():
         s_created = s.get("created_at")
         s_created_str = s_created.isoformat() if isinstance(s_created, datetime) else (s_created or datetime.utcnow().isoformat())
 
+        first_name = s.get("first_name") or s.get("firstName", "")
+        last_name = s.get("last_name") or s.get("lastName", "")
+        full_name = f"{first_name} {last_name}".strip() or s.get("name", f"Student {idx}")
+
         results.append({
-            "id": s["id"],
-            "name": f"{s['first_name']} {s.get('last_name', '')}".strip(),
-            "roll": s.get("roll_no") or f"21CS{100+s_id}",
+            "id": s_id,
+            "name": full_name,
+            "roll": s.get("roll_no") or s.get("rollNo") or f"21CS{100+idx}",
             "branch": s.get("branch", "CSE"),
             "year": s.get("year", "3rd Year"),
-            "email": s["email"],
+            "email": s.get("email", ""),
             "skills": skills,
             "status": student_status,
             "lastActive": s_created_str,
@@ -88,14 +105,25 @@ def get_cohort_students():
 
 @router.post("/faculty/review", response_model=schemas.FacultyReviewResponse)
 def submit_faculty_review(data: schemas.FacultyReviewRequest):
-    project = project_ideas_col.find_one({"id": int(data.project_id)})
+    p_id = data.project_id
+    query = []
+    if str(p_id).isdigit():
+        query.append({"id": int(p_id)})
+    query.append({"id": str(p_id)})
+    query.append({"idea_id": str(p_id)})
+    from bson import ObjectId
+    if ObjectId.is_valid(str(p_id)):
+        query.append({"_id": ObjectId(str(p_id))})
+
+    project = project_ideas_col.find_one({"$or": query})
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
     review_id = get_next_id("faculty_reviews")
+    actual_pid = project.get("id", p_id)
     review_doc = {
         "id": review_id,
-        "project_id": project["id"],
+        "project_id": actual_pid,
         "faculty_name": data.faculty_name or "Prof. Verma",
         "feedback": data.feedback,
         "status_action": data.status or "active",
@@ -105,13 +133,13 @@ def submit_faculty_review(data: schemas.FacultyReviewRequest):
 
     new_status = data.status or "active"
     project_ideas_col.update_one(
-        {"id": project["id"]},
+        {"_id": project["_id"]},
         {"$set": {"status": new_status, "updated_at": datetime.utcnow()}}
     )
 
     return {
         "review_id": review_id,
-        "project_id": project["id"],
+        "project_id": actual_pid,
         "status": new_status,
         "message": f"Review recorded. Project status set to '{new_status}'."
     }
@@ -145,7 +173,7 @@ def list_announcements():
         c_at = a.get("created_at")
         c_at_str = c_at.isoformat() if isinstance(c_at, datetime) else (c_at or datetime.utcnow().isoformat())
         res.append({
-            "id": a["id"],
+            "id": a.get("id", 1),
             "title": a.get("title", "Announcement"),
             "message": a.get("message", ""),
             "created_at": c_at_str
@@ -161,21 +189,30 @@ def export_csv_report():
     
     writer.writerow(["ID", "Name", "Roll No", "Branch", "Year", "Email", "Status", "Project Title", "Domain", "Feasibility", "Milestones Completed"])
 
-    for s in students:
-        s_id = s["id"]
-        p = project_ideas_col.find_one({"student_id": s_id})
+    for idx, s in enumerate(students, start=1):
+        s_id = s.get("id") or idx
+        s_query = [{"student_id": s_id}]
+        if isinstance(s_id, int) or str(s_id).isdigit():
+            s_query.append({"student_id": int(s_id)})
+            s_query.append({"student_id": str(s_id)})
+        p = project_ideas_col.find_one({"$or": s_query})
         p_title = p["title"] if p else "No Submission"
         p_domain = p.get("domain", "—") if p else "—"
         p_feas = f"{p.get('feasibility_score', 0)}%" if p else "—"
         
-        ms_count = project_milestones_col.count_documents({"project_id": p["id"]}) if p else 8
-        p_ms = f"{p.get('milestones_done', 0)}/{ms_count}" if p else "0/8"
+        p_id = p.get("id") if p else None
+        ms_count = project_milestones_col.count_documents({"$or": [{"project_id": p_id}, {"project_id": str(p_id)}]}) if p_id else 4
+        p_ms = f"{p.get('milestones_done', 0)}/{ms_count}" if p else "0/4"
         p_status = p.get("status", "pending") if p else "pending"
+
+        first_name = s.get("first_name") or s.get("firstName", "")
+        last_name = s.get("last_name") or s.get("lastName", "")
+        full_name = f"{first_name} {last_name}".strip() or s.get("name", f"Student {idx}")
 
         writer.writerow([
             s_id,
-            f"{s['first_name']} {s.get('last_name', '')}".strip(),
-            s.get("roll_no", ""),
+            full_name,
+            s.get("roll_no") or s.get("rollNo", ""),
             s.get("branch", "CSE"),
             s.get("year", "3rd Year"),
             s.get("email", ""),
@@ -192,3 +229,4 @@ def export_csv_report():
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename=Faculty_Cohort_Report_{datetime.utcnow().strftime('%Y%m%d')}.csv"}
     )
+

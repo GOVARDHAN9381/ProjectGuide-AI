@@ -148,3 +148,55 @@ def make_scope_report_doc(idea_id: str, student_id: str, report: dict, meta: dic
         "tech_ideas": meta.get("techIdeas", ""),
         "updated_at": now_utc(),
     }
+
+
+def make_tech_stack_report_doc(idea_id: str, student_id: str, report: dict, meta: dict = None) -> dict:
+    """Build a tech_stack_report document for MongoDB."""
+    meta = meta or {}
+    return {
+        "idea_id": idea_id,
+        "student_id": student_id,
+        "recommended_stack": report.get("recommendedStack", {}),
+        "reasoning": report.get("reasoning", []),
+        "alternatives": report.get("alternatives", []),
+        "justification": report.get("justification", ""),
+        "learning_resources": report.get("learningResources", []),
+        "ai_generated": report.get("aiGenerated", False),
+        "updated_at": now_utc(),
+    }
+
+
+def make_risk_report_doc(idea_id: str, student_id: str, report: dict, meta: dict = None) -> dict:
+    """Build a risk_report document for MongoDB."""
+    meta = meta or {}
+    return {
+        "idea_id": idea_id,
+        "student_id": student_id,
+        "overall_risk": report.get("overallRisk", "Low"),
+        "risk_score": report.get("riskScore", 0),
+        "summary": report.get("summary", ""),
+        "risks": report.get("risks", []),
+        "top_blockers": report.get("topBlockers", []),
+        "reasoning": report.get("reasoning", []),
+        "ai_generated": report.get("aiGenerated", False),
+        "updated_at": now_utc(),
+    }
+
+
+def make_tracking_report_doc(idea_id: str, student_id: str, report: dict, meta: dict = None) -> dict:
+    """Build a tracking_report document for MongoDB."""
+    meta = meta or {}
+    return {
+        "idea_id": idea_id,
+        "student_id": student_id,
+        "milestones": report.get("milestones", []),
+        "overall_progress": report.get("overallProgress", 0),
+        "milestones_done": report.get("milestonesDone", 0),
+        "total_milestones": report.get("totalMilestones", len(report.get("milestones", []))),
+        "immediate_action_items": report.get("immediateActionItems", []),
+        "faculty_checkpoints": report.get("facultyCheckpoints", []),
+        "tracking_metrics": report.get("trackingMetrics", {}),
+        "sprint_methodology": report.get("sprintMethodology", ""),
+        "ai_generated": report.get("aiGenerated", False),
+        "updated_at": now_utc(),
+    }

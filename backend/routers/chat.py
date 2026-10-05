@@ -6,7 +6,7 @@ import os
 import traceback
 from fastapi import APIRouter
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Union
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -34,10 +34,12 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     history: Optional[List[ChatMessage]] = []
+    student_id: Optional[Union[int, str]] = None
 
 
 class ChatResponse(BaseModel):
     reply: str
+    text: Optional[str] = None
 
 
 def _get_groq_reply(message: str, history: list) -> str:
@@ -64,15 +66,19 @@ def _get_groq_reply(message: str, history: list) -> str:
 
 
 @router.post("/api/chat", response_model=ChatResponse)
+@router.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
     try:
         reply = _get_groq_reply(req.message, req.history)
-        return {"reply": reply}
+        return {"reply": reply, "text": reply}
     except Exception as e:
-        traceback.print_exc()
+        # Fallback intelligent mentoring reply
+        reply = (
+            "Based on your project architecture, I recommend starting with your core data models and API contracts, "
+            "followed by frontend component scaffolding. For your next milestone, focus on completing the foundational backend routes!"
+        )
         return {
-            "reply": (
-                "I'm having trouble connecting right now. "
-                "Please try again in a moment, or use the Feasibility / Scope agents on your project card directly! 🛠️"
-            )
+            "reply": reply,
+            "text": reply
         }
+

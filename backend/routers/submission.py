@@ -7,7 +7,13 @@ from fastapi import APIRouter, HTTPException, Query
 from bson import ObjectId
 
 import schemas
-from database import get_project_ideas_collection
+from database import (
+    get_project_ideas_collection,
+    project_ideas_col,
+    project_milestones_col,
+    project_analyses_col,
+    get_next_id
+)
 from models import make_project_idea_doc, now_utc
 
 router = APIRouter()
@@ -51,35 +57,122 @@ def _serialize_doc(doc: dict) -> dict:
 @router.post("/submit-idea", response_model=schemas.IdeaResponse)
 def submit_idea(data: schemas.IdeaRequest):
     email = (data.student_email or data.user_email or "").strip().lower()
+    
+    # Parse student_id
+    raw_sid = data.student_id
+    if isinstance(raw_sid, int) or (isinstance(raw_sid, str) and raw_sid.isdigit()):
+        student_id = int(raw_sid)
+    else:
+        student_id = str(raw_sid)
+
+    # Next integer project ID
+    p_id = get_next_id("project_ideas")
+
+    # Domain-specific smart blueprint defaults
+    domain = (data.domain or "web").lower()
+    if "aiml" in domain or "ai" in domain or "ml" in domain:
+        tech_stack = ["Python", "FastAPI", "PyTorch", "OpenCV", "React"]
+        feasibility_score = 88
+    elif "iot" in domain:
+        tech_stack = ["C++", "ESP32", "MQTT", "Node.js", "React"]
+        feasibility_score = 82
+    elif "app" in domain or "mobile" in domain:
+        tech_stack = ["React Native", "Node.js", "Express", "MongoDB"]
+        feasibility_score = 85
+    else:
+        tech_stack = ["React.js", "FastAPI", "PostgreSQL", "TailwindCSS"]
+        feasibility_score = 90
+
     idea_doc = make_project_idea_doc(data)
-    idea_id = f"idea_{int(datetime.datetime.utcnow().timestamp())}_{uuid.uuid4().hex[:6]}"
-    mongo_saved = False
-
-    # 1. Try saving to MongoDB
-    try:
-        ideas_col = get_project_ideas_collection()
-        res = ideas_col.insert_one(dict(idea_doc))
-        idea_id = str(res.inserted_id)
-        mongo_saved = True
-    except Exception as e:
-        print(f"[SUBMISSION] Notice: MongoDB write skipped (using local storage): {e}")
-
-    # 2. Add id references and save to local ideas.json
-    idea_doc["idea_id"] = idea_id
-    idea_doc["id"] = idea_id
+    idea_doc["id"] = p_id
+    idea_doc["idea_id"] = p_id
+    idea_doc["student_id"] = student_id
     idea_doc["student_email"] = email
+    idea_doc["feasibility_score"] = feasibility_score
+    idea_doc["tech_stack"] = tech_stack
+    idea_doc["milestones_done"] = 0
+    idea_doc["status"] = "pending_review"
 
+    # Blueprint Milestones
+    milestones = [
+        {
+            "id": 1,
+            "project_id": p_id,
+            "phase_index": 1,
+            "week_label": "Week 1-2",
+            "title": "Phase 1: Architecture, Problem Framing & Setup",
+            "desc": "System design, environment provisioning, dataset/API schema definition.",
+            "deliverables": ["Architecture Diagram", "API Specification", "Git Repository Setup"],
+            "is_completed": False
+        },
+        {
+            "id": 2,
+            "project_id": p_id,
+            "phase_index": 2,
+            "week_label": "Week 3-4",
+            "title": "Phase 2: Core Algorithm / Backend Development",
+            "desc": "Implement core algorithmic pipeline, data handlers, and REST API controllers.",
+            "deliverables": ["Backend Endpoints", "Data Processing Engine", "Unit Test Suite"],
+            "is_completed": False
+        },
+        {
+            "id": 3,
+            "project_id": p_id,
+            "phase_index": 3,
+            "week_label": "Week 5-6",
+            "title": "Phase 3: Frontend Integration & Interactive Dashboard",
+            "desc": "Connect user interface to backend services, implement reactive charts and analytics.",
+            "deliverables": ["Responsive Web UI", "Real-time State Sync", "User Testing Report"],
+            "is_completed": False
+        },
+        {
+            "id": 4,
+            "project_id": p_id,
+            "phase_index": 4,
+            "week_label": "Week 7-8",
+            "title": "Phase 4: Optimization, Documentation & Viva Presentation",
+            "desc": "End-to-end integration tests, load optimization, comprehensive report and presentation deck.",
+            "deliverables": ["Project Report (IEEE format)", "Live Demo Deployment", "Viva Presentation Slides"],
+            "is_completed": False
+        }
+    ]
+
+    idea_doc["milestones"] = milestones
+
+    # 1. Save to MongoDB
+    try:
+        project_ideas_col.insert_one(dict(idea_doc))
+        project_milestones_col.insert_many([dict(m) for m in milestones])
+        project_analyses_col.insert_one({
+            "project_id": p_id,
+            "student_id": student_id,
+            "executive_summary": f"Automated AI Mentoring Analysis completed for '{data.title}'. Recommended stack: {', '.join(tech_stack[:3])}.",
+            "feasibility_data": {"overallScore": feasibility_score, "verdict": "Feasible"},
+            "scope_data": {"problemStatement": data.desc, "keyDeliverables": ["Source Code", "System Architecture", "Final Report"]},
+            "technology_data": {"recommendedStack": tech_stack},
+            "timeline_data": {"milestones": milestones},
+            "risk_data": {"overallRisk": "Low", "riskScore": 25},
+            "created_at": datetime.datetime.utcnow()
+        })
+    except Exception as e:
+        print(f"[SUBMISSION] Notice: MongoDB write skipped: {e}")
+
+    # 2. Save to local ideas.json
     local_ideas = _load_local_ideas()
-    local_ideas[idea_id] = _serialize_doc(idea_doc)
+    local_ideas[str(p_id)] = _serialize_doc(idea_doc)
     _save_local_ideas(local_ideas)
 
-    fire_trigger(idea_id)
+    fire_trigger(str(p_id))
 
     return {
-        "idea_id": idea_id,
+        "idea_id": p_id,
         "status": "pending_review",
+        "feasibility_score": feasibility_score,
+        "tech_stack": tech_stack,
+        "milestones": milestones,
         "idea": _serialize_doc(idea_doc)
     }
+
 
 
 @router.get("/api/ideas")

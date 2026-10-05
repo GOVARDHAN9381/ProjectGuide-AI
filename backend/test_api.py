@@ -1,10 +1,20 @@
 from fastapi.testclient import TestClient
 from main import app
 
+from database import project_ideas_col, project_milestones_col, project_analyses_col
+
 client = TestClient(app)
 
 def test_api():
     print("Running ProjectGuide-AI Backend API Tests on MongoDB...")
+
+    # Ensure clean slate for student 1 before test run
+    try:
+        project_ideas_col.delete_many({"$or": [{"student_id": 1}, {"student_id": "1"}]})
+        project_milestones_col.delete_many({"$or": [{"project_id": 1}, {"project_id": "1"}]})
+        project_analyses_col.delete_many({"$or": [{"student_id": 1}, {"student_id": "1"}]})
+    except Exception:
+        pass
 
     # 1. Health check
     res = client.get("/")
@@ -21,6 +31,7 @@ def test_api():
 
     # 3. Initial check: Student 1 has no default project submitted
     res = client.get("/projects/student/1")
+
     assert res.status_code == 200, res.text
     projs = res.json()
     assert len(projs) == 0, f"Expected 0 default projects, got {len(projs)}"

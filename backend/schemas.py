@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any
 from pydantic import BaseModel
 
 
@@ -49,6 +49,10 @@ class IdeaResponse(BaseModel):
     idea_id: Union[str, int]
     status: str
     idea: Optional[Dict[str, Union[str, int, float, bool, list, dict, None]]] = None
+    feasibility_score: Optional[int] = 85
+    tech_stack: Optional[List[str]] = []
+    milestones: Optional[List[Dict[str, Any]]] = []
+
 
 
 class FileUpload(BaseModel):
@@ -205,3 +209,149 @@ class RiskResponse(BaseModel):
     topBlockers: List[TopBlocker] # Top 3 critical blockers with immediate actions
     reasoning: List[str]          # Step-by-step reasoning chain from upstream reports
     aiGenerated: Optional[bool] = False
+
+
+# ── Milestone & Tracking Agent (Agent 4) ──────────────────────────────────────
+
+class TrackingRequest(BaseModel):
+    idea_id: Optional[str] = ""
+    student_email: Optional[str] = ""
+    title: str
+    desc: str
+    domain: Optional[str] = "web"
+    teamSize: Optional[str] = "3"
+    durationDays: Optional[int] = 30
+    techIdeas: Optional[str] = ""
+    features: Optional[List[str]] = []
+    studentSkills: Optional[Dict[str, int]] = {}
+    feasibilityReport: Optional[Dict] = None
+    scopeReport: Optional[Dict] = None
+    techStackReport: Optional[Dict] = None
+
+
+class MilestoneItem(BaseModel):
+    id: int
+    phase: str
+    weekLabel: Optional[str] = ""
+    title: str
+    description: Optional[str] = ""
+    deliverables: Optional[List[str]] = []
+    acceptanceCriteria: Optional[List[str]] = []
+    facultyCheckpoint: Optional[str] = ""
+    dependencies: Optional[List[str]] = []
+    estimatedEffortHours: Optional[int] = 24
+    status: Optional[str] = "pending"
+    completed: Optional[bool] = False
+    completedAt: Optional[str] = None
+
+
+class TrackingMetrics(BaseModel):
+    totalDurationWeeks: Optional[int] = 4
+    phasesCount: Optional[int] = 4
+    estimatedWeeklyHoursPerStudent: Optional[int] = 10
+    weeklyWorkloadPerStudent: Optional[str] = "8–12 hrs/week"
+    pace: Optional[str] = "On Schedule"
+    criticalPathPhase: Optional[str] = "Phase 2"
+    estimatedCompletionWeeks: Optional[int] = 4
+    targetEndDateDays: Optional[int] = 30
+
+
+class TrackingResponse(BaseModel):
+    milestones: List[MilestoneItem]
+    totalMilestones: Optional[int] = 4
+    milestonesDone: Optional[int] = 0
+    overallProgress: Optional[int] = 0
+    immediateActionItems: Optional[List[str]] = []
+    facultyCheckpoints: Optional[List[str]] = []
+    trackingMetrics: Optional[TrackingMetrics] = None
+    sprintMethodology: Optional[str] = "Agile Sprints with faculty milestone checkpoints."
+    reasoning: Optional[List[str]] = []
+    aiGenerated: Optional[bool] = False
+
+
+
+class MilestoneToggleRequest(BaseModel):
+    idea_id: Optional[str] = None
+    title: Optional[str] = None
+    milestone_id: Optional[int] = None
+    completed: bool
+
+
+class MilestoneToggleResponse(BaseModel):
+    milestone_id: Optional[int] = None
+    completed: Optional[bool] = None
+    is_completed: Optional[bool] = None
+    milestonesDone: Optional[int] = None
+    milestones_done: Optional[int] = None
+    totalMilestones: Optional[int] = None
+    total_milestones: Optional[int] = None
+    overallProgress: Optional[int] = None
+    progress_pct: Optional[int] = None
+
+
+# ── Projects & Milestones ─────────────────────────────────────────────────────
+
+class MilestoneResponse(BaseModel):
+    id: Optional[int] = None
+    phase_index: Optional[int] = 1
+    week: Optional[str] = ""
+    title: Optional[str] = ""
+    desc: Optional[str] = ""
+    deliverables: Optional[List[str]] = []
+    is_completed: Optional[bool] = False
+
+
+class ProjectAnalysisResponse(BaseModel):
+    executive_summary: Optional[str] = ""
+    feasibility: Optional[Dict] = None
+    scope: Optional[Dict] = None
+    technology: Optional[Dict] = None
+    timeline: Optional[Dict] = None
+    risk: Optional[Dict] = None
+
+
+class ProjectResponse(BaseModel):
+    id: Union[int, str]
+    student_id: Union[int, str]
+    title: str
+    desc: str
+    domain: Optional[str] = "web"
+    teamSize: Optional[str] = "3"
+    durationDays: Optional[int] = 30
+    status: Optional[str] = "pending_review"
+    feasibility: Optional[int] = 85
+    techStack: Optional[List[str]] = []
+    milestonesDone: Optional[int] = 0
+    submittedAt: Optional[str] = ""
+    milestones: Optional[List[MilestoneResponse]] = []
+    executive_summary: Optional[str] = ""
+    analysis: Optional[ProjectAnalysisResponse] = None
+
+
+# ── Faculty Schemas ───────────────────────────────────────────────────────────
+
+class FacultyReviewRequest(BaseModel):
+    project_id: Union[int, str]
+    faculty_name: Optional[str] = "Prof. Verma"
+    feedback: str
+    status: Optional[str] = "active"
+
+
+class FacultyReviewResponse(BaseModel):
+    review_id: int
+    project_id: Union[int, str]
+    status: str
+    message: str
+
+
+class AnnouncementRequest(BaseModel):
+    author_name: Optional[str] = "Prof. Verma"
+    title: Optional[str] = "Academic Project Update"
+    message: str
+
+
+class AnnouncementResponse(BaseModel):
+    id: int
+    title: str
+    message: str
+    created_at: str
