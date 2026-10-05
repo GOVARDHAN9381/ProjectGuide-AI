@@ -152,5 +152,25 @@
     ],
     "hasCompletedProfile": true,
     "createdAt": "2026-10-05T09:33:04.982315"
+  },
+  "student_1791193785@college.edu.in": {
+    "email": "student_1791193785@college.edu.in",
+    "password": "mypassword123",
+    "name": "Kiran Rao",
+    "role": "student",
+    "rollNo": "22CS555",
+    "branch": "Computer Science & Engineering",
+    "year": "3rd Year",
+    "skills": {
+      "python": 4,
+      "react": 3,
+      "fastapi": 4
+    },
+    "domains": [
+      "Artificial Intelligence",
+      "Web Development"
+    ],
+    "hasCompletedProfile": true,
+    "createdAt": "2026-10-05T09:49:46.413075"
   }
 }

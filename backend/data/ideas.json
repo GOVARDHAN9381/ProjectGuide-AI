@@ -503,5 +503,90 @@
         "is_completed": false
       }
     ]
+  },
+  "14": {
+    "student_id": 1,
+    "student_email": "",
+    "title": "Smart Attendance System using Facial Recognition",
+    "desc": "Automated classroom attendance platform utilizing MTCNN and FaceNet for high-accuracy real-time facial verification.",
+    "domain": "aiml",
+    "team_size": "3",
+    "duration_days": 30,
+    "duration_unit": "days",
+    "tech_ideas": "",
+    "refLink": "",
+    "features": [],
+    "uploaded_files": [],
+    "status": "pending_review",
+    "created_at": "2026-10-05T09:49:37.210605",
+    "id": 14,
+    "idea_id": 14,
+    "feasibility_score": 88,
+    "tech_stack": [
+      "Python",
+      "FastAPI",
+      "PyTorch",
+      "OpenCV",
+      "React"
+    ],
+    "milestones_done": 0,
+    "milestones": [
+      {
+        "id": 1,
+        "project_id": 14,
+        "phase_index": 1,
+        "week_label": "Week 1-2",
+        "title": "Phase 1: Architecture, Problem Framing & Setup",
+        "desc": "System design, environment provisioning, dataset/API schema definition.",
+        "deliverables": [
+          "Architecture Diagram",
+          "API Specification",
+          "Git Repository Setup"
+        ],
+        "is_completed": false
+      },
+      {
+        "id": 2,
+        "project_id": 14,
+        "phase_index": 2,
+        "week_label": "Week 3-4",
+        "title": "Phase 2: Core Algorithm / Backend Development",
+        "desc": "Implement core algorithmic pipeline, data handlers, and REST API controllers.",
+        "deliverables": [
+          "Backend Endpoints",
+          "Data Processing Engine",
+          "Unit Test Suite"
+        ],
+        "is_completed": false
+      },
+      {
+        "id": 3,
+        "project_id": 14,
+        "phase_index": 3,
+        "week_label": "Week 5-6",
+        "title": "Phase 3: Frontend Integration & Interactive Dashboard",
+        "desc": "Connect user interface to backend services, implement reactive charts and analytics.",
+        "deliverables": [
+          "Responsive Web UI",
+          "Real-time State Sync",
+          "User Testing Report"
+        ],
+        "is_completed": false
+      },
+      {
+        "id": 4,
+        "project_id": 14,
+        "phase_index": 4,
+        "week_label": "Week 7-8",
+        "title": "Phase 4: Optimization, Documentation & Viva Presentation",
+        "desc": "End-to-end integration tests, load optimization, comprehensive report and presentation deck.",
+        "deliverables": [
+          "Project Report (IEEE format)",
+          "Live Demo Deployment",
+          "Viva Presentation Slides"
+        ],
+        "is_completed": false
+      }
+    ]
   }
 }
