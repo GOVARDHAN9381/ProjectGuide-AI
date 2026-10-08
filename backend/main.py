@@ -1,5 +1,8 @@
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from database import check_db_connection, DB_NAME, students_col
 from routers import (
@@ -34,7 +37,8 @@ app.include_router(mentor.router, tags=["mentor"])
 app.include_router(chat.router, tags=["chat"])
 
 
-@app.get("/")
+@app.get("/health")
+@app.get("/api/health")
 def health_check():
     return {
         "status": "backend running",
@@ -84,4 +88,43 @@ def get_student_by_id(student_id: str):
 def db_health_check():
     """Live check for MongoDB Atlas connectivity"""
     return check_db_connection()
+
+
+# ─── Static Frontend Serving (Docker / Single-Deploy Full-Stack) ─────────────
+FRONTEND_DIST = os.environ.get("FRONTEND_DIST")
+if not FRONTEND_DIST:
+    possible_paths = [
+        os.path.join(os.path.dirname(__file__), "frontend_dist"),
+        "/app/frontend_dist",
+        os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"),
+    ]
+    for p in possible_paths:
+        if os.path.isdir(p) and os.path.isfile(os.path.join(p, "index.html")):
+            FRONTEND_DIST = os.path.abspath(p)
+            break
+
+if FRONTEND_DIST and os.path.isfile(os.path.join(FRONTEND_DIST, "index.html")):
+    assets_dir = os.path.join(FRONTEND_DIST, "assets")
+    if os.path.isdir(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    @app.get("/{full_path:path}")
+    def serve_frontend_spa(full_path: str):
+        # Do not hijack unresolved API calls
+        if any(full_path.startswith(prefix) for prefix in [
+            "api/", "auth/", "student/", "faculty/", "mentor/", "progress/", "documents/", "timeline/", "onboarding", "submit-idea"
+        ]):
+            raise HTTPException(status_code=404, detail="API route not found")
+        file_path = os.path.join(FRONTEND_DIST, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+else:
+    @app.get("/")
+    def root_health_fallback():
+        return {
+            "status": "backend running",
+            "database": "MongoDB",
+            "db_name": DB_NAME
+        }
 
