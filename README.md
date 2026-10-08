@@ -194,15 +194,49 @@ vercel --prod
 
 ---
 
-### B. Deploy Backend to Railway / Render / Cloud VPS
+---
 
-Because the backend runs Python FastAPI with CrewAI and MongoDB Atlas connections, host it on a platform that supports continuous Python services:
+### B. Deploy to Render (`render.com`)
 
-1. **Deploy to Railway**:
-   - Create a new project on [railway.app](https://railway.app) connected to your GitHub repository.
-   - Set the root directory or start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-   - Add environment variables (`MONGO_URI`, `DB_NAME`, `GROQ_API_KEY`, `GROQ_MODEL`).
-   - Copy the public service URL (e.g., `https://ip-backend.up.railway.app`) and set it as `VITE_API_BASE` in Vercel.
+The repository includes a pre-configured [`render.yaml`](file:///c:/infosys%20project/ai-mentor-platform/render.yaml) Blueprint for 1-click deployment of both the Python backend and the React frontend.
+
+#### Method 1: 1-Click Render Blueprint (Recommended)
+1. Sign in to **[dashboard.render.com](https://dashboard.render.com/)**.
+2. Click **New +** $\rightarrow$ **Blueprint**.
+3. Connect your GitHub repository (`ProjectGuide-AI`).
+4. Render will parse [`render.yaml`](file:///c:/infosys%20project/ai-mentor-platform/render.yaml) and create both:
+   - `projectguide-ai-backend` (Python Web Service)
+   - `projectguide-ai-frontend` (Static Site with SPA rewrite)
+5. Fill in the requested secret environment variables:
+   - `MONGO_URI`: Your MongoDB Atlas connection string
+   - `GROQ_API_KEY`: Your Groq API key
+   - `VITE_API_BASE`: `https://projectguide-ai-backend.onrender.com`
+6. Click **Apply**. Both services will build and deploy live!
+
+#### Method 2: Manual Backend Web Service on Render
+1. In Render Dashboard, click **New +** $\rightarrow$ **Web Service**.
+2. Select repository `ProjectGuide-AI`.
+3. Configure settings:
+   - **Root Directory**: `backend`
+   - **Runtime**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+4. In **Environment Variables**, add:
+   - `PYTHON_VERSION`: `3.11.9`
+   - `MONGO_URI`: `mongodb+srv://...`
+   - `DB_NAME`: `ProjectGuide-AI`
+   - `GROQ_API_KEY`: `gsk_...`
+   - `GROQ_MODEL`: `groq/llama-3.3-70b-versatile`
+5. Click **Create Web Service**.
+
+---
+
+### C. Deploy to Railway
+
+1. Create a new project on [railway.app](https://railway.app) connected to your GitHub repository.
+2. Set root directory to `backend` and start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+3. Add environment variables (`MONGO_URI`, `DB_NAME`, `GROQ_API_KEY`, `GROQ_MODEL`).
+4. Copy your live backend URL and set it as `VITE_API_BASE` in your frontend deployment.
 
 ---
 
