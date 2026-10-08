@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union, Any
+from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel
 
 
@@ -51,8 +51,7 @@ class IdeaResponse(BaseModel):
     idea: Optional[Dict[str, Union[str, int, float, bool, list, dict, None]]] = None
     feasibility_score: Optional[int] = 85
     tech_stack: Optional[List[str]] = []
-    milestones: Optional[List[Dict[str, Any]]] = []
-
+    milestones: Optional[List[dict]] = []
 
 
 class FileUpload(BaseModel):
@@ -121,6 +120,7 @@ class ScopeResponse(BaseModel):
     # Agent chaining: Feasibility Agent (Agent 1) output is forwarded in the
     # scope response so the frontend and downstream agents always have it.
     feasibilityReport: Optional[Dict] = None
+    feasibilityAlignment: Optional[str] = None
     aiGenerated: Optional[bool] = False
 
 
@@ -166,52 +166,22 @@ class TechStackResponse(BaseModel):
     aiGenerated: Optional[bool] = False
 
 
-# ── Risk Assessment & Mitigation Agent (Agent 4) ──────────────────────────────
+# ── Tracking Agent (Agent 4) ──────────────────────────────────────────────────
 
-class RiskRequest(BaseModel):
-    idea_id: Optional[str] = ""
-    student_email: Optional[str] = ""
-    title: str
-    desc: str
-    domain: Optional[str] = "web"
-    teamSize: Optional[str] = "3"
-    durationDays: Optional[int] = 30
-    techIdeas: Optional[str] = ""
-    features: Optional[List[str]] = []
-    studentSkills: Optional[Dict[str, int]] = {}
-    # Agent chaining: outputs from Agents 1, 2, and 3 are all required
-    feasibilityReport: Dict   # required — output from Feasibility Agent
-    scopeReport: Dict         # required — output from Scope Agent
-    techStackReport: Dict     # required — output from Tech Stack Agent
-
-
-class RiskItem(BaseModel):
-    id: str
+class TrackingMilestoneItem(BaseModel):
+    id: int
+    phase: str
+    weekLabel: str
     title: str
     description: str
-    category: str       # Technical | Timeline | Resource | Scope | External
-    likelihood: str     # High | Medium | Low
-    impact: str         # High | Medium | Low
-    mitigation: str
-    owner: str          # Student Team | Faculty | Both
+    deliverables: List[str]
+    acceptanceCriteria: List[str]
+    dependencies: Optional[List[str]] = []
+    estimatedEffortHours: Optional[int] = 24
+    status: Optional[str] = "pending"
+    completed: Optional[bool] = False
+    completedAt: Optional[str] = None
 
-
-class TopBlocker(BaseModel):
-    title: str
-    action: str
-
-
-class RiskResponse(BaseModel):
-    overallRisk: str              # High | Medium | Low  (traffic-light)
-    riskScore: int                # 0–100 composite score
-    summary: str                  # 2–3 sentence executive summary
-    risks: List[RiskItem]         # Full risk register with mitigations
-    topBlockers: List[TopBlocker] # Top 3 critical blockers with immediate actions
-    reasoning: List[str]          # Step-by-step reasoning chain from upstream reports
-    aiGenerated: Optional[bool] = False
-
-
-# ── Milestone & Tracking Agent (Agent 4) ──────────────────────────────────────
 
 class TrackingRequest(BaseModel):
     idea_id: Optional[str] = ""
@@ -224,134 +194,80 @@ class TrackingRequest(BaseModel):
     techIdeas: Optional[str] = ""
     features: Optional[List[str]] = []
     studentSkills: Optional[Dict[str, int]] = {}
+    # Agent chaining: upstream reports from Agents 1, 2, and 3
     feasibilityReport: Optional[Dict] = None
     scopeReport: Optional[Dict] = None
     techStackReport: Optional[Dict] = None
 
 
-class MilestoneItem(BaseModel):
-    id: int
-    phase: str
-    weekLabel: Optional[str] = ""
-    title: str
-    description: Optional[str] = ""
-    deliverables: Optional[List[str]] = []
-    acceptanceCriteria: Optional[List[str]] = []
-    facultyCheckpoint: Optional[str] = ""
-    dependencies: Optional[List[str]] = []
-    estimatedEffortHours: Optional[int] = 24
-    status: Optional[str] = "pending"
-    completed: Optional[bool] = False
-    completedAt: Optional[str] = None
-
-
-class TrackingMetrics(BaseModel):
-    totalDurationWeeks: Optional[int] = 4
-    phasesCount: Optional[int] = 4
-    estimatedWeeklyHoursPerStudent: Optional[int] = 10
-    weeklyWorkloadPerStudent: Optional[str] = "8–12 hrs/week"
-    pace: Optional[str] = "On Schedule"
-    criticalPathPhase: Optional[str] = "Phase 2"
-    estimatedCompletionWeeks: Optional[int] = 4
-    targetEndDateDays: Optional[int] = 30
-
-
 class TrackingResponse(BaseModel):
-    milestones: List[MilestoneItem]
-    totalMilestones: Optional[int] = 4
-    milestonesDone: Optional[int] = 0
-    overallProgress: Optional[int] = 0
-    immediateActionItems: Optional[List[str]] = []
-    facultyCheckpoints: Optional[List[str]] = []
-    trackingMetrics: Optional[TrackingMetrics] = None
-    sprintMethodology: Optional[str] = "Agile Sprints with faculty milestone checkpoints."
-    reasoning: Optional[List[str]] = []
+    overallProgress: int
+    totalMilestones: int
+    milestonesDone: int
+    milestones: List[TrackingMilestoneItem]
+    sprintMethodology: str
+    immediateActionItems: List[str]
+    facultyCheckpoints: List[str]
+    trackingMetrics: Dict[str, Any]
     aiGenerated: Optional[bool] = False
 
 
-
 class MilestoneToggleRequest(BaseModel):
-    idea_id: Optional[str] = None
-    title: Optional[str] = None
-    milestone_id: Optional[int] = None
+    idea_id: Optional[str] = ""
+    title: Optional[str] = ""
+    milestone_id: int
     completed: bool
 
 
 class MilestoneToggleResponse(BaseModel):
-    milestone_id: Optional[int] = None
-    completed: Optional[bool] = None
-    is_completed: Optional[bool] = None
-    milestonesDone: Optional[int] = None
-    milestones_done: Optional[int] = None
-    totalMilestones: Optional[int] = None
-    total_milestones: Optional[int] = None
-    overallProgress: Optional[int] = None
-    progress_pct: Optional[int] = None
+    milestone_id: int
+    completed: bool
+    milestonesDone: int
+    totalMilestones: int
+    overallProgress: int
 
 
-# ── Projects & Milestones ─────────────────────────────────────────────────────
+# ── Projects router schemas ───────────────────────────────────────────────────
 
-class MilestoneResponse(BaseModel):
-    id: Optional[int] = None
-    phase_index: Optional[int] = 1
+class MilestoneItem(BaseModel):
+    id: str
+    phase_index: int
     week: Optional[str] = ""
-    title: Optional[str] = ""
+    title: str
     desc: Optional[str] = ""
     deliverables: Optional[List[str]] = []
-    is_completed: Optional[bool] = False
-
-
-class ProjectAnalysisResponse(BaseModel):
-    executive_summary: Optional[str] = ""
-    feasibility: Optional[Dict] = None
-    scope: Optional[Dict] = None
-    technology: Optional[Dict] = None
-    timeline: Optional[Dict] = None
-    risk: Optional[Dict] = None
+    is_completed: bool = False
 
 
 class ProjectResponse(BaseModel):
-    id: Union[int, str]
-    student_id: Union[int, str]
+    id: str
+    student_id: str
     title: str
     desc: str
     domain: Optional[str] = "web"
     teamSize: Optional[str] = "3"
     durationDays: Optional[int] = 30
     status: Optional[str] = "pending_review"
-    feasibility: Optional[int] = 85
-    techStack: Optional[List[str]] = []
+    feasibility: Optional[int] = 0
+    techStack: Optional[Any] = None
     milestonesDone: Optional[int] = 0
     submittedAt: Optional[str] = ""
-    milestones: Optional[List[MilestoneResponse]] = []
-    executive_summary: Optional[str] = ""
-    analysis: Optional[ProjectAnalysisResponse] = None
+    milestones: Optional[List[MilestoneItem]] = []
+    analysis: Optional[Dict[str, Any]] = None
 
 
-# ── Faculty Schemas ───────────────────────────────────────────────────────────
+# ── Timeline agent router schemas ─────────────────────────────────────────────
 
-class FacultyReviewRequest(BaseModel):
-    project_id: Union[int, str]
-    faculty_name: Optional[str] = "Prof. Verma"
-    feedback: str
-    status: Optional[str] = "active"
-
-
-class FacultyReviewResponse(BaseModel):
-    review_id: int
-    project_id: Union[int, str]
-    status: str
-    message: str
+class TimelineCreateRequest(BaseModel):
+    project_name: str
+    deadline: int
+    hours_per_day: Optional[float] = 4.0
+    completed_tasks: Optional[str] = "None"
 
 
-class AnnouncementRequest(BaseModel):
-    author_name: Optional[str] = "Prof. Verma"
-    title: Optional[str] = "Academic Project Update"
-    message: str
+class TimelineProgressUpdateRequest(BaseModel):
+    project_id: str
+    task_index: int
+    progress: int
 
-
-class AnnouncementResponse(BaseModel):
-    id: int
-    title: str
-    message: str
-    created_at: str
+

@@ -1,0 +1,180 @@
+[
+  {
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "project_id": "idea_1789617458_45cdd1",
+    "project_title": "Smart Health Tracker & AI Diet Assistant",
+    "week_number": 1,
+    "progress_pct": 35,
+    "completed_tasks": [
+      "Setup repo",
+      "Docker compose skeleton"
+    ],
+    "pending_tasks": [
+      "Flask REST API",
+      "Auth endpoints"
+    ],
+    "blockers": "Could not finish the API development this week due to database connection bugs.",
+    "mood": "struggling",
+    "comments": "",
+    "submitted_at": "2026-09-29T15:07:40.148030",
+    "adjustment": {
+      "status": "on_track",
+      "progress_gap": -10,
+      "mentor_message": "First, take a deep breath\u2014being ahead of schedule at 35% when we expected 25% is a fantastic start, even if the process felt rough. Database connection bugs are a classic Week 1 hurdle, and the fact that you identified them means you are already solving the problem. Let\u2019s channel that momentum to stabilize the backend so the rest of the team can move forward smoothly.",
+      "plan_adjustments": [
+        "Pause new feature development for 24 hours to dedicate focused time to isolating and fixing the database connection bugs, ensuring a stable foundation before proceeding.",
+        "Implement a local development environment with a mocked database or in-memory store to allow the other two team members to continue frontend and AI logic work independently while the API is stabilized.",
+        "Schedule a 30-minute 'debugging war room' session with the team tomorrow morning to share insights on the connection issues and distribute the remaining API tasks more evenly."
+      ],
+      "next_week_goals": [
+        "Complete 100% of the core API endpoints with successful automated integration tests against the fixed database.",
+        "Integrate the AI diet assistant module with the health tracker data pipeline, ensuring data flows correctly from user input to AI recommendation."
+      ],
+      "priority_task": "Isolate the specific database connection error log and fix the configuration or connection string to establish a stable local connection within the next 48 hours.",
+      "ai_generated": true
+    },
+    "plan_adjusted": true
+  },
+  {
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "project_id": "idea_1789617458_45cdd1",
+    "project_title": "Smart Health Tracker & AI Diet Assistant",
+    "week_number": 2,
+    "progress_pct": 40,
+    "completed_tasks": [
+      "Repo initialized",
+      "Docker container setup"
+    ],
+    "pending_tasks": [
+      "Flask endpoints",
+      "Auth system"
+    ],
+    "blockers": "Database schema connection issue delayed the API integration.",
+    "mood": "struggling",
+    "comments": "",
+    "submitted_at": "2026-09-29T15:11:17.149960",
+    "adjustment": {
+      "status": "slightly_behind",
+      "progress_gap": 10,
+      "mentor_message": "I see you're feeling the weight of this database issue, but remember that hitting 40% in Week 2 is still a solid foundation. It is completely normal to hit technical walls early; what matters is how quickly we pivot to unblock the API. Let's tackle this schema issue together so you can regain momentum and confidence before the mid-project checkpoint.",
+      "plan_adjustments": [
+        "Pause new feature development for 24 hours to focus exclusively on debugging the database schema connection; assign one member to handle the DB while the others prepare mock data for the API.",
+        "Implement a temporary 'mock mode' for the API integration so that the frontend and AI diet logic can be tested and developed in parallel without waiting for the live database connection.",
+        "Schedule a 30-minute 'unblock' session with a TA or peer mentor specifically to review the schema error logs, as external perspective often solves connection issues faster than solo debugging."
+      ],
+      "next_week_goals": [
+        "Successfully connect the database to the API and verify that CRUD operations work for user health data.",
+        "Complete the basic UI integration for the diet assistant, allowing users to input data and see a static response from the AI module."
+      ],
+      "priority_task": "Isolate the specific error code in the database connection log and create a minimal reproducible test case to identify if the issue is in the schema definition or the connection string.",
+      "ai_generated": true
+    },
+    "plan_adjusted": true
+  },
+  {
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "project_id": "idea_1789617458_45cdd1",
+    "project_title": "Smart Health Tracker & AI Diet Assistant",
+    "week_number": 3,
+    "progress_pct": 100,
+    "completed_tasks": [
+      "Project setup",
+      "Database schema"
+    ],
+    "pending_tasks": [
+      "Flask endpoints",
+      "Auth system"
+    ],
+    "blockers": "None reported",
+    "mood": "good",
+    "comments": "",
+    "submitted_at": "2026-10-04T06:18:38.012107",
+    "adjustment": {
+      "status": "on_track",
+      "progress_gap": -50,
+      "mentor_message": "Wow, going from struggling in Week 2 to hitting 100% completion in Week 3 is an incredible turnaround! Your team\u2019s resilience and ability to clear all blockers so quickly is truly inspiring. Keep this momentum going as you move into the final refinement and testing phases.",
+      "plan_adjustments": [
+        "Shift focus from feature development to rigorous QA and user acceptance testing to ensure the AI diet recommendations are accurate and safe.",
+        "Conduct a final code review and documentation pass to prepare for any potential peer or faculty evaluation criteria.",
+        "Prepare the final presentation deck and demo script, ensuring the narrative clearly highlights the team's problem-solving journey and technical achievements."
+      ],
+      "next_week_goals": [
+        "Complete 100% of unit and integration tests for the Smart Health Tracker hardware and AI backend.",
+        "Finalize the project report and presentation slides, incorporating feedback from internal peer reviews."
+      ],
+      "priority_task": "Run a full end-to-end system test of the Smart Health Tracker and AI Diet Assistant to identify any remaining edge cases or bugs before the final submission.",
+      "ai_generated": true
+    },
+    "plan_adjusted": false
+  },
+  {
+    "student_email": "arjun.sharma@college.edu.in",
+    "project_id": "test123",
+    "project_title": "Test",
+    "week_number": 1,
+    "progress_pct": 45,
+    "completed_tasks": [],
+    "pending_tasks": [],
+    "blockers": "API integration issues",
+    "mood": "okay",
+    "comments": "",
+    "submitted_at": "2026-10-04T06:35:22.162633",
+    "adjustment": {
+      "status": "on_track",
+      "progress_gap": -20,
+      "mentor_message": "Great job jumping ahead of the expected 25% milestone\u2014your early momentum is impressive! I see the API integration is tripping you up; tackling that now will keep your pace strong. Let\u2019s turn this blocker into a quick win so the rest of the team can keep moving forward.",
+      "plan_adjustments": [
+        "Schedule a focused 2\u2011hour debugging session with the whole team to reproduce the API error and capture detailed logs.",
+        "Assign one member to reach out to the API provider for clarification on authentication and rate\u2011limit requirements.",
+        "Develop a temporary mock service that mimics the API responses so front\u2011end work can continue while the real integration is fixed."
+      ],
+      "next_week_goals": [
+        "Resolve the API integration issue and achieve a successful end\u2011to\u2011end data fetch.",
+        "Complete the UI prototype for the main dashboard using mock data if needed."
+      ],
+      "priority_task": "Conduct a pair\u2011programming session within the next 48 hours to reproduce and fix the API integration error.",
+      "ai_generated": true
+    },
+    "plan_adjusted": true
+  },
+  {
+    "student_email": "192411137.simats@saveetha.com",
+    "project_id": "6ac3625864b002646ee89f1c",
+    "project_title": "Smart Health Tracker & AI Diet Assistant",
+    "week_number": 1,
+    "progress_pct": 74,
+    "completed_tasks": [
+      "Project setup",
+      "Database schema",
+      "GitHub repository initialized with README, .gitignore, and branch strategy",
+      "Dockerfile + docker\u2011compose for Flask API, PostgreSQL, and React dev server",
+      "GitHub Actions workflow (lint \u2192 test \u2192 build \u2192 deploy to Heroku staging)"
+    ],
+    "pending_tasks": [
+      "API Development & Backend Services",
+      "Frontend Integration",
+      "Database schema diagram (ERD) and SQLAlchemy models for User, Meal, FoodLookup"
+    ],
+    "blockers": "None reported",
+    "mood": "good",
+    "comments": "",
+    "submitted_at": "2026-10-05T08:47:52.659207",
+    "adjustment": {
+      "status": "on_track",
+      "progress_gap": -62,
+      "mentor_message": "Fantastic work! Hitting 74% progress in week 1 shows you and your team are moving at a remarkable pace, and your good mood is clearly reflected in the results. Keep leveraging this momentum while beginning to solidify the foundations for the next phases.",
+      "plan_adjustments": [
+        "Allocate a short sprint (2\u20113 days) to document the architecture and APIs you\u2019ve built so far, ensuring knowledge transfer among the three members.",
+        "Start a lightweight testing framework now to catch integration issues early, rather than waiting until later stages.",
+        "Schedule a brief mid\u2011week sync to review any emerging technical debt and re\u2011prioritize any low\u2011impact features."
+      ],
+      "next_week_goals": [
+        "Complete the UI prototype for the health tracker and link it to the data collection module.",
+        "Integrate the first version of the AI diet recommendation engine and run a pilot test with at least five sample users."
+      ],
+      "priority_task": "Finalize and commit the data collection pipeline (sensor integration and storage) so the AI diet assistant can start consuming real\u2011time health data within the next 48 hours.",
+      "ai_generated": true
+    },
+    "plan_adjusted": false
+  }
+]

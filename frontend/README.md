@@ -56,9 +56,27 @@ npm run build
 
 ## 🔌 Connecting to Backend API
 
-To connect this frontend to a real backend API:
-1. Create a `.env` file in this directory:
+To connect this frontend to your FastAPI backend:
+1. Copy `.env.example` to `.env`:
    ```env
-   VITE_API_BASE_URL=http://localhost:5000/api
+   VITE_API_BASE=http://127.0.0.1:8000
    ```
-2. Replace local storage calls in `src/utils/store.js` with `fetch` / `axios` requests to your backend endpoints.
+   *(Or point to your live backend: `https://your-backend.up.railway.app`)*
+
+---
+
+## ☁️ Deploying to Vercel
+
+This app includes `vercel.json` with client-side SPA rewrites for React Router.
+
+1. **Via Vercel Web Dashboard**:
+   - Import repository on [vercel.com/new](https://vercel.com/new)
+   - Root Directory: `frontend`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Set Environment Variable: `VITE_API_BASE=https://your-backend-url`
+2. **Via Vercel CLI**:
+   ```bash
+   vercel --prod
+   ```
+

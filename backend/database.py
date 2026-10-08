@@ -42,28 +42,33 @@ def get_database():
             import certifi
             client = MongoClient(
                 MONGO_URI,
-                serverSelectionTimeoutMS=4000,
-                connectTimeoutMS=4000,
+                serverSelectionTimeoutMS=15000,
+                connectTimeoutMS=15000,
+                socketTimeoutMS=15000,
                 tlsCAFile=certifi.where()
             )
-        except Exception:
+            client.admin.command('ping')
+        except Exception as e1:
             try:
                 client = MongoClient(
                     MONGO_URI,
-                    serverSelectionTimeoutMS=4000,
-                    connectTimeoutMS=4000
+                    serverSelectionTimeoutMS=15000,
+                    connectTimeoutMS=15000,
+                    socketTimeoutMS=15000,
+                    tlsAllowInvalidCertificates=True
                 )
-            except Exception as conn_err:
-                print(f"[DB] Notice: MongoClient init error: {conn_err}")
+                client.admin.command('ping')
+            except Exception as e2:
+                print(f"[DB] Notice: Atlas connection error ({e1} / {e2}). Falling back to localhost.")
                 client = MongoClient(
                     "mongodb://localhost:27017",
-                    serverSelectionTimeoutMS=1000
+                    serverSelectionTimeoutMS=2000
                 )
         db = client[DB_NAME]
         try:
             _ensure_indexes(db)
         except Exception as e:
-            print(f"[DB] Notice: Could not ensure indexes on MongoDB Atlas: {e}")
+            print(f"[DB] Notice: Index check on MongoDB Atlas: {e}")
     return db
 
 
@@ -106,18 +111,57 @@ def _ensure_indexes(database):
         name="scope_student_id_idx",
     )
 
+    # tech_stack_reports: index on idea_id
+    database["tech_stack_reports"].create_index(
+        [("idea_id", ASCENDING)],
+        name="tech_stack_idea_id_idx",
+    )
+
+    # risk_reports: index on idea_id
+    database["risk_reports"].create_index(
+        [("idea_id", ASCENDING)],
+        name="risk_idea_id_idx",
+    )
+
+    # tracking_reports: index on idea_id
+    database["tracking_reports"].create_index(
+        [("idea_id", ASCENDING)],
+        name="tracking_idea_id_idx",
+    )
+
+    # project_milestones: index on project_id
+    database["project_milestones"].create_index(
+        [("project_id", ASCENDING)],
+        name="milestones_project_id_idx",
+    )
+
+
+def is_mongo_available() -> bool:
+    """Check MongoDB availability."""
+    global _mongo_online, client
+    if _mongo_online is True:
+        return True
+    try:
+        current_db = get_database()
+        current_db.command("ping")
+        _mongo_online = True
+        return True
+    except Exception:
+        _mongo_online = None
+        return False
+
 
 def check_db_connection():
     """Utility to test whether the MongoDB connection is alive."""
     try:
         current_db = get_database()
-        # Ping the server to check connectivity
         current_db.command("ping")
         return {"connected": True, "database": DB_NAME, "message": "MongoDB Atlas connected successfully!"}
     except (ConnectionFailure, ServerSelectionTimeoutError) as e:
         return {"connected": False, "database": DB_NAME, "error": str(e), "message": "Failed to connect to MongoDB Atlas. Check your MONGO_URI in .env"}
     except Exception as e:
         return {"connected": False, "database": DB_NAME, "error": str(e), "message": "Unexpected error connecting to MongoDB"}
+
 
 
 # ---------------------------------------------------------------------------
@@ -150,6 +194,34 @@ def get_risk_reports_collection():
 
 def get_tracking_reports_collection():
     return get_database()["tracking_reports"]
+
+
+def get_timeline_collection():
+    return get_database()["timeline_projects"]
+
+
+def get_mentor_conversations_collection():
+    return get_database()["mentor_conversations"]
+
+
+def get_progress_updates_collection():
+    return get_database()["progress_updates"]
+
+
+def get_plan_history_collection():
+    return get_database()["plan_history"]
+
+
+def get_generated_documents_collection():
+    return get_database()["generated_documents"]
+
+
+def get_mentor_checkins_collection():
+    return get_database()["mentor_checkins"]
+
+
+def get_project_plans_collection():
+    return get_database()["project_plans"]
 
 
 def get_skill_profiles_collection():
@@ -189,6 +261,11 @@ class _LazyCollection:
 students_col = _LazyCollection("students")
 skill_profiles_col = _LazyCollection("skill_profiles")
 project_ideas_col = _LazyCollection("project_ideas")
+feasibility_reports_col = _LazyCollection("feasibility_reports")
+scope_reports_col = _LazyCollection("scope_reports")
+tech_stack_reports_col = _LazyCollection("tech_stack_reports")
+risk_reports_col = _LazyCollection("risk_reports")
+tracking_reports_col = _LazyCollection("tracking_reports")
 project_analyses_col = _LazyCollection("project_analyses")
 project_milestones_col = _LazyCollection("project_milestones")
 faculty_reviews_col = _LazyCollection("faculty_reviews")

@@ -32,7 +32,7 @@ function MetricBar({ icon, label, value }) {
   );
 }
 
-export default function FeasibilityReportModal({ isOpen, onClose, report, project }) {
+export default function FeasibilityReportModal({ isOpen, onClose, report, project, onProceedToScope }) {
   if (!isOpen || !report) return null;
 
   const {
@@ -58,7 +58,7 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 100000,
-        background: 'rgba(0,0,0,0.85)',
+        background: 'rgba(15,23,42,0.55)',
         backdropFilter: 'blur(8px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '1rem',
@@ -67,10 +67,10 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
     >
       <div style={{
         width: '100%', maxWidth: 680, maxHeight: '90vh',
-        background: '#0f1521',
-        border: '1px solid rgba(255,255,255,0.1)',
+        background: '#ffffff',
+        border: '1px solid rgba(15,23,42,0.1)',
         borderRadius: 18,
-        boxShadow: '0 40px 100px rgba(0,0,0,0.8)',
+        boxShadow: '0 24px 64px rgba(15,23,42,0.18)',
         display: 'flex', flexDirection: 'column',
         overflow: 'hidden',
         animation: 'rptSlide 0.28s cubic-bezier(.22,1,.36,1)',
@@ -82,8 +82,8 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
         <div style={{ height: 5, background: `linear-gradient(90deg, ${c.text}, ${c.text}55)` }} />
 
         <div style={{
-          background: `linear-gradient(135deg, ${c.text}14 0%, rgba(15,21,33,0) 60%)`,
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          background: `linear-gradient(135deg, ${c.text}10 0%, rgba(248,250,252,0) 60%)`,
+          borderBottom: '1px solid rgba(15,23,42,0.08)',
           padding: '1.25rem 1.5rem',
         }}>
           {/* Row 1 — badges + close */}
@@ -91,19 +91,19 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               <span style={{
                 fontSize: '0.67rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em',
-                color: '#a5b4fc', background: 'rgba(99,102,241,0.2)',
-                border: '1px solid rgba(99,102,241,0.35)', padding: '2px 10px', borderRadius: 999,
+                color: '#4f46e5',
+                border: '1px solid rgba(79,70,229,0.25)', padding: '2px 10px', borderRadius: 999,
               }}>{aiGenerated ? '🤖 CrewAI + Groq LLM' : '⚡ Heuristic'}</span>
               <span style={{
-                fontSize: '0.67rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)',
-                background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)',
+                fontSize: '0.67rem', fontWeight: 700, color: '#64748b',
+                background: 'rgba(15,23,42,0.06)', border: '1px solid rgba(15,23,42,0.1)',
                 padding: '2px 10px', borderRadius: 999,
               }}>{domain}</span>
             </div>
             <button onClick={onClose} style={{
               width: 30, height: 30, borderRadius: '50%',
-              background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)',
-              color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', cursor: 'pointer',
+              background: 'rgba(15,23,42,0.06)', border: 'none',
+              color: '#475569', fontSize: '0.9rem', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>✕</button>
           </div>
@@ -121,17 +121,17 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
               <div style={{ fontSize: '2.8rem', fontWeight: 900, color: c.text, lineHeight: 1, letterSpacing: '-1px' }}>
                 {overallScore}%
               </div>
-              <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 4 }}>
+              <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 4 }}>
                 Feasibility Score
               </div>
             </div>
 
             {/* Title + verdict */}
             <div style={{ flex: 1, minWidth: 200 }}>
-              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', marginBottom: 3 }}>
+              <div style={{ fontSize: '0.72rem', color: '#64748b', marginBottom: 3 }}>
                 📊 Feasibility Report · {days} days · Team of {team}
               </div>
-              <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 800, color: '#f1f5f9', lineHeight: 1.3 }}>
+              <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.3 }}>
                 {title}
               </h2>
               {verdict && (
@@ -160,8 +160,8 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
                 <div key={i} style={{
                   display: 'flex', alignItems: 'center', gap: 5,
                   padding: '4px 10px', borderRadius: 999,
-                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)',
-                  fontSize: '0.74rem', color: 'rgba(255,255,255,0.6)',
+                  background: 'rgba(15,23,42,0.04)', border: '1px solid rgba(15,23,42,0.08)',
+                  fontSize: '0.74rem', color: '#475569',
                 }}>
                   <span>{m.icon}</span>
                   <span>{m.label}</span>
@@ -178,14 +178,14 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
           {/* Beginner tip */}
           <div style={{
             display: 'flex', gap: 10, alignItems: 'flex-start',
-            background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.18)',
+            background: 'rgba(79,70,229,0.08)', border: '1px solid rgba(79,70,229,0.15)',
             borderRadius: 10, padding: '0.75rem 1rem',
           }}>
             <span style={{ fontSize: '1rem', flexShrink: 0 }}>💡</span>
-            <p style={{ margin: 0, fontSize: '0.79rem', color: '#94a3b8', lineHeight: 1.6 }}>
-              <strong style={{ color: '#e2e8f0' }}>What is Feasibility?</strong>{' '}
+            <p style={{ margin: 0, fontSize: '0.79rem', color: '#475569', lineHeight: 1.6 }}>
+              <strong style={{ color: '#0f172a' }}>What is Feasibility?</strong>{' '}
               It measures how realistic your project is — can your team finish it within the deadline with available skills and tools?{' '}
-              <strong style={{ color: '#e2e8f0' }}>Higher = more achievable.</strong> A low score means the scope may need trimming, not that the idea is bad.
+              <strong style={{ color: '#0f172a' }}>Higher = more achievable.</strong> A low score means the scope may need trimming, not that the idea is bad.
             </p>
           </div>
 
@@ -202,8 +202,8 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
                 { icon: '🎯', label: 'Student Skill Match',     value: metrics.skillMatch || 0 },
               ].map((m, i) => (
                 <div key={i} style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: '#f8fafc',
+                  border: '1px solid rgba(15,23,42,0.08)',
                   borderRadius: 12, padding: '0.85rem 1rem',
                 }}>
                   <MetricBar {...m} />
@@ -217,15 +217,15 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px,1fr))', gap: '0.85rem' }}>
 
               {strengths.length > 0 && (
-                <div style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 12, padding: '1rem' }}>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#4ade80', marginBottom: 4 }}>
+                <div style={{ background: 'rgba(22,163,74,0.06)', border: '1px solid rgba(22,163,74,0.18)', borderRadius: 12, padding: '1rem' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#16a34a', marginBottom: 4 }}>
                     ✨ Strengths
                   </div>
-                  <p style={{ fontSize: '0.7rem', color: '#475569', fontStyle: 'italic', margin: '0 0 0.65rem' }}>Positive aspects increasing success chances</p>
+                  <p style={{ fontSize: '0.7rem', color: '#64748b', fontStyle: 'italic', margin: '0 0 0.65rem' }}>Positive aspects increasing success chances</p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                     {strengths.map((s, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 8, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.5 }}>
-                        <span style={{ color: '#4ade80', fontWeight: 800, flexShrink: 0 }}>✓</span>{s}
+                      <div key={i} style={{ display: 'flex', gap: 8, fontSize: '0.82rem', color: '#334155', lineHeight: 1.5 }}>
+                        <span style={{ color: '#16a34a', fontWeight: 800, flexShrink: 0 }}>✓</span>{s}
                       </div>
                     ))}
                   </div>
@@ -233,15 +233,15 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
               )}
 
               {bottlenecks.length > 0 && (
-                <div style={{ background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.18)', borderRadius: 12, padding: '1rem' }}>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#fbbf24', marginBottom: 4 }}>
+                <div style={{ background: 'rgba(217,119,6,0.06)', border: '1px solid rgba(217,119,6,0.18)', borderRadius: 12, padding: '1rem' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#d97706', marginBottom: 4 }}>
                     ⚠️ Bottlenecks
                   </div>
-                  <p style={{ fontSize: '0.7rem', color: '#475569', fontStyle: 'italic', margin: '0 0 0.65rem' }}>Address these early to avoid delays</p>
+                  <p style={{ fontSize: '0.7rem', color: '#64748b', fontStyle: 'italic', margin: '0 0 0.65rem' }}>Address these early to avoid delays</p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                     {bottlenecks.map((b, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 8, fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.5 }}>
-                        <span style={{ color: '#fbbf24', fontWeight: 800, flexShrink: 0 }}>!</span>{b}
+                      <div key={i} style={{ display: 'flex', gap: 8, fontSize: '0.82rem', color: '#334155', lineHeight: 1.5 }}>
+                        <span style={{ color: '#d97706', fontWeight: 800, flexShrink: 0 }}>!</span>{b}
                       </div>
                     ))}
                   </div>
@@ -263,29 +263,46 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
 
         {/* ── FOOTER ── */}
         <div style={{
-          borderTop: '1px solid rgba(255,255,255,0.07)',
+          borderTop: '1px solid rgba(15,23,42,0.08)',
           padding: '0.85rem 1.5rem',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           gap: '0.75rem', flexWrap: 'wrap',
-          background: 'rgba(0,0,0,0.2)',
+          background: '#f8fafc',
         }}>
           <button onClick={handleCopy} style={{
             display: 'flex', alignItems: 'center', gap: 6,
             padding: '0.42rem 0.9rem', borderRadius: 8,
-            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-            color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
+            background: '#fff', border: '1px solid rgba(15,23,42,0.12)',
+            color: '#475569', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
           }}>
             📋 Copy Report
           </button>
-          <button onClick={onClose} style={{
-            padding: '0.42rem 1.4rem', borderRadius: 8,
-            background: 'linear-gradient(135deg,#3b82f6,#6366f1)',
-            border: 'none', color: '#fff', fontSize: '0.84rem',
-            fontWeight: 700, cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
-          }}>
-            Close
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {onProceedToScope && project && (
+              <button
+                onClick={() => onProceedToScope(project)}
+                style={{
+                  padding: '0.42rem 1.1rem', borderRadius: 8,
+                  background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+                  border: 'none', color: '#fff', fontSize: '0.82rem',
+                  fontWeight: 700, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  boxShadow: '0 4px 14px rgba(139,92,246,0.35)',
+                }}
+              >
+                <span>📐 Define Scope (Agent 2)</span>
+                <span>➔</span>
+              </button>
+            )}
+            <button onClick={onClose} style={{
+              padding: '0.42rem 1.2rem', borderRadius: 8,
+              background: '#fff',
+              border: '1px solid rgba(15,23,42,0.12)', color: '#475569', fontSize: '0.84rem',
+              fontWeight: 600, cursor: 'pointer',
+            }}>
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>

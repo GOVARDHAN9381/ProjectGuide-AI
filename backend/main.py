@@ -2,7 +2,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import check_db_connection, DB_NAME, students_col
-from routers import onboarding, submission, feasibility, scope, chat, auth, tech_stack, risk, tracking, projects, faculty
+from routers import (
+    onboarding, submission, feasibility, scope, chat, auth, tech_stack,
+    risk, tracking, projects, faculty, progress, documents, timeline, mentor
+)
 
 app = FastAPI(title="Agentic Mentoring System - Backend (Milestone 1 - MongoDB)")
 
@@ -24,6 +27,10 @@ app.include_router(risk.router, tags=["agents"])
 app.include_router(tracking.router, tags=["agents"])
 app.include_router(projects.router, tags=["projects"])
 app.include_router(faculty.router, tags=["faculty"])
+app.include_router(progress.router, tags=["progress"])
+app.include_router(documents.router, tags=["documents"])
+app.include_router(timeline.router, tags=["timeline"])
+app.include_router(mentor.router, tags=["mentor"])
 app.include_router(chat.router, tags=["chat"])
 
 

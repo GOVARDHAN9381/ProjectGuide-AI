@@ -112,15 +112,22 @@ def _persist_report(data: schemas.FeasibilityRequest, report: dict) -> Optional[
             )
             inserted_id = str(result.upserted_id) if result.upserted_id else idea_id
             
-            # Also update the project_idea document with feasibility results
+            # Keep project_ideas clean — store summary score, do NOT nest full report
             try:
+                from models import now_utc
                 ideas_col.update_one(
                     {"_id": idea_doc["_id"]},
-                    {"$set": {
-                        "feasibility": report.get("overallScore"),
-                        "feasibilityReport": report,
-                        "status": "reviewed",
-                    }}
+                    {
+                        "$set": {
+                            "feasibility": report.get("overallScore"),
+                            "feasibility_score": report.get("overallScore"),
+                            "status": "reviewed",
+                            "updated_at": now_utc(),
+                        },
+                        "$unset": {
+                            "feasibilityReport": ""
+                        }
+                    }
                 )
             except Exception:
                 pass
@@ -129,7 +136,7 @@ def _persist_report(data: schemas.FeasibilityRequest, report: dict) -> Optional[
             result = reports_col.insert_one(report_doc)
             inserted_id = str(result.inserted_id)
 
-        print(f"[FEASIBILITY] Report saved to MongoDB (id={inserted_id}, score={report.get('overallScore')})")
+        print(f"[FEASIBILITY] Report saved to normalized feasibility_reports (id={inserted_id}, score={report.get('overallScore')})")
 
         # Also update local ideas.json if matching title or idea_id
         try:
@@ -138,7 +145,7 @@ def _persist_report(data: schemas.FeasibilityRequest, report: dict) -> Optional[
             for i_id, i_doc in local_ideas.items():
                 if (data.idea_id and i_id == data.idea_id) or (i_doc.get("title") == data.title):
                     i_doc["feasibility"] = report.get("overallScore")
-                    i_doc["feasibilityReport"] = report
+                    i_doc["feasibility_score"] = report.get("overallScore")
                     i_doc["status"] = "reviewed"
                     break
             _save_local_ideas(local_ideas)

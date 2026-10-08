@@ -111,3 +111,22 @@ def test_new_registration_and_skills_persistence():
     assert data2["hasCompletedProfile"] is True
     assert data2["user"]["skills"]["python"] == 4
     assert "Artificial Intelligence" in data2["user"]["domains"]
+
+    # 5. Clean up test student after test run so production web data is not polluted
+    try:
+        from routers.submission import DATA_DIR
+        import json
+        users_file = DATA_DIR / "users.json"
+        if users_file.exists():
+            u_data = json.loads(users_file.read_text(encoding="utf-8"))
+            if test_email in u_data:
+                del u_data[test_email]
+                users_file.write_text(json.dumps(u_data, indent=2), encoding="utf-8")
+        students_file = DATA_DIR / "students.json"
+        if students_file.exists():
+            s_data = json.loads(students_file.read_text(encoding="utf-8"))
+            if test_email in s_data:
+                del s_data[test_email]
+                students_file.write_text(json.dumps(s_data, indent=2), encoding="utf-8")
+    except Exception:
+        pass

@@ -102,15 +102,25 @@ def seed_database(force_clean=False):
             "id": student_id,
             "first_name": item["firstName"],
             "last_name": item["lastName"],
-            "email": item["email"],
+            "name": f"{item['firstName']} {item['lastName']}".strip(),
+            "email": item["email"].strip().lower(),
             "roll_no": item["rollNo"],
             "branch": item["branch"],
             "year": item["year"],
             "role": "student",
-            "created_at": datetime.utcnow() - timedelta(days=5)
+            "skills": item["skills"],
+            "domains": item["domains"],
+            "other_skills": "",
+            "other_domains": "",
+            "about_me": "Dedicated computer engineering student aiming to build high-impact capstone projects.",
+            "team_size": item["teamSize"],
+            "projects": [],
+            "created_at": datetime.utcnow() - timedelta(days=5),
+            "updated_at": datetime.utcnow()
         }
         students_col.insert_one(student_doc)
 
+        # Also maintain skill_profiles for backwards-compatibility
         skill_profiles_col.insert_one({
             "student_id": student_id,
             "skills": item["skills"],

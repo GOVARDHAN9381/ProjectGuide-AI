@@ -1,0 +1,403 @@
+[
+  {
+    "project_id": "idea_1789617458_45cdd1",
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "doc_type": "synopsis",
+    "document": {
+      "title": "Smart Health Tracker & AI Diet Assistant",
+      "subtitle": "Academic Project Synopsis",
+      "date": "October 2026",
+      "doc_type": "synopsis",
+      "generated_at": "2026-10-04T16:30:39.056561",
+      "ai_generated": false,
+      "sections": {
+        "abstract": "The 'Smart Health Tracker & AI Diet Assistant' project presents an engineering solution within the AIML domain. A mobile-friendly web application where users can log their daily meals and physical activity. The system uses a computer vision / machine learning model to estimate calorie counts from uploaded food photos and provides personalized dietary recommendations and weekly nutrition summaries based on health goals. Developed by a team of 3 over a 42-day timeline, the platform incorporates rigorous architectural design, modular services, and empirical testing.",
+        "problem_statement": "'Smart Health Tracker & AI Diet Assistant' addresses a challenge in the AIML domain. A mobile-friendly web application where users can log their daily meals and physical activity. The system uses a compute...",
+        "objectives": [
+          "Implement the core functionality of 'Smart Health Tracker & AI Diet Assistant' as described.",
+          "Deliver a working prototype within 42 days.",
+          "Verify correctness through testing and documentation."
+        ],
+        "project_scope": "In-scope: Development and validation of core modules (Environment, Repo, and Architecture Baseline). Tech stack includes frontend, backend, database, apis. Out-of-scope: Third-party commercial billing infrastructure and distributed multi-region clustering.",
+        "modules": [
+          "Environment, Repo, and Architecture Baseline: Core service implementation supporting Smart Health Tracker & AI Diet Assistant workflow."
+        ],
+        "methodology_overview": "Sprint-based Agile lifecycle consisting of 2-week iterations, continuous integration, milestone reviews, and automated testing.",
+        "expected_outcomes": [
+          "A validated functional prototype of 'Smart Health Tracker & AI Diet Assistant'",
+          "Verified API contracts and automated test suite",
+          "Complete academic documentation and project presentation"
+        ],
+        "conclusion": "'Smart Health Tracker & AI Diet Assistant' demonstrates a scalable, academically rigorous software engineering solution meeting all faculty capstone requirements."
+      }
+    },
+    "generated_at": "2026-10-04T16:30:39.056561"
+  },
+  {
+    "project_id": "idea_1789617458_45cdd1",
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "doc_type": "progress_report",
+    "document": {
+      "title": "Progress Report: Smart Health Tracker & AI Diet Assistant",
+      "doc_type": "progress_report",
+      "overall_progress": 35,
+      "total_check_ins": 1,
+      "status": "At Risk",
+      "executive_summary": "The Smart Health Tracker & AI Diet Assistant project has achieved 35% completion based on a single recorded weekly review, indicating a moderate development velocity that requires acceleration to meet final deadlines. Critical infrastructure and backend deliverables, including the Docker-Compose environment and Flask-RESTful API, remain pending, creating a bottleneck for subsequent integration and testing phases. Immediate mitigation of identified risks, particularly regarding training data sufficiency and authentication privacy, is essential to prevent further schedule slippage.",
+      "completed_tasks": [],
+      "pending_tasks": [
+        "GitHub repository with branch strategy (main, develop, feature/*) and README",
+        "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers",
+        "GitHub Actions workflow for lint, unit tests, and image build",
+        "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities",
+        "PostgreSQL schema scripts and migration files (Alembic)",
+        "Automated Pytest suite covering 80% of backend routes"
+      ],
+      "top_risks": [
+        "Insufficient training data leading to poor calorie\u2011estimation model accuracy",
+        "Responsive UI and mobile\u2011first implementation delays",
+        "Authentication & user\u2011data privacy implementation gaps"
+      ],
+      "next_steps": [
+        "Prioritize top pending deliverable: GitHub repository with branch strategy (main, develop, feature/*) and README",
+        "Conduct integration verification tests",
+        "Prepare status update for next faculty mentor review"
+      ],
+      "ai_generated": true,
+      "generated_at": "2026-10-04T16:32:09.835868",
+      "weekly_progress": [
+        {
+          "week": 1,
+          "date": "2026-10-04",
+          "progress": 35,
+          "mood": "good",
+          "blockers": "None",
+          "completed_tasks": [],
+          "pending_tasks": [
+            "GitHub repository with branch strategy (main, develop, feature/*) and README",
+            "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers"
+          ]
+        }
+      ]
+    },
+    "generated_at": "2026-10-04T16:32:09.835868"
+  },
+  {
+    "project_id": "idea_1789293629_6e6790",
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "doc_type": "methodology",
+    "document": {
+      "title": "Methodology: flipkart clone",
+      "doc_type": "methodology",
+      "generated_at": "2026-10-04T16:33:17.349730",
+      "ai_generated": false,
+      "development_model": "Agile (Sprint-Based Iterations)",
+      "tools_and_technologies": [
+        "frontend",
+        "backend",
+        "database",
+        "apis",
+        "devops",
+        "testing"
+      ],
+      "testing_strategy": "Automated test coverage for flipkart clone components, REST API schema validation, and user integration testing.",
+      "risk_mitigation_approach": "Academic Rejection Due to Lack of AI/ML Component: Immediately define a specific AI/ML feature (e.g., 'Product Recommendation using Collaborative Filtering' or 'Chatbot for Customer Support') and document it as the core academic contribution, separating it from the standard web app functionality.; Frontend Complexity Exceeds Team JavaScript Proficiency: Adopt a pre-built React e-commerce template (e.g., from GitHub) to handle the UI structure, allowing the team to focus on integrating backend APIs and the AI module rather than building CSS/layout from scratch.",
+      "phases": [
+        {
+          "phase": "Phase 1: Project Setup, DB Schema, and CI/CD Pipeline",
+          "duration": "Weeks 1-6",
+          "activities": [
+            "Dockerized local development environment (docker-compose.yml) running React, Django, and PostgreSQL",
+            "Complete PostgreSQL ERD and migration scripts for core entities",
+            "GitHub Actions CI pipeline that runs Jest (frontend) and Pytest (backend) on every push"
+          ],
+          "deliverable": "Dockerized local development environment (docker-compose.yml) running React, Django, and PostgreSQL"
+        },
+        {
+          "phase": "Phase 2: REST API Implementation & Recommendation Engine",
+          "duration": "Weeks 7-12",
+          "activities": [
+            "Fully functional REST API for Auth, Products, Cart, and Orders with JWT security",
+            "AI/ML Recommendation Service (Python script/model) that returns top-5 product recommendations per user",
+            "Payment Gateway integration (Stripe Test Mode) with webhook handling for order status updates"
+          ],
+          "deliverable": "Fully functional REST API for Auth, Products, Cart, and Orders with JWT security"
+        },
+        {
+          "phase": "Phase 3: React UI Construction & API Integration",
+          "duration": "Weeks 13-18",
+          "activities": [
+            "Responsive React UI for Home, Product List, Product Detail, Cart, and Checkout pages",
+            "User Authentication flow (Login/Register) with JWT token storage and protected routes",
+            "Dynamic Product Listing with search and category filtering functionality"
+          ],
+          "deliverable": "Responsive React UI for Home, Product List, Product Detail, Cart, and Checkout pages"
+        },
+        {
+          "phase": "Phase 4: E2E Testing, Performance Tuning, and Cloud Deployment",
+          "duration": "Weeks 19-24",
+          "activities": [
+            "Selenium E2E test suite covering 5 critical user journeys with automated execution",
+            "Production deployment on Render.com/Railway with live URL accessible to faculty",
+            "Performance Report documenting API response times and database query optimization steps"
+          ],
+          "deliverable": "Selenium E2E test suite covering 5 critical user journeys with automated execution"
+        },
+        {
+          "phase": "Phase 5: Academic Report, Code Review, and Demo Prep",
+          "duration": "Weeks 25-30",
+          "activities": [
+            "Final Academic Project Report (PDF) with architecture diagrams and AI/ML analysis",
+            "Cleaned-up source code repository with comprehensive README and setup instructions",
+            "Final Presentation Slides and Demo Video (5-10 minutes)"
+          ],
+          "deliverable": "Final Academic Project Report (PDF) with architecture diagrams and AI/ML analysis"
+        }
+      ]
+    },
+    "generated_at": "2026-10-04T16:33:17.349730"
+  },
+  {
+    "project_id": "idea_1789617458_45cdd1",
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "doc_type": "methodology",
+    "document": {
+      "title": "Methodology: Smart Health Tracker & AI Diet Assistant",
+      "doc_type": "methodology",
+      "generated_at": "2026-10-05T06:13:58.766662",
+      "ai_generated": false,
+      "development_model": "Agile (Sprint-Based Iterations)",
+      "tools_and_technologies": [
+        "frontend",
+        "backend",
+        "database",
+        "apis",
+        "devops",
+        "testing"
+      ],
+      "testing_strategy": "Automated test coverage for Smart Health Tracker & AI Diet Assistant components, REST API schema validation, and user integration testing.",
+      "risk_mitigation_approach": "Insufficient training data leading to poor calorie\u2011estimation model accuracy: Spend the first week acquiring an open\u2011source food image dataset (e.g., Food-101, UECFOOD256), split it, and run a quick baseline model; if coverage is low, augment with crowdsourced labeling via a simple Google Form within the next week.; Responsive UI and mobile\u2011first implementation delays: Adopt a UI component library (e.g., Material\u2011UI) and create a reusable layout skeleton in the first 3 days; then allocate two 2\u2011day sprints solely for responsive testing on common devices.",
+      "phases": [
+        {
+          "phase": "Phase 1: Environment, Repo, and Architecture Baseline",
+          "duration": "Weeks 1-1",
+          "activities": [
+            "GitHub repository with branch strategy (main, develop, feature/*) and README",
+            "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers",
+            "GitHub Actions workflow for lint, unit tests, and image build"
+          ],
+          "deliverable": "GitHub repository with branch strategy (main, develop, feature/*) and README"
+        },
+        {
+          "phase": "Phase 2: User Management, Meal & Activity APIs",
+          "duration": "Weeks 2-2",
+          "activities": [
+            "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities",
+            "PostgreSQL schema scripts and migration files (Alembic)",
+            "Automated Pytest suite covering 80% of backend routes"
+          ],
+          "deliverable": "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities"
+        },
+        {
+          "phase": "Phase 3: React UI, State Management, and API Consumption",
+          "duration": "Weeks 3-3",
+          "activities": [
+            "Login/Signup pages with JWT storage (httpOnly cookie or localStorage)",
+            "Dashboard with forms to add meals and activities",
+            "React Testing Library tests for core components (\u226570% coverage)"
+          ],
+          "deliverable": "Login/Signup pages with JWT storage (httpOnly cookie or localStorage)"
+        },
+        {
+          "phase": "Phase 4: Food Image Calorie Estimation & Personalized Advice",
+          "duration": "Weeks 4-4",
+          "activities": [
+            "Dockerized inference endpoint exposing `/predict` that returns calorie estimate",
+            "Frontend component for photo upload and display of estimated calories",
+            "Recommendation API (`/recommendations`) returning personalized tips"
+          ],
+          "deliverable": "Dockerized inference endpoint exposing `/predict` that returns calorie estimate"
+        },
+        {
+          "phase": "Phase 5: End\u2011to\u2011End Validation, User Guide, and Production Release",
+          "duration": "Weeks 5-5",
+          "activities": [
+            "End\u2011to\u2011end Cypress test suite covering main user journeys",
+            "Technical documentation (architecture diagram, API spec, setup guide) in the repo Wiki",
+            "Live deployment URL with HTTPS and a 5\u2011minute demo video"
+          ],
+          "deliverable": "End\u2011to\u2011end Cypress test suite covering main user journeys"
+        }
+      ]
+    },
+    "generated_at": "2026-10-05T06:13:58.766662"
+  },
+  {
+    "project_id": "6ac3625864b002646ee89f1c",
+    "student_email": "192411137.simats@saveetha.com",
+    "doc_type": "synopsis",
+    "document": {
+      "title": "Smart Health Tracker & AI Diet Assistant",
+      "subtitle": "Academic Project Synopsis",
+      "date": "October 2026",
+      "doc_type": "synopsis",
+      "generated_at": "2026-10-05T08:51:07.730770",
+      "ai_generated": false,
+      "sections": {
+        "abstract": "The 'Smart Health Tracker & AI Diet Assistant' project presents an engineering solution within the AIML domain. A mobile-friendly web app where users log meals. Uses ML to estimate calories from food photos and gives personalized dietary recommendations Developed by a team of 3 over a 56-day timeline, the platform incorporates rigorous architectural design, modular services, and empirical testing.",
+        "problem_statement": "College students and young professionals often avoid manual calorie entry because it is time\u2011consuming, yet existing diet\u2011tracking apps do not provide an easy way to estimate calories from a quick photo of a meal and deliver immediate, personalized guidance; this project delivers a mobile\u2011friendly web app that lets users capture a meal photo, receives an approximate calorie count via a pre\u2011trained image classifier, and returns simple, rule\u2011based dietary recommendations.",
+        "objectives": [
+          "Build a responsive web interface with user registration/login and a meal\u2011logging form that accepts a photo upload and optional text description.",
+          "Integrate a pre\u2011trained CNN (e.g., MobileNetV2 from TensorFlow Hub) to classify the uploaded image into a Food\u2011101 category and map that category to an average calorie value using a static lookup table.",
+          "Implement a rule\u2011based recommendation engine that compares the estimated calories to a user\u2011defined daily goal and suggests one actionable tip per meal; validate the end\u2011to\u2011end flow with at least 20 test meals."
+        ],
+        "project_scope": "In-scope: Development and validation of core modules (Setup repository, CI/CD, and database schema). Tech stack includes frontend, backend, database, apis. Out-of-scope: Third-party commercial billing infrastructure and distributed multi-region clustering.",
+        "modules": [
+          "Setup repository, CI/CD, and database schema: Core service implementation supporting Smart Health Tracker & AI Diet Assistant workflow."
+        ],
+        "methodology_overview": "Sprint-based Agile lifecycle consisting of 2-week iterations, continuous integration, milestone reviews, and automated testing.",
+        "expected_outcomes": [
+          "A validated functional prototype of 'Smart Health Tracker & AI Diet Assistant'",
+          "Verified API contracts and automated test suite",
+          "Complete academic documentation and project presentation"
+        ],
+        "conclusion": "'Smart Health Tracker & AI Diet Assistant' demonstrates a scalable, academically rigorous software engineering solution meeting all faculty capstone requirements."
+      }
+    },
+    "generated_at": "2026-10-05T08:51:07.731571"
+  },
+  {
+    "project_id": "6ac3625864b002646ee89f1c",
+    "student_email": "192411137.simats@saveetha.com",
+    "doc_type": "methodology",
+    "document": {
+      "title": "Methodology: Smart Health Tracker & AI Diet Assistant",
+      "doc_type": "methodology",
+      "generated_at": "2026-10-05T08:51:30.763864",
+      "ai_generated": false,
+      "development_model": "Agile (Sprint-Based Iterations)",
+      "tools_and_technologies": [
+        "frontend",
+        "backend",
+        "database",
+        "apis",
+        "devops",
+        "testing"
+      ],
+      "testing_strategy": "Automated test coverage for Smart Health Tracker & AI Diet Assistant components, REST API schema validation, and user integration testing.",
+      "risk_mitigation_approach": "Pre\u2011trained model may not deliver usable calorie estimates: Spend the first week building a minimal prototype that runs the pre\u2011trained model on 10\u201115 sample images, logs the predicted class and maps it to an average calorie value. If error >30%, fall back to a rule\u2011based lookup table instead of ML for the MVP.; Undefined MVP feature list leading to scope creep: Hold a 2\u2011hour scope\u2011definition workshop today, produce a signed MVP spec with 5 user stories, assign story points, and lock all out\u2011of\u2011scope items until after the demo.",
+      "phases": [
+        {
+          "phase": "Phase 1: Setup repository, CI/CD, and database schema",
+          "duration": "Weeks 1-2",
+          "activities": [
+            "GitHub repository initialized with README, .gitignore, and branch strategy",
+            "Dockerfile + docker\u2011compose for Flask API, PostgreSQL, and React dev server",
+            "GitHub Actions workflow (lint \u2192 test \u2192 build \u2192 deploy to Heroku staging)"
+          ],
+          "deliverable": "GitHub repository initialized with README, .gitignore, and branch strategy"
+        },
+        {
+          "phase": "Phase 2: Implement image upload endpoint and calorie estimation",
+          "duration": "Weeks 3-4",
+          "activities": [
+            "POST /api/meals/upload endpoint with multipart handling",
+            "TensorFlow Hub MobileNetV2 integration and inference wrapper",
+            "Food\u2011101 category \u2192 average calorie JSON lookup table"
+          ],
+          "deliverable": "POST /api/meals/upload endpoint with multipart handling"
+        },
+        {
+          "phase": "Phase 3: Create responsive React app with login, registration, and photo capture",
+          "duration": "Weeks 5-6",
+          "activities": [
+            "Login & registration pages with form validation",
+            "MealLog component with camera access (HTML5 file input) and preview",
+            "API client layer (axios) calling /api/meals/upload and handling responses"
+          ],
+          "deliverable": "Login & registration pages with form validation"
+        },
+        {
+          "phase": "Phase 4: Generate personalized dietary suggestions and complete end\u2011to\u2011end flow",
+          "duration": "Weeks 7-8",
+          "activities": [
+            "GET /api/recommendations endpoint implementing rule\u2011based logic",
+            "Frontend RecommendationCard component displaying suggestions",
+            "docker\u2011compose.yml for production (Flask + PostgreSQL + Nginx)"
+          ],
+          "deliverable": "GET /api/recommendations endpoint implementing rule\u2011based logic"
+        },
+        {
+          "phase": "Phase 5: Validate, document, and launch the prototype",
+          "duration": "Weeks 9-10",
+          "activities": [
+            "Test report (unit, integration, 20\u2011meal validation) with coverage metrics",
+            "Swagger UI generated from Flask\u2011RESTful routes (OpenAPI 3.0)",
+            "README + user guide + 3\u2011minute demo video hosted on YouTube"
+          ],
+          "deliverable": "Test report (unit, integration, 20\u2011meal validation) with coverage metrics"
+        }
+      ]
+    },
+    "generated_at": "2026-10-05T08:51:30.763864"
+  },
+  {
+    "project_id": "6ac3625864b002646ee89f1c",
+    "student_email": "192411137.simats@saveetha.com",
+    "doc_type": "progress_report",
+    "document": {
+      "title": "Progress Report: Smart Health Tracker & AI Diet Assistant",
+      "doc_type": "progress_report",
+      "overall_progress": 74,
+      "total_check_ins": 1,
+      "status": "On Track",
+      "executive_summary": "The Smart Health Tracker & AI Diet Assistant project has achieved 74% completion, demonstrating strong initial velocity through the successful establishment of infrastructure, including Dockerized services and a robust CI/CD pipeline. While foundational tasks such as repository initialization and database schema design are complete, critical backend and frontend integration work remains pending. Immediate mitigation of risks regarding model accuracy and scope definition is essential to ensure the remaining 26% of the project is delivered within the constrained 56-day timeline.",
+      "completed_tasks": [
+        "Project setup",
+        "Database schema",
+        "GitHub repository initialized with README, .gitignore, and branch strategy",
+        "Dockerfile + docker\u2011compose for Flask API, PostgreSQL, and React dev server",
+        "GitHub Actions workflow (lint \u2192 test \u2192 build \u2192 deploy to Heroku staging)"
+      ],
+      "pending_tasks": [
+        "API Development & Backend Services",
+        "Frontend Integration",
+        "Database schema diagram (ERD) and SQLAlchemy models for User, Meal, FoodLookup"
+      ],
+      "top_risks": [
+        "Pre\u2011trained model may not deliver usable calorie estimates",
+        "Undefined MVP feature list leading to scope creep",
+        "56\u2011day schedule is insufficient for full\u2011stack development and testing"
+      ],
+      "next_steps": [
+        "Prioritize top pending deliverable: API Development & Backend Services",
+        "Conduct integration verification tests",
+        "Prepare status update for next faculty mentor review"
+      ],
+      "ai_generated": true,
+      "generated_at": "2026-10-05T08:52:12.657426",
+      "weekly_progress": [
+        {
+          "week": 1,
+          "date": "2026-10-05",
+          "progress": 74,
+          "mood": "good",
+          "blockers": "None reported",
+          "completed_tasks": [
+            "Project setup",
+            "Database schema",
+            "GitHub repository initialized with README, .gitignore, and branch strategy",
+            "Dockerfile + docker\u2011compose for Flask API, PostgreSQL, and React dev server",
+            "GitHub Actions workflow (lint \u2192 test \u2192 build \u2192 deploy to Heroku staging)"
+          ],
+          "pending_tasks": [
+            "API Development & Backend Services",
+            "Frontend Integration",
+            "Database schema diagram (ERD) and SQLAlchemy models for User, Meal, FoodLookup"
+          ]
+        }
+      ]
+    },
+    "generated_at": "2026-10-05T08:52:12.657426"
+  }
+]

@@ -1,0 +1,188 @@
+{
+  "idea_1789617458_45cdd1": {
+    "project_id": "idea_1789617458_45cdd1",
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "current_plan": {
+      "risk_exists": true,
+      "affected_milestone": "Environment, Repo, and Architecture Baseline",
+      "reason": "Database schema connection issue delayed the API integration, preventing the completion of the Flask endpoints and Auth system required for the baseline milestone.",
+      "recommended_action": "Resolve the database connection configuration immediately by verifying environment variables and connection strings. If unresolved within 24 hours, implement a mock database layer to decouple API development from the persistent storage layer, allowing the Auth and Flask endpoints to be built and tested in parallel.",
+      "timeline_adjusted": true,
+      "adjustment_message": "Your Weeks 1\u20132 task (Environment, Repo, and Architecture Baseline) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+      "updated_milestones": [
+        {
+          "title": "Environment, Repo, and Architecture Baseline",
+          "week": "Week 1-2",
+          "status": "in_progress",
+          "change_note": "Unchanged"
+        },
+        {
+          "title": "User Management, Meal & Activity APIs",
+          "week": "Week 3",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "React UI, State Management, and API Consumption",
+          "week": "Week 4",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "Food Image Calorie Estimation & Personalized Advice",
+          "week": "Week 5",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+          "week": "Week 6",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        }
+      ],
+      "previous_plan": [
+        {
+          "title": "Environment, Repo, and Architecture Baseline",
+          "week": "Weeks 1\u20132",
+          "status": "in_progress",
+          "deliverables": [
+            "GitHub repository with branch strategy (main, develop, feature/*) and README",
+            "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers",
+            "GitHub Actions workflow for lint, unit tests, and image build"
+          ]
+        },
+        {
+          "title": "User Management, Meal & Activity APIs",
+          "week": "Weeks 2\u20133",
+          "status": "pending",
+          "deliverables": [
+            "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities",
+            "PostgreSQL schema scripts and migration files (Alembic)",
+            "Automated Pytest suite covering 80% of backend routes"
+          ]
+        },
+        {
+          "title": "React UI, State Management, and API Consumption",
+          "week": "Weeks 3\u20134",
+          "status": "pending",
+          "deliverables": [
+            "Login/Signup pages with JWT storage (httpOnly cookie or localStorage)",
+            "Dashboard with forms to add meals and activities",
+            "React Testing Library tests for core components (\u226570% coverage)"
+          ]
+        },
+        {
+          "title": "Food Image Calorie Estimation & Personalized Advice",
+          "week": "Weeks 4\u20135",
+          "status": "pending",
+          "deliverables": [
+            "Dockerized inference endpoint exposing `/predict` that returns calorie estimate",
+            "Frontend component for photo upload and display of estimated calories",
+            "Recommendation API (`/recommendations`) returning personalized tips"
+          ]
+        },
+        {
+          "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+          "week": "Weeks 5\u20136",
+          "status": "pending",
+          "deliverables": [
+            "End\u2011to\u2011end Cypress test suite covering main user journeys",
+            "Technical documentation (architecture diagram, API spec, setup guide) in the repo Wiki",
+            "Live deployment URL with HTTPS and a 5\u2011minute demo video"
+          ]
+        }
+      ]
+    },
+    "updated_at": "2026-09-29T15:11:17.149960"
+  },
+  "test123": {
+    "project_id": "test123",
+    "student_email": "arjun.sharma@college.edu.in",
+    "current_plan": {
+      "risk_exists": true,
+      "affected_milestone": "API Development & Backend Services",
+      "reason": "The student reported blockers related to API integration issues, preventing the completion of the current milestone despite 45% overall progress.",
+      "recommended_action": "Prioritize resolving the specific API integration errors by consulting documentation or seeking peer review, and isolate the failing endpoints to ensure core functionality is stable before proceeding to frontend integration.",
+      "timeline_adjusted": true,
+      "adjustment_message": "Your Week 4 task (API Development & Backend Services) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+      "updated_milestones": [
+        {
+          "title": "Requirements Analysis & Setup",
+          "week": "Week 1",
+          "status": "completed",
+          "change_note": "Unchanged"
+        },
+        {
+          "title": "System Architecture & Database Schema",
+          "week": "Week 2",
+          "status": "completed",
+          "change_note": "Unchanged"
+        },
+        {
+          "title": "Core Module Implementation",
+          "week": "Week 3",
+          "status": "completed",
+          "change_note": "Unchanged"
+        },
+        {
+          "title": "API Development & Backend Services",
+          "week": "Week 5",
+          "status": "in_progress",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "Frontend Integration & Authentication",
+          "week": "Week 6",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        },
+        {
+          "title": "Testing, Deployment & Capstone Defense",
+          "week": "Week 7",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        }
+      ],
+      "previous_plan": [
+        {
+          "title": "Requirements Analysis & Setup",
+          "week": "Week 1",
+          "status": "completed",
+          "deliverables": []
+        },
+        {
+          "title": "System Architecture & Database Schema",
+          "week": "Week 2",
+          "status": "completed",
+          "deliverables": []
+        },
+        {
+          "title": "Core Module Implementation",
+          "week": "Week 3",
+          "status": "completed",
+          "deliverables": []
+        },
+        {
+          "title": "API Development & Backend Services",
+          "week": "Week 4",
+          "status": "in_progress",
+          "deliverables": []
+        },
+        {
+          "title": "Frontend Integration & Authentication",
+          "week": "Week 5",
+          "status": "pending",
+          "deliverables": []
+        },
+        {
+          "title": "Testing, Deployment & Capstone Defense",
+          "week": "Week 4",
+          "status": "pending",
+          "deliverables": []
+        }
+      ]
+    },
+    "updated_at": "2026-10-04T06:35:22.162633"
+  }
+}

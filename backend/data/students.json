@@ -1,48 +1,98 @@
 {
-  "student_1791191870@college.edu.in": {
-    "first_name": "Kiran",
-    "last_name": "Rao",
-    "email": "student_1791191870@college.edu.in",
-    "roll_no": "22CS555",
-    "branch": "Computer Science & Engineering",
-    "year": "3rd Year",
-    "skills": {
-      "python": 4,
-      "react": 3,
-      "fastapi": 4
-    },
-    "other_skills": "",
-    "domains": [
-      "Artificial Intelligence",
-      "Web Development"
-    ],
-    "other_domains": "",
-    "about_me": "Full stack builder",
+  "ngovardhanreddy9381@gmail.com": {
+    "first_name": "N.",
+    "last_name": "Reddy",
+    "name": "N. Govardhan Reddy",
+    "email": "ngovardhanreddy9381@gmail.com",
+    "branch": "CSE",
+    "year": "4th Year",
+    "role": "student",
     "team_size": "3",
-    "updated_at": "2026-10-05T09:17:51.779435",
-    "student_id": "st_1791172071"
+    "projects": [],
+    "student_id": "ngovardhanreddy9381@gmail.com"
   },
-  "student_1791192249@college.edu.in": {
-    "first_name": "Kiran",
-    "last_name": "Rao",
-    "email": "student_1791192249@college.edu.in",
-    "roll_no": "22CS555",
-    "branch": "Computer Science & Engineering",
-    "year": "3rd Year",
-    "skills": {
-      "python": 4,
-      "react": 3,
-      "fastapi": 4
-    },
-    "other_skills": "",
-    "domains": [
-      "Artificial Intelligence",
-      "Web Development"
-    ],
-    "other_domains": "",
-    "about_me": "Full stack builder",
+  "192411137.simats@saveetha.com": {
+    "first_name": "NARAPAREDDY",
+    "last_name": "REDDY",
+    "name": "NARAPAREDDY GOVARDHAN REDDY",
+    "email": "192411137.simats@saveetha.com",
+    "branch": "CSE",
+    "year": "Final Year",
+    "role": "student",
     "team_size": "3",
-    "updated_at": "2026-10-05T09:24:09.944347",
-    "student_id": "st_1791172449"
+    "projects": [],
+    "student_id": "192411137.simats@saveetha.com"
+  },
+  "arjun.sharma@college.edu.in": {
+    "first_name": "Arjun",
+    "last_name": "Sharma",
+    "name": "Arjun Sharma",
+    "email": "arjun.sharma@college.edu.in",
+    "branch": "CSE",
+    "year": "3rd Year",
+    "role": "student",
+    "team_size": "3",
+    "projects": [],
+    "student_id": "arjun.sharma@college.edu.in"
+  },
+  "priya.mehta@college.edu.in": {
+    "first_name": "Priya",
+    "last_name": "Mehta",
+    "name": "Priya Mehta",
+    "email": "priya.mehta@college.edu.in",
+    "branch": "CSE",
+    "year": "3rd Year",
+    "role": "student",
+    "team_size": "3",
+    "projects": [],
+    "student_id": "priya.mehta@college.edu.in"
+  },
+  "rahul.patel@college.edu.in": {
+    "first_name": "Rahul",
+    "last_name": "Patel",
+    "name": "Rahul Patel",
+    "email": "rahul.patel@college.edu.in",
+    "branch": "IT",
+    "year": "3rd Year",
+    "role": "student",
+    "team_size": "3",
+    "projects": [],
+    "student_id": "rahul.patel@college.edu.in"
+  },
+  "sneha.reddy@college.edu.in": {
+    "first_name": "Sneha",
+    "last_name": "Reddy",
+    "name": "Sneha Reddy",
+    "email": "sneha.reddy@college.edu.in",
+    "branch": "DS & AI",
+    "year": "3rd Year",
+    "role": "student",
+    "team_size": "3",
+    "projects": [],
+    "student_id": "sneha.reddy@college.edu.in"
+  },
+  "anjali.singh@college.edu.in": {
+    "first_name": "Anjali",
+    "last_name": "Singh",
+    "name": "Anjali Singh",
+    "email": "anjali.singh@college.edu.in",
+    "branch": "CSE",
+    "year": "3rd Year",
+    "role": "student",
+    "team_size": "3",
+    "projects": [],
+    "student_id": "anjali.singh@college.edu.in"
+  },
+  "dev.malhotra@college.edu.in": {
+    "first_name": "Dev",
+    "last_name": "Malhotra",
+    "name": "Dev Malhotra",
+    "email": "dev.malhotra@college.edu.in",
+    "branch": "CSE",
+    "year": "4th Year",
+    "role": "student",
+    "team_size": "3",
+    "projects": [],
+    "student_id": "dev.malhotra@college.edu.in"
   }
 }

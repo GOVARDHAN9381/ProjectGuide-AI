@@ -8,6 +8,7 @@ The application uses PyMongo directly (no ORM). This module provides:
 """
 
 import datetime
+from typing import Optional
 from bson import ObjectId
 
 
@@ -41,24 +42,25 @@ def now_utc() -> datetime.datetime:
 
 def make_student_doc(data) -> dict:
     """
-    Build a student document from an OnboardingRequest schema object.
-
-    The 'created_at' field is intentionally omitted here; callers should
-    add it only on *insert* (not on upsert/update).
+    Build a student document from an OnboardingRequest schema object
+    with embedded profile and projects array.
     """
     return {
         "first_name": data.firstName,
         "last_name": data.lastName or "",
-        "email": data.email,
+        "name": f"{data.firstName} {data.lastName or ''}".strip(),
+        "email": data.email.strip().lower(),
         "roll_no": data.rollNo or "",
         "branch": data.branch or "",
         "year": data.year or "",
+        "role": "student",
         "skills": data.skills or {},
         "other_skills": data.otherSkills or "",
         "domains": data.domains or [],
         "other_domains": data.otherDomains or "",
         "about_me": data.aboutMe or "",
         "team_size": data.teamSize or "3",
+        "projects": [],
         "updated_at": now_utc(),
     }
 
@@ -199,4 +201,88 @@ def make_tracking_report_doc(idea_id: str, student_id: str, report: dict, meta: 
         "sprint_methodology": report.get("sprintMethodology", ""),
         "ai_generated": report.get("aiGenerated", False),
         "updated_at": now_utc(),
-    }
+    }
+
+
+# ---------------------------------------------------------------------------
+# Report Deserializers / Normalization Formatters
+# Converts MongoDB normalized documents to standard frontend API response shape
+# ---------------------------------------------------------------------------
+
+def format_feasibility_report(doc: dict) -> Optional[dict]:
+    """Convert a feasibility_reports MongoDB doc into the API schema shape."""
+    if not doc:
+        return None
+    return {
+        "overallScore": doc.get("overall_score") if doc.get("overall_score") is not None else doc.get("overallScore", 0),
+        "verdict": doc.get("verdict", "Feasible"),
+        "metrics": doc.get("metrics", {}),
+        "strengths": doc.get("strengths", []),
+        "bottlenecks": doc.get("bottlenecks", []),
+        "filesAnalyzed": doc.get("files_analyzed") or doc.get("filesAnalyzed", []),
+        "aiGenerated": doc.get("ai_generated") or doc.get("aiGenerated", False),
+    }
+
+
+def format_scope_report(doc: dict) -> Optional[dict]:
+    """Convert a scope_reports MongoDB doc into the API schema shape."""
+    if not doc:
+        return None
+    return {
+        "problemStatement": doc.get("problem_statement") or doc.get("problemStatement", ""),
+        "objectives": doc.get("objectives", []),
+        "inScope": doc.get("in_scope") or doc.get("inScope", []),
+        "outOfScope": doc.get("out_of_scope") or doc.get("outOfScope", []),
+        "targetUsers": doc.get("target_users") or doc.get("targetUsers", ""),
+        "keyDeliverables": doc.get("key_deliverables") or doc.get("keyDeliverables", []),
+        "assumptions": doc.get("assumptions", []),
+        "constraints": doc.get("constraints", []),
+        "aiGenerated": doc.get("ai_generated") or doc.get("aiGenerated", False),
+    }
+
+
+def format_tech_stack_report(doc: dict) -> Optional[dict]:
+    """Convert a tech_stack_reports MongoDB doc into the API schema shape."""
+    if not doc:
+        return None
+    return {
+        "recommendedStack": doc.get("recommended_stack") or doc.get("recommendedStack", {}),
+        "reasoning": doc.get("reasoning", []),
+        "alternatives": doc.get("alternatives", []),
+        "justification": doc.get("justification", ""),
+        "learningResources": doc.get("learning_resources") or doc.get("learningResources", []),
+        "aiGenerated": doc.get("ai_generated") or doc.get("aiGenerated", False),
+    }
+
+
+def format_risk_report(doc: dict) -> Optional[dict]:
+    """Convert a risk_reports MongoDB doc into the API schema shape."""
+    if not doc:
+        return None
+    return {
+        "overallRisk": doc.get("overall_risk") or doc.get("overallRisk", "Low"),
+        "riskScore": doc.get("risk_score") if doc.get("risk_score") is not None else doc.get("riskScore", 0),
+        "summary": doc.get("summary", ""),
+        "risks": doc.get("risks", []),
+        "topBlockers": doc.get("top_blockers") or doc.get("topBlockers", []),
+        "reasoning": doc.get("reasoning", []),
+        "aiGenerated": doc.get("ai_generated") or doc.get("aiGenerated", False),
+    }
+
+
+def format_tracking_report(doc: dict) -> Optional[dict]:
+    """Convert a tracking_reports MongoDB doc into the API schema shape."""
+    if not doc:
+        return None
+    return {
+        "milestones": doc.get("milestones", []),
+        "overallProgress": doc.get("overall_progress") if doc.get("overall_progress") is not None else doc.get("overallProgress", 0),
+        "milestonesDone": doc.get("milestones_done") if doc.get("milestones_done") is not None else doc.get("milestonesDone", 0),
+        "totalMilestones": doc.get("total_milestones") if doc.get("total_milestones") is not None else doc.get("totalMilestones", 0),
+        "immediateActionItems": doc.get("immediate_action_items") or doc.get("immediateActionItems", []),
+        "facultyCheckpoints": doc.get("faculty_checkpoints") or doc.get("facultyCheckpoints", []),
+        "trackingMetrics": doc.get("tracking_metrics") or doc.get("trackingMetrics", {}),
+        "sprintMethodology": doc.get("sprint_methodology") or doc.get("sprintMethodology", ""),
+        "aiGenerated": doc.get("ai_generated") or doc.get("aiGenerated", False),
+    }
+

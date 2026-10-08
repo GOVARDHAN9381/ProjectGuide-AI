@@ -19,6 +19,7 @@ Inputs:
 import json
 import os
 import re
+import sys
 import traceback
 from typing import Optional, Dict, Any, List
 from dotenv import load_dotenv
@@ -389,8 +390,16 @@ def _build_fallback_report(
     scope_report: Optional[dict] = None,
     tech_stack_report: Optional[dict] = None,
 ) -> dict:
-    """Intelligent heuristic tracking report when LLM is offline or unavailable."""
+    """Intelligent heuristic tracking report when LLM is offline or unavailable.
+    
+    Each report is made project-specific by injecting the project title into
+    phase names, descriptions, checkpoints, and actions — so different projects
+    produce visually distinct roadmaps even without the LLM.
+    """
     title = idea_data.get("title") or "Academic Project"
+    features = _coerce_string_list(idea_data.get("features"))
+    features_hint = f" Core features: {', '.join(features[:3])}" if features else ""
+    short_title = title[:40] + ("…" if len(title) > 40 else "")
     domain = (idea_data.get("domain") or "web").lower()
     duration_days = _coerce_positive_int(idea_data.get("durationDays"), 30)
     team_size = _coerce_positive_int(idea_data.get("teamSize"), 3)
@@ -424,23 +433,34 @@ def _build_fallback_report(
                     deliverables.append(cd)
                     
         # Incorporate tech stack hints if available
+        stack_hint = ""
         desc = tpl["description"]
-        if tech_stack_report and tech_stack_report.get("recommendedStack") and idx in (1, 2):
+        if tech_stack_report and tech_stack_report.get("recommendedStack"):
             rec = tech_stack_report["recommendedStack"]
             if idx == 1 and rec.get("database"):
-                desc += f" Primary database: {rec.get('database')}."
+                stack_hint = f" Primary database: {rec.get('database')}."
             elif idx == 2 and rec.get("backend"):
-                desc += f" Backend services powered by {rec.get('backend')}."
+                stack_hint = f" Backend: {rec.get('backend')}."
+            elif idx == 3 and rec.get("frontend"):
+                stack_hint = f" Frontend: {rec.get('frontend')}."
+
+        # Inject project title into phase name and description so every project has unique labels
+        project_phase = f"{tpl['phase']} — {short_title}"
+        project_desc = f"[{short_title}] {desc}{stack_hint}{features_hint}"
+        project_deps = (
+            [f"Milestone {idx-1} of {short_title}"] if idx > 1
+            else [f"{short_title} — Project Kickoff & Git Repository Setup"]
+        )
 
         milestones.append({
             "id": idx,
-            "phase": tpl["phase"],
+            "phase": project_phase,
             "weekLabel": week_label,
             "title": tpl["title"],
-            "description": desc,
+            "description": project_desc,
             "deliverables": deliverables,
             "acceptanceCriteria": list(tpl["acceptanceCriteria"]),
-            "dependencies": [f"Milestone {idx-1}"] if idx > 1 else ["Project Kickoff & Git Repository"],
+            "dependencies": project_deps,
             "estimatedEffortHours": tpl.get("estimatedEffortHours", 25),
             "status": "in_progress" if idx == 1 else "pending",
             "completed": False,
@@ -452,21 +472,21 @@ def _build_fallback_report(
     hrs_per_student = round(sum(m["estimatedEffortHours"] for m in milestones) / (team_size * total_weeks), 1)
 
     faculty_checkpoints = [
-        f"Checkpoint 1 (Week 1): Project Scope & Architecture Sign-Off with Guide",
-        f"Checkpoint 2 (Week {max(2, total_weeks // 2)}): Mid-Term Working Prototype & Schema Review",
-        f"Checkpoint 3 (Week {max(3, int(total_weeks * 0.8))}): Code Audit, Unit Tests & Security Evaluation",
-        f"Checkpoint 4 (Week {total_weeks}): Final Capstone Defense, IEEE Paper / Project Report & Live Demo"
+        f"Checkpoint 1 (Week 1): [{short_title}] Scope & Architecture Sign-Off with Academic Guide",
+        f"Checkpoint 2 (Week {max(2, total_weeks // 2)}): [{short_title}] Mid-Term Prototype Demo & Schema Review",
+        f"Checkpoint 3 (Week {max(3, int(total_weeks * 0.8))}): [{short_title}] Code Audit, Unit Tests & Feature Completeness Check",
+        f"Checkpoint 4 (Week {total_weeks}): [{short_title}] Final Capstone Defense, Report & Live Demo Presentation"
     ]
 
     immediate_actions = [
-        f"Set up Git repository with main and development branches and invite all {team_size} team members.",
-        f"Review the approved Scope and Tech Stack documents with your project guide.",
-        f"Complete database schema modeling for Phase 1 and draft OpenAPI endpoint definitions."
+        f"Create a Git repository for '{short_title}', add main/dev branches, and invite all {team_size} team member(s) as collaborators.",
+        f"Review the Scope & Tech Stack reports for '{short_title}' with your academic guide before development starts.",
+        f"Draft the architecture diagram, database schema, and API contracts specific to '{short_title}'."
     ]
 
     methodology = (
-        f"Two-week Agile Sprints tailored for a {team_size}-student capstone over a {duration_days}-day "
-        f"timeline. Includes weekly internal standup syncs and structured faculty demonstration checkpoints."
+        f"Two-week Agile Sprints for '{short_title}' — a {team_size}-student capstone spanning {duration_days} days "
+        f"({total_weeks} weeks). Includes weekly team standups and scheduled faculty review checkpoints."
     )
 
     return {
@@ -687,6 +707,19 @@ Return ONLY a valid JSON object matching this exact structure:
             return _build_fallback_report(idea_data, feasibility_report, scope_report, tech_stack_report)
 
     except Exception as e:
-        print(f"[TRACKING AGENT] Crew kickoff exception: {e}")
-        traceback.print_exc()
+        err_msg = str(e)
+        # Safely print error — avoid UnicodeEncodeError on Windows cp1252 consoles
+        try:
+            sys.stderr.buffer.write(f"[TRACKING AGENT] Crew kickoff exception: {err_msg}\n".encode("utf-8", errors="replace"))
+            sys.stderr.buffer.flush()
+        except Exception:
+            pass  # Never let logging crash the agent
+        # Log traceback only if NOT the known ThreadPoolExecutor shutdown issue
+        if "cannot schedule new futures after shutdown" not in err_msg:
+            try:
+                tb = traceback.format_exc()
+                sys.stderr.buffer.write(tb.encode("utf-8", errors="replace"))
+                sys.stderr.buffer.flush()
+            except Exception:
+                pass
         return _build_fallback_report(idea_data, feasibility_report, scope_report, tech_stack_report)

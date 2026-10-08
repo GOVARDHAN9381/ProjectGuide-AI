@@ -27,7 +27,7 @@ function Item({ text, icon, iconColor }) {
   );
 }
 
-export default function ScopeReportModal({ isOpen, onClose, report, project }) {
+export default function ScopeReportModal({ isOpen, onClose, report, project, onProceedToTechStack }) {
   if (!isOpen || !report) return null;
 
   const {
@@ -40,9 +40,11 @@ export default function ScopeReportModal({ isOpen, onClose, report, project }) {
     assumptions = [],
     constraints = [],
     aiGenerated = false,
-    // Agent chaining: feasibility report from Agent 1 embedded in the scope report
-    feasibilityReport = null,
+    feasibilityAlignment = '',
   } = report;
+
+  // Agent chaining: feasibility report can come from report, or directly from project
+  const activeFeasReport = report.feasibilityReport || project?.feasibilityReport || project?.feasibility_report || null;
 
   const title  = project?.title || 'Academic Project';
   const domain = (project?.domain || 'web').toUpperCase();
@@ -68,7 +70,7 @@ export default function ScopeReportModal({ isOpen, onClose, report, project }) {
       <style>{`@keyframes scopeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
 
       <div style={{
-        width: '100%', maxWidth: 720, maxHeight: '90vh',
+        width: '100%', maxWidth: 740, maxHeight: '90vh',
         background: '#0f1521',
         border: '1px solid rgba(255,255,255,0.1)',
         borderRadius: 18,
@@ -100,6 +102,13 @@ export default function ScopeReportModal({ isOpen, onClose, report, project }) {
                 background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)',
                 padding:'2px 10px', borderRadius:999,
               }}>{domain}</span>
+              {activeFeasReport && (
+                <span style={{
+                  fontSize:'0.67rem', fontWeight:700, color:'#60a5fa',
+                  background:'rgba(59,130,246,0.15)', border:'1px solid rgba(59,130,246,0.3)',
+                  padding:'2px 10px', borderRadius:999,
+                }}>🔗 Chained with Agent 1</span>
+              )}
             </div>
             <button onClick={onClose} style={{
               width:30, height:30, borderRadius:'50%',
@@ -136,44 +145,105 @@ export default function ScopeReportModal({ isOpen, onClose, report, project }) {
         <div style={{ flex: 1, overflowY: 'auto', padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
           {/* ══ FEASIBILITY CONTEXT BANNER (chained from Agent 1) ══ */}
-          {feasibilityReport && (
+          {activeFeasReport ? (
             <div style={{
-              background: 'rgba(59,130,246,0.07)',
-              border: '1px solid rgba(59,130,246,0.2)',
-              borderRadius: 10,
-              padding: '0.75rem 1rem',
-              marginBottom: '0.25rem',
+              background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.25) 0%, rgba(15, 23, 42, 0.5) 100%)',
+              border: '1px solid rgba(59, 130, 246, 0.35)',
+              borderRadius: 14,
+              padding: '1rem 1.15rem',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
             }}>
-              <div style={{ fontSize: '0.68rem', color: 'rgba(59,130,246,0.8)', fontWeight: 700,
-                textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.5rem',
-                display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <span>🔗</span> Chained from Agent 1 — Feasibility Report
+              <div style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                borderBottom: '1px solid rgba(59, 130, 246, 0.2)', paddingBottom: '0.6rem', marginBottom: '0.75rem',
+              }}>
+                <div style={{
+                  fontSize: '0.74rem', color: '#93c5fd', fontWeight: 800,
+                  textTransform: 'uppercase', letterSpacing: '0.07em',
+                  display: 'flex', alignItems: 'center', gap: '0.45rem',
+                }}>
+                  <span>🔗</span> Agent 1 Output — Feasibility Assessment
+                </div>
+                <span style={{
+                  fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px', borderRadius: 6,
+                  background: (activeFeasReport.overallScore || 0) >= 75 ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)',
+                  color: (activeFeasReport.overallScore || 0) >= 75 ? '#4ade80' : '#fbbf24',
+                  border: `1px solid ${(activeFeasReport.overallScore || 0) >= 75 ? 'rgba(34,197,94,0.4)' : 'rgba(245,158,11,0.4)'}`,
+                }}>
+                  {activeFeasReport.verdict || 'Evaluated'}
+                </span>
               </div>
-              <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                <div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 900, color: feasibilityReport.overallScore >= 80 ? '#4ade80' : feasibilityReport.overallScore >= 65 ? '#fbbf24' : '#f87171', lineHeight: 1 }}>
-                    {feasibilityReport.overallScore}%
+
+              {/* Metrics Grid */}
+              <div style={{ display: 'flex', gap: '1.2rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <div style={{
+                  background: 'rgba(0,0,0,0.3)', padding: '0.5rem 0.85rem', borderRadius: 10,
+                  border: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                }}>
+                  <div style={{
+                    fontSize: '1.5rem', fontWeight: 900, lineHeight: 1,
+                    color: (activeFeasReport.overallScore || 0) >= 80 ? '#4ade80' : (activeFeasReport.overallScore || 0) >= 65 ? '#fbbf24' : '#f87171',
+                  }}>
+                    {activeFeasReport.overallScore ?? '—'}%
                   </div>
-                  <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>Overall Score</div>
+                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.2 }}>
+                    Feasibility<br/>Score
+                  </div>
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#93c5fd', fontWeight: 600 }}>
-                  {feasibilityReport.verdict}
-                </div>
-                {['technical','timeline','resource','skillMatch'].map(k => (
-                  <div key={k} style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'rgba(255,255,255,0.7)' }}>
-                      {feasibilityReport.metrics?.[k] ?? '—'}%
+
+                {['technical', 'timeline', 'resource', 'skillMatch'].map(k => (
+                  <div key={k} style={{
+                    textAlign: 'center', background: 'rgba(255,255,255,0.03)', padding: '0.45rem 0.75rem',
+                    borderRadius: 8, border: '1px solid rgba(255,255,255,0.05)', minWidth: 64,
+                  }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#e2e8f0' }}>
+                      {activeFeasReport.metrics?.[k] ?? '—'}%
                     </div>
-                    <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.3)', textTransform: 'capitalize' }}>{k}</div>
+                    <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', textTransform: 'capitalize', marginTop: 1 }}>
+                      {k === 'skillMatch' ? 'Skills' : k}
+                    </div>
                   </div>
                 ))}
               </div>
-              {feasibilityReport.bottlenecks?.length > 0 && (
-                <div style={{ marginTop: '0.5rem', fontSize: '0.72rem', color: 'rgba(251,191,36,0.75)',
-                  borderTop: '1px solid rgba(59,130,246,0.15)', paddingTop: '0.4rem' }}>
-                  ⚠️ Key bottleneck: {feasibilityReport.bottlenecks[0]}
+
+              {/* Bottlenecks / Risks handled */}
+              {activeFeasReport.bottlenecks?.length > 0 && (
+                <div style={{
+                  marginTop: '0.5rem', padding: '0.55rem 0.75rem', borderRadius: 8,
+                  background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)',
+                  fontSize: '0.74rem', color: '#fca5a5', lineHeight: 1.45,
+                }}>
+                  <strong style={{ color: '#f87171' }}>⚠️ Identified Bottlenecks:</strong>{' '}
+                  {activeFeasReport.bottlenecks.join(' · ')}
                 </div>
               )}
+
+              {/* How Scope addressed Feasibility */}
+              {feasibilityAlignment && (
+                <div style={{
+                  marginTop: '0.5rem', padding: '0.55rem 0.75rem', borderRadius: 8,
+                  background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.25)',
+                  fontSize: '0.75rem', color: '#bfdbfe', lineHeight: 1.5,
+                }}>
+                  <strong style={{ color: '#60a5fa' }}>💡 Scope Alignment with Feasibility:</strong>{' '}
+                  {feasibilityAlignment}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div style={{
+              background: 'rgba(245, 158, 11, 0.06)',
+              border: '1px dashed rgba(245, 158, 11, 0.3)',
+              borderRadius: 10,
+              padding: '0.75rem 1rem',
+              fontSize: '0.77rem',
+              color: '#fcd34d',
+              display: 'flex', alignItems: 'center', gap: 10,
+            }}>
+              <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>ℹ️</span>
+              <div>
+                <strong>Agent 1 (Feasibility Check) Not Run:</strong> Run the Feasibility Agent first on your project card to automatically pass technical constraints and bottlenecks into this Scope Definition!
+              </div>
             </div>
           )}
 
@@ -314,15 +384,32 @@ export default function ScopeReportModal({ isOpen, onClose, report, project }) {
           }}>
             📋 Copy Report
           </button>
-          <button onClick={onClose} style={{
-            padding: '0.42rem 1.4rem', borderRadius: 8,
-            background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
-            border: 'none', color: '#fff', fontSize: '0.84rem',
-            fontWeight: 700, cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(139,92,246,0.35)',
-          }}>
-            Close
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {onProceedToTechStack && project && (
+              <button
+                onClick={() => onProceedToTechStack(project)}
+                style={{
+                  padding: '0.42rem 1.1rem', borderRadius: 8,
+                  background: 'linear-gradient(135deg,#f59e0b,#d97706)',
+                  border: 'none', color: '#fff', fontSize: '0.82rem',
+                  fontWeight: 700, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  boxShadow: '0 4px 14px rgba(245,158,11,0.35)',
+                }}
+              >
+                <span>🛠️ Tech Stack (Agent 3)</span>
+                <span>➔</span>
+              </button>
+            )}
+            <button onClick={onClose} style={{
+              padding: '0.42rem 1.2rem', borderRadius: 8,
+              background: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.15)', color: '#cbd5e1', fontSize: '0.84rem',
+              fontWeight: 600, cursor: 'pointer',
+            }}>
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>

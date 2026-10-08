@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
+import { Store } from '../utils/store';
+import { showToast } from '../utils/toast';
+import { API_BASE } from '../utils/api';
 
-const API_BASE = 'http://127.0.0.1:8000';
-
-async function sendMessage(message, history) {
+async function sendMessage(message, history, projectContext) {
   try {
     const res = await fetch(`${API_BASE}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, history }),
+      body: JSON.stringify({ message, history, projectContext }),
     });
     if (!res.ok) throw new Error('API error');
     const data = await res.json();
@@ -20,24 +21,372 @@ async function sendMessage(message, history) {
 
 const STARTERS = [
   '📊 Check my project feasibility',
-  '📐 Define my project scope',
-  '💡 Give me project ideas for my skills',
-  '🛠️ What tech stack should I use?',
-  '📅 Help me plan my milestones',
+  '📐 Define clear scope & avoid scope creep',
+  '🛠️ Recommend modern tech stack',
+  '📅 Generate sprint roadmap & milestones',
+  '⚠️ Identify key project bottlenecks',
 ];
 
 const FALLBACKS = [
-  "I'm your AI Project Mentor! Try asking about feasibility, scope, tech stack, or milestones for your project. 🚀",
-  "Great question! To give you the best answer, could you share a bit more about your project idea and your tech skills?",
-  "Based on what you've shared, I'd recommend starting by clearly defining your problem statement and MVP scope. Want me to help with that?",
-  "For a student team, I always suggest keeping the scope tight for the first sprint. What's the core feature that makes your project unique?",
+  "I'm your AI Project Mentor! Try asking about feasibility, scope boundaries, tech stack architecture, or sprint milestones for your project. 🚀",
+  "Great question! To give you the best guidance, ensure your skills and idea details are set in the dashboard so I can tailor my recommendations.",
+  "Based on best software engineering practices, keep your core MVP features lean for Phase 1 and defer complex extras to Phase 2. What's the core problem your project solves?",
+  "For academic projects, focus on high execution quality on 3-4 solid features rather than spreading thin across 10 unpolished ones.",
 ];
+
+/* ── Rich Markdown Renderer for AI Mentor Answers ── */
+function FormattedMessage({ text }) {
+  const [copiedCodeIdx, setCopiedCodeIdx] = useState(null);
+
+  if (!text) return null;
+
+  const handleCopyCode = (code, idx) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCodeIdx(idx);
+    showToast('Code copied to clipboard!', '📋');
+    setTimeout(() => setCopiedCodeIdx(null), 2000);
+  };
+
+  // Render inline formatting (bold, italic, code, link)
+  const renderInline = (inlineText) => {
+    if (!inlineText) return null;
+
+    // Pattern for inline code, bold, link, italic
+    const regex = /(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\([^)]+\))/g;
+    const parts = inlineText.split(regex);
+
+    return parts.map((part, i) => {
+      if (!part) return null;
+      if (part.startsWith('`') && part.endsWith('`') && part.length > 2) {
+        return (
+          <code key={i} style={{
+            background: 'rgba(99,102,241,0.18)',
+            border: '1px solid rgba(99,102,241,0.3)',
+            borderRadius: 4,
+            padding: '1px 5px',
+            fontSize: '0.82em',
+            fontFamily: 'Consolas, Monaco, monospace',
+            color: '#c4b5fd',
+          }}>
+            {part.slice(1, -1)}
+          </code>
+        );
+      }
+      if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+        return (
+          <strong key={i} style={{ color: '#f8fafc', fontWeight: 700 }}>
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
+        return <em key={i} style={{ color: '#cbd5e1' }}>{part.slice(1, -1)}</em>;
+      }
+      if (part.startsWith('[') && part.includes('](') && part.endsWith(')')) {
+        const label = part.slice(1, part.indexOf(']('));
+        const url = part.slice(part.indexOf('](') + 2, -1);
+        return (
+          <a
+            key={i}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#60a5fa', textDecoration: 'underline' }}
+          >
+            {label}
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
+  // Parse lines into structured blocks
+  const lines = text.split('\n');
+  const blocks = [];
+  let inCode = false;
+  let codeLang = '';
+  let codeBuffer = [];
+  let inTable = false;
+  let tableRows = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Fenced code block detection
+    if (line.trim().startsWith('```')) {
+      if (inCode) {
+        blocks.push({ type: 'code', lang: codeLang, content: codeBuffer.join('\n') });
+        codeBuffer = [];
+        inCode = false;
+        codeLang = '';
+      } else {
+        inCode = true;
+        codeLang = line.trim().slice(3).trim() || 'text';
+      }
+      continue;
+    }
+
+    if (inCode) {
+      codeBuffer.push(line);
+      continue;
+    }
+
+    // Markdown Table detection (| a | b |)
+    if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+      inTable = true;
+      // Skip separator rows (|---|---|)
+      if (!line.includes('---')) {
+        const cells = line.trim().slice(1, -1).split('|').map(c => c.trim());
+        tableRows.push(cells);
+      }
+      continue;
+    } else if (inTable) {
+      if (tableRows.length > 0) {
+        blocks.push({ type: 'table', rows: tableRows });
+        tableRows = [];
+      }
+      inTable = false;
+    }
+
+    // Headings
+    if (line.startsWith('#### ')) {
+      blocks.push({ type: 'h4', text: line.replace('#### ', '') });
+    } else if (line.startsWith('### ')) {
+      blocks.push({ type: 'h3', text: line.replace('### ', '') });
+    } else if (line.startsWith('## ')) {
+      blocks.push({ type: 'h2', text: line.replace('## ', '') });
+    } else if (line.startsWith('# ')) {
+      blocks.push({ type: 'h1', text: line.replace('# ', '') });
+    }
+    // Blockquote
+    else if (line.startsWith('> ')) {
+      blocks.push({ type: 'quote', text: line.replace('> ', '') });
+    }
+    // Numbered step (e.g. "1. ", "2. ")
+    else if (/^\d+\.\s+/.test(line.trim())) {
+      const match = line.trim().match(/^(\d+)\.\s+(.*)/);
+      if (match) {
+        blocks.push({ type: 'ordered', num: match[1], text: match[2] });
+      } else {
+        blocks.push({ type: 'p', text: line });
+      }
+    }
+    // Bullet list item (e.g. "- ", "* ", "• ")
+    else if (/^[-*•]\s+/.test(line.trim())) {
+      blocks.push({ type: 'bullet', text: line.trim().replace(/^[-*•]\s+/, '') });
+    }
+    // Empty line
+    else if (!line.trim()) {
+      blocks.push({ type: 'spacer' });
+    }
+    // Standard paragraph line
+    else {
+      blocks.push({ type: 'p', text: line });
+    }
+  }
+
+  if (inCode && codeBuffer.length > 0) {
+    blocks.push({ type: 'code', lang: codeLang, content: codeBuffer.join('\n') });
+  }
+  if (inTable && tableRows.length > 0) {
+    blocks.push({ type: 'table', rows: tableRows });
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.84rem', lineHeight: 1.6 }}>
+      {blocks.map((b, idx) => {
+        if (b.type === 'spacer') {
+          return <div key={idx} style={{ height: 4 }} />;
+        }
+
+        if (b.type === 'h1' || b.type === 'h2' || b.type === 'h3' || b.type === 'h4') {
+          const size = b.type === 'h1' ? '1.05rem' : b.type === 'h2' ? '0.98rem' : '0.92rem';
+          const color = b.type === 'h1' ? '#a5b4fc' : b.type === 'h2' ? '#93c5fd' : '#c4b5fd';
+          return (
+            <div key={idx} style={{
+              fontSize: size,
+              fontWeight: 800,
+              color,
+              marginTop: 4,
+              marginBottom: 2,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+            }}>
+              <span>✦</span>
+              <span>{renderInline(b.text)}</span>
+            </div>
+          );
+        }
+
+        if (b.type === 'quote') {
+          return (
+            <div key={idx} style={{
+              background: 'rgba(99,102,241,0.08)',
+              borderLeft: '3px solid #6366f1',
+              padding: '6px 10px',
+              borderRadius: '0 8px 8px 0',
+              color: '#cbd5e1',
+              fontStyle: 'italic',
+              margin: '2px 0',
+            }}>
+              {renderInline(b.text)}
+            </div>
+          );
+        }
+
+        if (b.type === 'bullet') {
+          return (
+            <div key={idx} style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 8,
+              paddingLeft: 4,
+            }}>
+              <span style={{ color: '#818cf8', fontWeight: 800, flexShrink: 0, marginTop: 1 }}>•</span>
+              <span style={{ color: '#e2e8f0', flex: 1 }}>{renderInline(b.text)}</span>
+            </div>
+          );
+        }
+
+        if (b.type === 'ordered') {
+          return (
+            <div key={idx} style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 8,
+              paddingLeft: 2,
+            }}>
+              <span style={{
+                background: 'rgba(99,102,241,0.25)',
+                border: '1px solid rgba(99,102,241,0.4)',
+                color: '#a5b4fc',
+                borderRadius: '50%',
+                width: 18,
+                height: 18,
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                marginTop: 2,
+              }}>
+                {b.num}
+              </span>
+              <span style={{ color: '#e2e8f0', flex: 1 }}>{renderInline(b.text)}</span>
+            </div>
+          );
+        }
+
+        if (b.type === 'code') {
+          return (
+            <div key={idx} style={{
+              background: '#090d16',
+              border: '1px solid rgba(99,102,241,0.25)',
+              borderRadius: 8,
+              overflow: 'hidden',
+              margin: '6px 0',
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '4px 10px',
+                background: 'rgba(255,255,255,0.04)',
+                borderBottom: '1px solid rgba(255,255,255,0.06)',
+                fontSize: '0.68rem',
+                color: '#94a3b8',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+              }}>
+                <span>{b.lang || 'code'}</span>
+                <button
+                  onClick={() => handleCopyCode(b.content, idx)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: copiedCodeIdx === idx ? '#4ade80' : '#818cf8',
+                    cursor: 'pointer',
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  {copiedCodeIdx === idx ? '✓ Copied' : 'Copy'}
+                </button>
+              </div>
+              <pre style={{
+                margin: 0,
+                padding: '8px 10px',
+                fontSize: '0.78rem',
+                fontFamily: 'Consolas, Monaco, monospace',
+                color: '#e2e8f0',
+                overflowX: 'auto',
+                lineHeight: 1.45,
+              }}>
+                <code>{b.content}</code>
+              </pre>
+            </div>
+          );
+        }
+
+        if (b.type === 'table') {
+          const [header, ...bodyRows] = b.rows;
+          return (
+            <div key={idx} style={{ overflowX: 'auto', margin: '6px 0' }}>
+              <table style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                fontSize: '0.76rem',
+                background: 'rgba(255,255,255,0.02)',
+                borderRadius: 8,
+                overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.08)',
+              }}>
+                {header && (
+                  <thead>
+                    <tr style={{ background: 'rgba(99,102,241,0.15)', borderBottom: '1px solid rgba(99,102,241,0.3)' }}>
+                      {header.map((cell, cIdx) => (
+                        <th key={cIdx} style={{ padding: '6px 8px', textAlign: 'left', color: '#c4b5fd', fontWeight: 700 }}>
+                          {renderInline(cell)}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                )}
+                <tbody>
+                  {bodyRows.map((row, rIdx) => (
+                    <tr key={rIdx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      {row.map((cell, cIdx) => (
+                        <td key={cIdx} style={{ padding: '5px 8px', color: '#cbd5e1' }}>
+                          {renderInline(cell)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
+
+        return (
+          <p key={idx} style={{ margin: 0, color: '#e2e8f0' }}>
+            {renderInline(b.text)}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function ChatbotPanel({
   isOpen: externalOpen,
   onClose: externalClose,
   onOpen: externalOpenFn,
   onToggle: externalToggle,
+  activeProject = null,
 }) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -72,10 +421,17 @@ export default function ChatbotPanel({
     }
   };
 
+  // Get active project context from prop or Store
+  const user = Store.get('currentUser');
+  const userProjects = user?.email ? Store.getUserProjects(user.email) : [];
+  const selectedProj = activeProject || userProjects[0] || null;
+
   const [messages, setMessages] = useState([
     {
       role: 'ai',
-      text: "👋 Hi! I'm your **AI Project Mentor**.\n\nI can help you with feasibility checks, scope definition, tech stack advice, and milestone planning. What are you working on?",
+      text: selectedProj
+        ? `👋 Hi! I'm your **AI Project Mentor**.\n\nI'm loaded with context for **"${selectedProj.title}"** (${(selectedProj.domain || 'web').toUpperCase()}). Ask me anything about feasibility, scope boundaries, tech stack, or milestone planning!`
+        : "👋 Hi! I'm your **AI Project Mentor**.\n\nI can help you with feasibility checks, scope definition, tech stack advice, and sprint roadmap planning. What project are you working on?",
       ts: new Date(),
     },
   ]);
@@ -108,25 +464,38 @@ export default function ChatbotPanel({
       role: m.role === 'ai' ? 'assistant' : 'user',
       content: m.text,
     }));
-    const reply = await sendMessage(msg, history);
+
+    const projectContext = selectedProj ? {
+      title: selectedProj.title,
+      domain: selectedProj.domain,
+      desc: selectedProj.desc,
+      teamSize: selectedProj.teamSize,
+      durationDays: selectedProj.durationDays,
+      techIdeas: selectedProj.techIdeas,
+      feasibilityScore: selectedProj.feasibility || selectedProj.feasibilityReport?.overallScore,
+      studentSkills: Store.get('profile')?.skills || {},
+    } : null;
+
+    const reply = await sendMessage(msg, history, projectContext);
 
     setLoading(false);
     addMsg('ai', reply || FALLBACKS[Math.floor(Math.random() * FALLBACKS.length)]);
   };
 
-  const renderText = (text) => {
-    return text
-      .split('\n')
-      .map((line, i) => (
-        <span key={i}>
-          {line.split(/(\*\*[^*]+\*\*)/).map((part, j) =>
-            part.startsWith('**') && part.endsWith('**')
-              ? <strong key={j}>{part.slice(2, -2)}</strong>
-              : part
-          )}
-          {i < text.split('\n').length - 1 && <br />}
-        </span>
-      ));
+  const handleCopyMessage = (text) => {
+    navigator.clipboard.writeText(text);
+    showToast('Answer copied to clipboard!', '📋');
+  };
+
+  const handleClearChat = () => {
+    setMessages([
+      {
+        role: 'ai',
+        text: "Chat cleared! How can I assist you with your academic project?",
+        ts: new Date(),
+      }
+    ]);
+    showToast('Chat history cleared', '🧹');
   };
 
   return (
@@ -219,17 +588,17 @@ export default function ChatbotPanel({
           position: fixed;
           bottom: 94px;
           right: 24px;
-          width: 400px;
+          width: 440px;
           max-width: calc(100vw - 32px);
-          height: 580px;
+          height: 600px;
           max-height: calc(100vh - 120px);
           z-index: 9998;
-          background: rgba(13, 17, 23, 0.96);
+          background: rgba(13, 17, 23, 0.98);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
-          border: 1px solid rgba(99, 102, 241, 0.3);
+          border: 1px solid rgba(99, 102, 241, 0.35);
           border-radius: 20px;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(99, 102, 241, 0.18);
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(99, 102, 241, 0.2);
           display: flex;
           flex-direction: column;
           overflow: hidden;
@@ -242,8 +611,8 @@ export default function ChatbotPanel({
 
         /* Header */
         .cp-header {
-          padding: 0.9rem 1.15rem;
-          background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.14));
+          padding: 0.85rem 1.15rem;
+          background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.16));
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
           display: flex;
           align-items: center;
@@ -252,14 +621,14 @@ export default function ChatbotPanel({
         }
 
         .cp-header-icon {
-          width: 38px;
-          height: 38px;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
           background: linear-gradient(135deg, #3b82f6, #6366f1);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.25rem;
+          font-size: 1.2rem;
           flex-shrink: 0;
           box-shadow: 0 0 14px rgba(99, 102, 241, 0.45);
         }
@@ -270,7 +639,7 @@ export default function ChatbotPanel({
         }
 
         .cp-header-name {
-          font-size: 0.94rem;
+          font-size: 0.92rem;
           font-weight: 700;
           color: #f8fafc;
           letter-spacing: -0.01em;
@@ -280,9 +649,9 @@ export default function ChatbotPanel({
           display: flex;
           align-items: center;
           gap: 6px;
-          font-size: 0.7rem;
+          font-size: 0.68rem;
           color: #4ade80;
-          margin-top: 2px;
+          margin-top: 1px;
         }
 
         .cp-status-dot {
@@ -298,26 +667,42 @@ export default function ChatbotPanel({
           50% { opacity: 0.4; transform: scale(0.85); }
         }
 
-        .cp-close-btn {
-          width: 32px;
-          height: 32px;
+        .cp-header-actions {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .cp-icon-btn {
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
           background: rgba(255, 255, 255, 0.08);
           border: 1px solid rgba(255, 255, 255, 0.12);
           color: rgba(255, 255, 255, 0.6);
-          font-size: 0.95rem;
+          font-size: 0.8rem;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
           transition: all 0.18s;
-          flex-shrink: 0;
         }
 
-        .cp-close-btn:hover {
-          background: rgba(248, 113, 113, 0.2);
-          color: #f87171;
-          border-color: rgba(248, 113, 113, 0.35);
+        .cp-icon-btn:hover {
+          background: rgba(255, 255, 255, 0.15);
+          color: #fff;
+        }
+
+        /* Project context banner */
+        .cp-context-banner {
+          padding: 5px 12px;
+          background: rgba(99, 102, 241, 0.1);
+          border-bottom: 1px solid rgba(99, 102, 241, 0.18);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 0.72rem;
+          color: #c4b5fd;
         }
 
         /* Messages area */
@@ -327,19 +712,19 @@ export default function ChatbotPanel({
           padding: 1rem;
           display: flex;
           flex-direction: column;
-          gap: 0.85rem;
+          gap: 0.9rem;
         }
 
         .cp-messages::-webkit-scrollbar { width: 5px; }
         .cp-messages::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.12);
           border-radius: 99px;
         }
 
         .cp-bubble-wrap {
           display: flex;
           gap: 8px;
-          align-items: flex-end;
+          align-items: flex-start;
         }
 
         .cp-bubble-wrap.user {
@@ -347,8 +732,8 @@ export default function ChatbotPanel({
         }
 
         .cp-avatar {
-          width: 26px;
-          height: 26px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
           flex-shrink: 0;
           display: flex;
@@ -356,11 +741,17 @@ export default function ChatbotPanel({
           justify-content: center;
           font-size: 0.82rem;
           background: linear-gradient(135deg, #3b82f6, #6366f1);
+          margin-top: 2px;
+        }
+
+        .cp-bubble-container {
+          max-width: 86%;
+          display: flex;
+          flex-direction: column;
         }
 
         .cp-bubble {
-          max-width: 82%;
-          padding: 0.7rem 0.95rem;
+          padding: 0.75rem 0.95rem;
           border-radius: 14px;
           font-size: 0.84rem;
           line-height: 1.55;
@@ -369,23 +760,48 @@ export default function ChatbotPanel({
         }
 
         .cp-bubble.ai {
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.09);
           border-bottom-left-radius: 4px;
         }
 
         .cp-bubble.user {
-          background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(99, 102, 241, 0.3));
-          border: 1px solid rgba(99, 102, 241, 0.35);
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(99, 102, 241, 0.35));
+          border: 1px solid rgba(99, 102, 241, 0.4);
           border-bottom-right-radius: 4px;
           color: #f1f5f9;
         }
 
+        .cp-msg-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 4px;
+          padding: 0 4px;
+        }
+
+        .cp-copy-btn {
+          background: transparent;
+          border: none;
+          color: rgba(255, 255, 255, 0.35);
+          font-size: 0.68rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          padding: 2px 4px;
+          border-radius: 4px;
+          transition: all 0.15s;
+        }
+
+        .cp-copy-btn:hover {
+          color: #a5b4fc;
+          background: rgba(255, 255, 255, 0.06);
+        }
+
         .cp-ts {
           font-size: 0.62rem;
-          color: rgba(255, 255, 255, 0.25);
-          margin-top: 3px;
-          text-align: right;
+          color: rgba(255, 255, 255, 0.3);
         }
 
         .cp-thinking {
@@ -541,23 +957,61 @@ export default function ChatbotPanel({
             <div className="cp-header-name">AI Project Mentor</div>
             <div className="cp-status">
               <span className="cp-status-dot" />
-              Online · Powered by Groq LLM
+              Online · Groq LLM Assistant
             </div>
           </div>
-          <button className="cp-close-btn" onClick={handleClose} title="Minimize">
-            ✕
-          </button>
+          <div className="cp-header-actions">
+            <button className="cp-icon-btn" onClick={handleClearChat} title="Clear Chat">
+              🧹
+            </button>
+            <button className="cp-icon-btn" onClick={handleClose} title="Minimize">
+              ✕
+            </button>
+          </div>
         </div>
+
+        {/* Project Context Badge */}
+        {selectedProj && (
+          <div className="cp-context-banner">
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span>📁</span>
+              <strong style={{ color: '#e2e8f0' }}>{selectedProj.title}</strong>
+              <span style={{ opacity: 0.7 }}>({(selectedProj.domain || 'web').toUpperCase()})</span>
+            </span>
+            {selectedProj.feasibility && (
+              <span style={{ fontWeight: 700, color: '#4ade80' }}>
+                {selectedProj.feasibility}%
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Messages */}
         <div className="cp-messages">
           {messages.map((m, i) => (
             <div key={i} className={`cp-bubble-wrap ${m.role === 'user' ? 'user' : ''}`}>
               {m.role === 'ai' && <div className="cp-avatar">🤖</div>}
-              <div>
-                <div className={`cp-bubble ${m.role}`}>{renderText(m.text)}</div>
-                <div className="cp-ts">
-                  {m.ts.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+              <div className="cp-bubble-container">
+                <div className={`cp-bubble ${m.role}`}>
+                  {m.role === 'ai' ? (
+                    <FormattedMessage text={m.text} />
+                  ) : (
+                    <span>{m.text}</span>
+                  )}
+                </div>
+                <div className="cp-msg-footer">
+                  {m.role === 'ai' ? (
+                    <button
+                      className="cp-copy-btn"
+                      onClick={() => handleCopyMessage(m.text)}
+                      title="Copy Answer"
+                    >
+                      📋 Copy
+                    </button>
+                  ) : <div />}
+                  <span className="cp-ts">
+                    {m.ts.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
                 </div>
               </div>
               {m.role === 'user' && (
@@ -582,7 +1036,7 @@ export default function ChatbotPanel({
         </div>
 
         {/* Quick starters (visible before first user message) */}
-        {messages.length <= 1 && (
+        {messages.length <= 2 && (
           <div className="cp-starters">
             {STARTERS.map((s, i) => (
               <button key={i} className="cp-starter" onClick={() => handleSend(s)}>
@@ -597,7 +1051,11 @@ export default function ChatbotPanel({
           <textarea
             ref={inputRef}
             className="cp-input"
-            placeholder="Ask about feasibility, scope, tech stack..."
+            placeholder={
+              selectedProj
+                ? `Ask about "${selectedProj.title.slice(0, 20)}..."`
+                : "Ask about feasibility, scope, tech stack..."
+            }
             value={input}
             rows={1}
             onChange={e => setInput(e.target.value)}

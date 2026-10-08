@@ -125,11 +125,15 @@ def _persist_scope_report(data: schemas.ScopeRequest, report: dict) -> Optional[
             )
             inserted_id = str(result.upserted_id) if result.upserted_id else idea_id
 
-            # Also update the project_idea document with scopeReport
+            # Keep project_ideas clean — unset any nested scopeReport
             try:
+                from models import now_utc
                 ideas_col.update_one(
                     {"_id": idea_doc["_id"]},
-                    {"$set": {"scopeReport": report}}
+                    {
+                        "$set": {"updated_at": now_utc()},
+                        "$unset": {"scopeReport": ""}
+                    }
                 )
             except Exception:
                 pass
@@ -139,7 +143,7 @@ def _persist_scope_report(data: schemas.ScopeRequest, report: dict) -> Optional[
             inserted_id = str(result.inserted_id)
 
         print(
-            f"[SCOPE] Report saved to MongoDB "
+            f"[SCOPE] Report saved to normalized scope_reports "
             f"(id={inserted_id}, ai_generated={report.get('aiGenerated')})"
         )
 
@@ -149,7 +153,7 @@ def _persist_scope_report(data: schemas.ScopeRequest, report: dict) -> Optional[
             local_ideas = _load_local_ideas()
             for i_id, i_doc in local_ideas.items():
                 if (data.idea_id and i_id == data.idea_id) or (i_doc.get("title") == data.title):
-                    i_doc["scopeReport"] = report
+                    i_doc.pop("scopeReport", None)
                     break
             _save_local_ideas(local_ideas)
         except Exception as e:

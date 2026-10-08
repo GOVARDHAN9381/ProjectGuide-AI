@@ -1,0 +1,31 @@
+{
+  "test@test.com": [
+    {
+      "id": "ci_1790548865",
+      "idea_id": "test123",
+      "project_title": "Test Project",
+      "week_number": 1,
+      "progress_pct": 45,
+      "mood": "good",
+      "blockers": "API integration",
+      "summary": "",
+      "submitted_at": "2026-09-28T04:11:05.318569",
+      "adjustment": {
+        "status": "on_track",
+        "progress_gap": -28,
+        "mentor_message": "Great job blasting past the 17% milestone and reaching 45% already\u2014your momentum is impressive! I see the API integration is holding you up; tackling that now will keep your pace strong. Let\u2019s turn that blocker into a quick win so the rest of the project can flow smoothly.",
+        "plan_adjustments": [
+          "Schedule a focused 2\u2011hour debugging session with the API owner or senior developer to pinpoint the exact failure point.",
+          "Create a lightweight mock endpoint that mimics the expected API responses so you can continue developing other features while the real integration is fixed.",
+          "Document each step of the current integration attempt, noting error messages and response codes, to build a clear troubleshooting checklist."
+        ],
+        "next_week_goals": [
+          "Achieve a fully functional API integration and verify end\u2011to\u2011end data flow.",
+          "Update the project documentation with integration details, error handling procedures, and any mock\u2011API setups used."
+        ],
+        "priority_task": "Identify and resolve the specific error causing the API integration failure within the next 48 hours.",
+        "ai_generated": true
+      }
+    }
+  ]
+}

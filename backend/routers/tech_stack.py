@@ -76,21 +76,60 @@ def recommend_tech_stack(data: schemas.TechStackRequest):
 
 
 def _persist_tech_stack(data: schemas.TechStackRequest, report: dict) -> Optional[str]:
-    """Save the tech stack report back to the project_idea document (best-effort)."""
+    """Save the tech stack report to dedicated tech_stack_reports collection and keep project_ideas clean."""
     try:
+        from database import get_tech_stack_reports_collection
+        from models import make_tech_stack_report_doc, now_utc
+
+        tech_col = get_tech_stack_reports_collection()
         ideas_col = get_project_ideas_collection()
 
         idea_doc = ideas_col.find_one(
             {"title": data.title},
             sort=[("created_at", -1)],
         )
+        idea_id = str(idea_doc["_id"]) if idea_doc else (data.idea_id or "")
+        student_id = str(idea_doc.get("student_id", "")) if idea_doc else ""
+
+        meta = {
+            "title": data.title,
+            "desc": data.desc,
+            "domain": data.domain,
+            "teamSize": data.teamSize,
+            "durationDays": data.durationDays,
+        }
+
+        report_doc = make_tech_stack_report_doc(
+            idea_id=idea_id,
+            student_id=student_id,
+            report=report,
+            meta=meta,
+        )
+
+        if idea_id:
+            tech_col.update_one(
+                {"idea_id": idea_id},
+                {"$set": report_doc},
+                upsert=True,
+            )
+
         if idea_doc:
+            rec_stack = report.get("recommendedStack", {})
+            stack_list = [v for v in rec_stack.values() if isinstance(v, str)] if isinstance(rec_stack, dict) else []
             ideas_col.update_one(
                 {"_id": idea_doc["_id"]},
-                {"$set": {"techStackReport": report}},
+                {
+                    "$set": {
+                        "tech_stack": stack_list,
+                        "updated_at": now_utc(),
+                    },
+                    "$unset": {
+                        "techStackReport": "",
+                    }
+                },
             )
             print(
-                f"[TECH STACK] Report saved to MongoDB "
+                f"[TECH STACK] Report saved to normalized tech_stack_reports "
                 f"(idea={idea_doc['_id']}, ai_generated={report.get('aiGenerated')})"
             )
             return str(idea_doc["_id"])
@@ -101,7 +140,9 @@ def _persist_tech_stack(data: schemas.TechStackRequest, report: dict) -> Optiona
             local_ideas = _load_local_ideas()
             for i_id, i_doc in local_ideas.items():
                 if (data.idea_id and i_id == data.idea_id) or (i_doc.get("title") == data.title):
-                    i_doc["techStackReport"] = report
+                    i_doc.pop("techStackReport", None)
+                    rec_stack = report.get("recommendedStack", {})
+                    i_doc["tech_stack"] = [v for v in rec_stack.values() if isinstance(v, str)] if isinstance(rec_stack, dict) else []
                     break
             _save_local_ideas(local_ideas)
         except Exception as e:

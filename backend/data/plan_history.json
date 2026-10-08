@@ -1,0 +1,739 @@
+[
+  {
+    "project_id": "idea_1789617458_45cdd1",
+    "original_plan_snapshot": [
+      {
+        "title": "Environment, Repo, and Architecture Baseline",
+        "week": "Weeks 1\u20132",
+        "status": "in_progress",
+        "deliverables": [
+          "GitHub repository with branch strategy (main, develop, feature/*) and README",
+          "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers",
+          "GitHub Actions workflow for lint, unit tests, and image build"
+        ]
+      },
+      {
+        "title": "User Management, Meal & Activity APIs",
+        "week": "Weeks 2\u20133",
+        "status": "pending",
+        "deliverables": [
+          "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities",
+          "PostgreSQL schema scripts and migration files (Alembic)",
+          "Automated Pytest suite covering 80% of backend routes"
+        ]
+      },
+      {
+        "title": "React UI, State Management, and API Consumption",
+        "week": "Weeks 3\u20134",
+        "status": "pending",
+        "deliverables": [
+          "Login/Signup pages with JWT storage (httpOnly cookie or localStorage)",
+          "Dashboard with forms to add meals and activities",
+          "React Testing Library tests for core components (\u226570% coverage)"
+        ]
+      },
+      {
+        "title": "Food Image Calorie Estimation & Personalized Advice",
+        "week": "Weeks 4\u20135",
+        "status": "pending",
+        "deliverables": [
+          "Dockerized inference endpoint exposing `/predict` that returns calorie estimate",
+          "Frontend component for photo upload and display of estimated calories",
+          "Recommendation API (`/recommendations`) returning personalized tips"
+        ]
+      },
+      {
+        "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+        "week": "Weeks 5\u20136",
+        "status": "pending",
+        "deliverables": [
+          "End\u2011to\u2011end Cypress test suite covering main user journeys",
+          "Technical documentation (architecture diagram, API spec, setup guide) in the repo Wiki",
+          "Live deployment URL with HTTPS and a 5\u2011minute demo video"
+        ]
+      }
+    ],
+    "updated_plan": {
+      "risk_exists": true,
+      "affected_milestone": "Environment, Repo, and Architecture Baseline",
+      "reason": "The student encountered database connection bugs that prevented the completion of the Flask REST API and Auth endpoints, which are critical components of the current baseline milestone.",
+      "recommended_action": "Isolate the database connection issue by verifying Docker service dependencies and environment variables. Implement a simple health-check endpoint to validate DB connectivity before proceeding with complex API logic. Allocate the first 2 days of the next week strictly to resolving this blocker.",
+      "timeline_adjusted": true,
+      "adjustment_message": "Your Weeks 1\u20132 task (Environment, Repo, and Architecture Baseline) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+      "updated_milestones": [
+        {
+          "title": "Environment, Repo, and Architecture Baseline",
+          "week": "Week 1-2",
+          "status": "in_progress",
+          "change_note": "Adjusted target"
+        },
+        {
+          "title": "User Management, Meal & Activity APIs",
+          "week": "Week 3",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "React UI, State Management, and API Consumption",
+          "week": "Week 4",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "Food Image Calorie Estimation & Personalized Advice",
+          "week": "Week 5",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+          "week": "Week 6",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        }
+      ],
+      "previous_plan": [
+        {
+          "title": "Environment, Repo, and Architecture Baseline",
+          "week": "Weeks 1\u20132",
+          "status": "in_progress",
+          "deliverables": [
+            "GitHub repository with branch strategy (main, develop, feature/*) and README",
+            "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers",
+            "GitHub Actions workflow for lint, unit tests, and image build"
+          ]
+        },
+        {
+          "title": "User Management, Meal & Activity APIs",
+          "week": "Weeks 2\u20133",
+          "status": "pending",
+          "deliverables": [
+            "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities",
+            "PostgreSQL schema scripts and migration files (Alembic)",
+            "Automated Pytest suite covering 80% of backend routes"
+          ]
+        },
+        {
+          "title": "React UI, State Management, and API Consumption",
+          "week": "Weeks 3\u20134",
+          "status": "pending",
+          "deliverables": [
+            "Login/Signup pages with JWT storage (httpOnly cookie or localStorage)",
+            "Dashboard with forms to add meals and activities",
+            "React Testing Library tests for core components (\u226570% coverage)"
+          ]
+        },
+        {
+          "title": "Food Image Calorie Estimation & Personalized Advice",
+          "week": "Weeks 4\u20135",
+          "status": "pending",
+          "deliverables": [
+            "Dockerized inference endpoint exposing `/predict` that returns calorie estimate",
+            "Frontend component for photo upload and display of estimated calories",
+            "Recommendation API (`/recommendations`) returning personalized tips"
+          ]
+        },
+        {
+          "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+          "week": "Weeks 5\u20136",
+          "status": "pending",
+          "deliverables": [
+            "End\u2011to\u2011end Cypress test suite covering main user journeys",
+            "Technical documentation (architecture diagram, API spec, setup guide) in the repo Wiki",
+            "Live deployment URL with HTTPS and a 5\u2011minute demo video"
+          ]
+        }
+      ]
+    },
+    "reason": "The student encountered database connection bugs that prevented the completion of the Flask REST API and Auth endpoints, which are critical components of the current baseline milestone.",
+    "message": "Your Weeks 1\u20132 task (Environment, Repo, and Architecture Baseline) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+    "created_at": "2026-09-29T15:07:57.065995"
+  },
+  {
+    "project_id": "idea_1789617458_45cdd1",
+    "original_plan_snapshot": [
+      {
+        "title": "Environment, Repo, and Architecture Baseline",
+        "week": "Weeks 1\u20132",
+        "status": "in_progress",
+        "deliverables": [
+          "GitHub repository with branch strategy (main, develop, feature/*) and README",
+          "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers",
+          "GitHub Actions workflow for lint, unit tests, and image build"
+        ]
+      },
+      {
+        "title": "User Management, Meal & Activity APIs",
+        "week": "Weeks 2\u20133",
+        "status": "pending",
+        "deliverables": [
+          "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities",
+          "PostgreSQL schema scripts and migration files (Alembic)",
+          "Automated Pytest suite covering 80% of backend routes"
+        ]
+      },
+      {
+        "title": "React UI, State Management, and API Consumption",
+        "week": "Weeks 3\u20134",
+        "status": "pending",
+        "deliverables": [
+          "Login/Signup pages with JWT storage (httpOnly cookie or localStorage)",
+          "Dashboard with forms to add meals and activities",
+          "React Testing Library tests for core components (\u226570% coverage)"
+        ]
+      },
+      {
+        "title": "Food Image Calorie Estimation & Personalized Advice",
+        "week": "Weeks 4\u20135",
+        "status": "pending",
+        "deliverables": [
+          "Dockerized inference endpoint exposing `/predict` that returns calorie estimate",
+          "Frontend component for photo upload and display of estimated calories",
+          "Recommendation API (`/recommendations`) returning personalized tips"
+        ]
+      },
+      {
+        "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+        "week": "Weeks 5\u20136",
+        "status": "pending",
+        "deliverables": [
+          "End\u2011to\u2011end Cypress test suite covering main user journeys",
+          "Technical documentation (architecture diagram, API spec, setup guide) in the repo Wiki",
+          "Live deployment URL with HTTPS and a 5\u2011minute demo video"
+        ]
+      }
+    ],
+    "updated_plan": {
+      "risk_exists": true,
+      "affected_milestone": "Environment, Repo, and Architecture Baseline",
+      "reason": "Database schema connection issue delayed the API integration, preventing the completion of the Flask endpoints and Auth system required for the baseline milestone.",
+      "recommended_action": "Resolve the database connection configuration immediately by verifying environment variables and connection strings. If unresolved within 24 hours, implement a mock database layer to decouple API development from the persistent storage layer, allowing the Auth and Flask endpoints to be built and tested in parallel.",
+      "timeline_adjusted": true,
+      "adjustment_message": "Your Weeks 1\u20132 task (Environment, Repo, and Architecture Baseline) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+      "updated_milestones": [
+        {
+          "title": "Environment, Repo, and Architecture Baseline",
+          "week": "Week 1-2",
+          "status": "in_progress",
+          "change_note": "Unchanged"
+        },
+        {
+          "title": "User Management, Meal & Activity APIs",
+          "week": "Week 3",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "React UI, State Management, and API Consumption",
+          "week": "Week 4",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "Food Image Calorie Estimation & Personalized Advice",
+          "week": "Week 5",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+          "week": "Week 6",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        }
+      ],
+      "previous_plan": [
+        {
+          "title": "Environment, Repo, and Architecture Baseline",
+          "week": "Weeks 1\u20132",
+          "status": "in_progress",
+          "deliverables": [
+            "GitHub repository with branch strategy (main, develop, feature/*) and README",
+            "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers",
+            "GitHub Actions workflow for lint, unit tests, and image build"
+          ]
+        },
+        {
+          "title": "User Management, Meal & Activity APIs",
+          "week": "Weeks 2\u20133",
+          "status": "pending",
+          "deliverables": [
+            "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities",
+            "PostgreSQL schema scripts and migration files (Alembic)",
+            "Automated Pytest suite covering 80% of backend routes"
+          ]
+        },
+        {
+          "title": "React UI, State Management, and API Consumption",
+          "week": "Weeks 3\u20134",
+          "status": "pending",
+          "deliverables": [
+            "Login/Signup pages with JWT storage (httpOnly cookie or localStorage)",
+            "Dashboard with forms to add meals and activities",
+            "React Testing Library tests for core components (\u226570% coverage)"
+          ]
+        },
+        {
+          "title": "Food Image Calorie Estimation & Personalized Advice",
+          "week": "Weeks 4\u20135",
+          "status": "pending",
+          "deliverables": [
+            "Dockerized inference endpoint exposing `/predict` that returns calorie estimate",
+            "Frontend component for photo upload and display of estimated calories",
+            "Recommendation API (`/recommendations`) returning personalized tips"
+          ]
+        },
+        {
+          "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+          "week": "Weeks 5\u20136",
+          "status": "pending",
+          "deliverables": [
+            "End\u2011to\u2011end Cypress test suite covering main user journeys",
+            "Technical documentation (architecture diagram, API spec, setup guide) in the repo Wiki",
+            "Live deployment URL with HTTPS and a 5\u2011minute demo video"
+          ]
+        }
+      ]
+    },
+    "reason": "Database schema connection issue delayed the API integration, preventing the completion of the Flask endpoints and Auth system required for the baseline milestone.",
+    "message": "Your Weeks 1\u20132 task (Environment, Repo, and Architecture Baseline) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+    "created_at": "2026-09-29T15:11:23.531721"
+  },
+  {
+    "project_id": "test123",
+    "original_plan_snapshot": [
+      {
+        "title": "Requirements Analysis & Setup",
+        "week": "Week 1",
+        "status": "completed",
+        "deliverables": []
+      },
+      {
+        "title": "System Architecture & Database Schema",
+        "week": "Week 2",
+        "status": "completed",
+        "deliverables": []
+      },
+      {
+        "title": "Core Module Implementation",
+        "week": "Week 3",
+        "status": "completed",
+        "deliverables": []
+      },
+      {
+        "title": "API Development & Backend Services",
+        "week": "Week 4",
+        "status": "in_progress",
+        "deliverables": []
+      },
+      {
+        "title": "Frontend Integration & Authentication",
+        "week": "Week 5",
+        "status": "pending",
+        "deliverables": []
+      },
+      {
+        "title": "Testing, Deployment & Capstone Defense",
+        "week": "Week 4",
+        "status": "pending",
+        "deliverables": []
+      }
+    ],
+    "updated_plan": {
+      "risk_exists": true,
+      "affected_milestone": "API Development & Backend Services",
+      "reason": "The student reported blockers related to API integration issues, preventing the completion of the current milestone despite 45% overall progress.",
+      "recommended_action": "Prioritize resolving the specific API integration errors by consulting documentation or seeking peer review, and isolate the failing endpoints to ensure core functionality is stable before proceeding to frontend integration.",
+      "timeline_adjusted": true,
+      "adjustment_message": "Your Week 4 task (API Development & Backend Services) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+      "updated_milestones": [
+        {
+          "title": "Requirements Analysis & Setup",
+          "week": "Week 1",
+          "status": "completed",
+          "change_note": "Unchanged"
+        },
+        {
+          "title": "System Architecture & Database Schema",
+          "week": "Week 2",
+          "status": "completed",
+          "change_note": "Unchanged"
+        },
+        {
+          "title": "Core Module Implementation",
+          "week": "Week 3",
+          "status": "completed",
+          "change_note": "Unchanged"
+        },
+        {
+          "title": "API Development & Backend Services",
+          "week": "Week 5",
+          "status": "in_progress",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "Frontend Integration & Authentication",
+          "week": "Week 6",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        },
+        {
+          "title": "Testing, Deployment & Capstone Defense",
+          "week": "Week 7",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        }
+      ],
+      "previous_plan": [
+        {
+          "title": "Requirements Analysis & Setup",
+          "week": "Week 1",
+          "status": "completed",
+          "deliverables": []
+        },
+        {
+          "title": "System Architecture & Database Schema",
+          "week": "Week 2",
+          "status": "completed",
+          "deliverables": []
+        },
+        {
+          "title": "Core Module Implementation",
+          "week": "Week 3",
+          "status": "completed",
+          "deliverables": []
+        },
+        {
+          "title": "API Development & Backend Services",
+          "week": "Week 4",
+          "status": "in_progress",
+          "deliverables": []
+        },
+        {
+          "title": "Frontend Integration & Authentication",
+          "week": "Week 5",
+          "status": "pending",
+          "deliverables": []
+        },
+        {
+          "title": "Testing, Deployment & Capstone Defense",
+          "week": "Week 4",
+          "status": "pending",
+          "deliverables": []
+        }
+      ]
+    },
+    "reason": "The student reported blockers related to API integration issues, preventing the completion of the current milestone despite 45% overall progress.",
+    "message": "Your Week 4 task (API Development & Backend Services) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+    "created_at": "2026-10-04T06:35:52.940018"
+  },
+  {
+    "project_id": "idea_1789617458_45cdd1",
+    "original_plan_snapshot": [
+      {
+        "title": "Environment, Repo, and Architecture Baseline",
+        "week": "Weeks 1\u20132",
+        "status": "in_progress",
+        "deliverables": [
+          "GitHub repository with branch strategy (main, develop, feature/*) and README",
+          "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers",
+          "GitHub Actions workflow for lint, unit tests, and image build"
+        ]
+      },
+      {
+        "title": "User Management, Meal & Activity APIs",
+        "week": "Weeks 2\u20133",
+        "status": "in_progress",
+        "deliverables": [
+          "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities",
+          "PostgreSQL schema scripts and migration files (Alembic)",
+          "Automated Pytest suite covering 80% of backend routes"
+        ]
+      },
+      {
+        "title": "React UI, State Management, and API Consumption",
+        "week": "Weeks 3\u20134",
+        "status": "pending",
+        "deliverables": [
+          "Login/Signup pages with JWT storage (httpOnly cookie or localStorage)",
+          "Dashboard with forms to add meals and activities",
+          "React Testing Library tests for core components (\u226570% coverage)"
+        ]
+      },
+      {
+        "title": "Food Image Calorie Estimation & Personalized Advice",
+        "week": "Weeks 4\u20135",
+        "status": "pending",
+        "deliverables": [
+          "Dockerized inference endpoint exposing `/predict` that returns calorie estimate",
+          "Frontend component for photo upload and display of estimated calories",
+          "Recommendation API (`/recommendations`) returning personalized tips"
+        ]
+      },
+      {
+        "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+        "week": "Weeks 5\u20136",
+        "status": "pending",
+        "deliverables": [
+          "End\u2011to\u2011end Cypress test suite covering main user journeys",
+          "Technical documentation (architecture diagram, API spec, setup guide) in the repo Wiki",
+          "Live deployment URL with HTTPS and a 5\u2011minute demo video"
+        ]
+      }
+    ],
+    "updated_plan": {
+      "risk_exists": true,
+      "affected_milestone": "Environment, Repo, and Architecture Baseline",
+      "reason": "The student was unable to complete the Flask REST API and Auth endpoints due to persistent database connection bugs, preventing the finalization of the architecture baseline.",
+      "recommended_action": "Isolate the database connection issue by verifying Docker Compose service dependencies and environment variables. Implement a robust connection retry mechanism or use a health-check script to ensure the DB is ready before the API starts. If unresolved, switch to an in-memory SQLite database for the next 48 hours to unblock API development, then migrate back to the primary database once stable.",
+      "timeline_adjusted": true,
+      "adjustment_message": "Your Weeks 1\u20132 task (Environment, Repo, and Architecture Baseline) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+      "updated_milestones": [
+        {
+          "title": "Environment, Repo, and Architecture Baseline",
+          "week": "Week 1-2",
+          "status": "in_progress",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "User Management, Meal & Activity APIs",
+          "week": "Week 3-4",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        },
+        {
+          "title": "React UI, State Management, and API Consumption",
+          "week": "Week 5-6",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        },
+        {
+          "title": "Food Image Calorie Estimation & Personalized Advice",
+          "week": "Week 7-8",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        },
+        {
+          "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+          "week": "Week 9-10",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        }
+      ],
+      "previous_plan": [
+        {
+          "title": "Environment, Repo, and Architecture Baseline",
+          "week": "Weeks 1\u20132",
+          "status": "in_progress",
+          "deliverables": [
+            "GitHub repository with branch strategy (main, develop, feature/*) and README",
+            "Docker\u2011Compose file provisioning React, Flask, PostgreSQL containers",
+            "GitHub Actions workflow for lint, unit tests, and image build"
+          ]
+        },
+        {
+          "title": "User Management, Meal & Activity APIs",
+          "week": "Weeks 2\u20133",
+          "status": "in_progress",
+          "deliverables": [
+            "Flask\u2011RESTful API with endpoints: /auth, /users, /meals, /activities",
+            "PostgreSQL schema scripts and migration files (Alembic)",
+            "Automated Pytest suite covering 80% of backend routes"
+          ]
+        },
+        {
+          "title": "React UI, State Management, and API Consumption",
+          "week": "Weeks 3\u20134",
+          "status": "pending",
+          "deliverables": [
+            "Login/Signup pages with JWT storage (httpOnly cookie or localStorage)",
+            "Dashboard with forms to add meals and activities",
+            "React Testing Library tests for core components (\u226570% coverage)"
+          ]
+        },
+        {
+          "title": "Food Image Calorie Estimation & Personalized Advice",
+          "week": "Weeks 4\u20135",
+          "status": "pending",
+          "deliverables": [
+            "Dockerized inference endpoint exposing `/predict` that returns calorie estimate",
+            "Frontend component for photo upload and display of estimated calories",
+            "Recommendation API (`/recommendations`) returning personalized tips"
+          ]
+        },
+        {
+          "title": "End\u2011to\u2011End Validation, User Guide, and Production Release",
+          "week": "Weeks 5\u20136",
+          "status": "pending",
+          "deliverables": [
+            "End\u2011to\u2011end Cypress test suite covering main user journeys",
+            "Technical documentation (architecture diagram, API spec, setup guide) in the repo Wiki",
+            "Live deployment URL with HTTPS and a 5\u2011minute demo video"
+          ]
+        }
+      ]
+    },
+    "reason": "Manual adjustment requested",
+    "message": "Your Weeks 1\u20132 task (Environment, Repo, and Architecture Baseline) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+    "created_at": "2026-10-04T15:43:49.675258"
+  },
+  {
+    "project_id": "6ac3625864b002646ee89f1c",
+    "original_plan_snapshot": [
+      {
+        "title": "Setup repository, CI/CD, and database schema",
+        "week": "Weeks 1\u20132",
+        "status": "in_progress",
+        "deliverables": [
+          "GitHub repository initialized with README, .gitignore, and branch strategy",
+          "Dockerfile + docker\u2011compose for Flask API, PostgreSQL, and React dev server",
+          "GitHub Actions workflow (lint \u2192 test \u2192 build \u2192 deploy to Heroku staging)",
+          "Database schema diagram (ERD) and SQLAlchemy models for User, Meal, FoodLookup"
+        ]
+      },
+      {
+        "title": "Implement image upload endpoint and calorie estimation",
+        "week": "Weeks 3\u20134",
+        "status": "pending",
+        "deliverables": [
+          "POST /api/meals/upload endpoint with multipart handling",
+          "TensorFlow Hub MobileNetV2 integration and inference wrapper",
+          "Food\u2011101 category \u2192 average calorie JSON lookup table",
+          "Pytest suite covering endpoint logic and model inference"
+        ]
+      },
+      {
+        "title": "Create responsive React app with login, registration, and photo capture",
+        "week": "Weeks 5\u20136",
+        "status": "pending",
+        "deliverables": [
+          "Login & registration pages with form validation",
+          "MealLog component with camera access (HTML5 file input) and preview",
+          "API client layer (axios) calling /api/meals/upload and handling responses",
+          "Jest + React Testing Library tests for UI components"
+        ]
+      },
+      {
+        "title": "Generate personalized dietary suggestions and complete end\u2011to\u2011end flow",
+        "week": "Weeks 6\u20137",
+        "status": "pending",
+        "deliverables": [
+          "GET /api/recommendations endpoint implementing rule\u2011based logic",
+          "Frontend RecommendationCard component displaying suggestions",
+          "docker\u2011compose.yml for production (Flask + PostgreSQL + Nginx)",
+          "Integration test suite exercising full request\u2011response cycle"
+        ]
+      },
+      {
+        "title": "Validate, document, and launch the prototype",
+        "week": "Week 8",
+        "status": "pending",
+        "deliverables": [
+          "Test report (unit, integration, 20\u2011meal validation) with coverage metrics",
+          "Swagger UI generated from Flask\u2011RESTful routes (OpenAPI 3.0)",
+          "README + user guide + 3\u2011minute demo video hosted on YouTube",
+          "Live Heroku URL with HTTPS, accessible to faculty"
+        ]
+      }
+    ],
+    "updated_plan": {
+      "risk_exists": true,
+      "affected_milestone": "Setup repository, CI/CD, and database schema",
+      "reason": "The student reports 74% overall progress but has not completed the core deliverables of the active milestone (Database schema diagram/ERD and SQLAlchemy models). While infrastructure (Docker, CI/CD) is set up, the lack of finalized data models blocks the start of API development, creating a dependency risk for the next milestone.",
+      "recommended_action": "Immediately finalize the Entity-Relationship Diagram (ERD) and implement the SQLAlchemy models for User, Meal, and FoodLookup. Push these changes to the repository to allow the CI/CD pipeline to validate the database schema before proceeding to API endpoint development.",
+      "timeline_adjusted": true,
+      "adjustment_message": "Your Weeks 1\u20132 task (Setup repository, CI/CD, and database schema) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+      "updated_milestones": [
+        {
+          "title": "Setup repository, CI/CD, and database schema",
+          "week": "Week 3",
+          "status": "in_progress",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "Implement image upload endpoint and calorie estimation",
+          "week": "Week 4",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "Create responsive React app with login, registration, and photo capture",
+          "week": "Week 5",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "Generate personalized dietary suggestions and complete end\u2011to\u2011end flow",
+          "week": "Week 6",
+          "status": "pending",
+          "change_note": "Shifted +1 Week"
+        },
+        {
+          "title": "Validate, document, and launch the prototype",
+          "week": "Week 7",
+          "status": "pending",
+          "change_note": "Adjusted target"
+        }
+      ],
+      "previous_plan": [
+        {
+          "title": "Setup repository, CI/CD, and database schema",
+          "week": "Weeks 1\u20132",
+          "status": "in_progress",
+          "deliverables": [
+            "GitHub repository initialized with README, .gitignore, and branch strategy",
+            "Dockerfile + docker\u2011compose for Flask API, PostgreSQL, and React dev server",
+            "GitHub Actions workflow (lint \u2192 test \u2192 build \u2192 deploy to Heroku staging)",
+            "Database schema diagram (ERD) and SQLAlchemy models for User, Meal, FoodLookup"
+          ]
+        },
+        {
+          "title": "Implement image upload endpoint and calorie estimation",
+          "week": "Weeks 3\u20134",
+          "status": "pending",
+          "deliverables": [
+            "POST /api/meals/upload endpoint with multipart handling",
+            "TensorFlow Hub MobileNetV2 integration and inference wrapper",
+            "Food\u2011101 category \u2192 average calorie JSON lookup table",
+            "Pytest suite covering endpoint logic and model inference"
+          ]
+        },
+        {
+          "title": "Create responsive React app with login, registration, and photo capture",
+          "week": "Weeks 5\u20136",
+          "status": "pending",
+          "deliverables": [
+            "Login & registration pages with form validation",
+            "MealLog component with camera access (HTML5 file input) and preview",
+            "API client layer (axios) calling /api/meals/upload and handling responses",
+            "Jest + React Testing Library tests for UI components"
+          ]
+        },
+        {
+          "title": "Generate personalized dietary suggestions and complete end\u2011to\u2011end flow",
+          "week": "Weeks 6\u20137",
+          "status": "pending",
+          "deliverables": [
+            "GET /api/recommendations endpoint implementing rule\u2011based logic",
+            "Frontend RecommendationCard component displaying suggestions",
+            "docker\u2011compose.yml for production (Flask + PostgreSQL + Nginx)",
+            "Integration test suite exercising full request\u2011response cycle"
+          ]
+        },
+        {
+          "title": "Validate, document, and launch the prototype",
+          "week": "Week 8",
+          "status": "pending",
+          "deliverables": [
+            "Test report (unit, integration, 20\u2011meal validation) with coverage metrics",
+            "Swagger UI generated from Flask\u2011RESTful routes (OpenAPI 3.0)",
+            "README + user guide + 3\u2011minute demo video hosted on YouTube",
+            "Live Heroku URL with HTTPS, accessible to faculty"
+          ]
+        }
+      ]
+    },
+    "reason": "Manual adjustment requested",
+    "message": "Your Weeks 1\u20132 task (Setup repository, CI/CD, and database schema) is delayed. The system has moved integration to next week and adjusted the following tasks.",
+    "created_at": "2026-10-05T08:48:13.201663",
+    "_id": 

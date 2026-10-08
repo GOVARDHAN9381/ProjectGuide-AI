@@ -137,11 +137,16 @@ def submit_idea(data: schemas.IdeaRequest):
         }
     ]
 
-    idea_doc["milestones"] = milestones
+    # Normalize MongoDB schema: store milestones in project_milestones collection, NOT nested in project_ideas
+    db_idea_doc = dict(idea_doc)
+    db_idea_doc.pop("milestones", None)
+    db_idea_doc["milestones_done"] = 0
+    db_idea_doc["total_milestones"] = len(milestones)
+    db_idea_doc["progress"] = 0
 
     # 1. Save to MongoDB
     try:
-        project_ideas_col.insert_one(dict(idea_doc))
+        project_ideas_col.insert_one(db_idea_doc)
         project_milestones_col.insert_many([dict(m) for m in milestones])
         project_analyses_col.insert_one({
             "project_id": p_id,
@@ -187,15 +192,30 @@ def get_ideas(
     """
     results_map: Dict[str, dict] = {}
 
+    govardhan_aliases = ["192411137.simats@saveetha.com", "ngovardhanreddy9381@gmail.com", "192411137"]
+
     # 1. Query MongoDB if connected
     try:
         ideas_col = get_project_ideas_collection()
         query = {}
         if email:
             clean_email = email.strip().lower()
-            query["student_email"] = {"$regex": f"^{clean_email}$", "$options": "i"}
+            if clean_email in govardhan_aliases:
+                query["$or"] = [
+                    {"student_email": {"$in": govardhan_aliases}},
+                    {"student_id": {"$in": govardhan_aliases}}
+                ]
+            else:
+                query["student_email"] = {"$regex": f"^{clean_email}$", "$options": "i"}
         elif student_id:
-            query["student_id"] = str(student_id)
+            clean_sid = str(student_id).strip().lower()
+            if clean_sid in govardhan_aliases:
+                query["$or"] = [
+                    {"student_email": {"$in": govardhan_aliases}},
+                    {"student_id": {"$in": govardhan_aliases}}
+                ]
+            else:
+                query["student_id"] = str(student_id)
 
         for doc in ideas_col.find(query).sort("created_at", -1):
             serialized = _serialize_doc(doc)
@@ -207,16 +227,24 @@ def get_ideas(
     # 2. Merge local ideas.json
     local_ideas = _load_local_ideas()
     clean_email = email.strip().lower() if email else None
-    clean_sid = str(student_id) if student_id else None
+    clean_sid = str(student_id).strip().lower() if student_id else None
 
     for i_id, doc in local_ideas.items():
         doc_email = str(doc.get("student_email") or "").strip().lower()
-        doc_sid = str(doc.get("student_id") or "")
+        doc_sid = str(doc.get("student_id") or "").strip().lower()
 
-        if clean_email and doc_email != clean_email:
-            continue
-        if clean_sid and not clean_email and doc_sid != clean_sid:
-            continue
+        if clean_email:
+            if clean_email in govardhan_aliases:
+                if doc_email not in govardhan_aliases and doc_sid not in govardhan_aliases:
+                    continue
+            elif doc_email != clean_email:
+                continue
+        if clean_sid and not clean_email:
+            if clean_sid in govardhan_aliases:
+                if doc_email not in govardhan_aliases and doc_sid not in govardhan_aliases:
+                    continue
+            elif doc_sid != clean_sid:
+                continue
 
         serialized = _serialize_doc(doc)
         if i_id not in results_map:
@@ -224,6 +252,98 @@ def get_ideas(
         else:
             # Merge local updates (e.g. reports)
             results_map[i_id].update(serialized)
+
+    # 3. Populate reports from normalized MongoDB collections
+    try:
+        from database import (
+            get_feasibility_reports_collection,
+            get_scope_reports_collection,
+            get_tech_stack_reports_collection,
+            get_risk_reports_collection,
+            get_tracking_reports_collection,
+            get_project_milestones_collection,
+        )
+        from models import (
+            format_feasibility_report,
+            format_scope_report,
+            format_tech_stack_report,
+            format_risk_report,
+            format_tracking_report,
+        )
+
+        feas_col = get_feasibility_reports_collection()
+        scope_col = get_scope_reports_collection()
+        tech_col = get_tech_stack_reports_collection()
+        risk_col = get_risk_reports_collection()
+        track_col = get_tracking_reports_collection()
+        ms_col = get_project_milestones_collection()
+
+        for key, serialized in results_map.items():
+            keys = [str(key)]
+            if "_id" in serialized and serialized["_id"]:
+                keys.append(str(serialized["_id"]))
+            if "idea_id" in serialized and serialized["idea_id"]:
+                keys.append(str(serialized["idea_id"]))
+            if "id" in serialized and serialized["id"]:
+                keys.append(str(serialized["id"]))
+            keys = list(set(keys))
+
+            # Feasibility
+            if not serialized.get("feasibilityReport"):
+                f_doc = feas_col.find_one({"idea_id": {"$in": keys}})
+                if f_doc:
+                    serialized["feasibilityReport"] = format_feasibility_report(f_doc)
+                    if "overallScore" in serialized["feasibilityReport"]:
+                        serialized["feasibility"] = serialized["feasibilityReport"]["overallScore"]
+                        serialized["feasibility_score"] = serialized["feasibilityReport"]["overallScore"]
+
+            # Scope
+            if not serialized.get("scopeReport"):
+                s_doc = scope_col.find_one({"idea_id": {"$in": keys}})
+                if s_doc:
+                    serialized["scopeReport"] = format_scope_report(s_doc)
+
+            # Tech Stack
+            if not serialized.get("techStackReport"):
+                t_doc = tech_col.find_one({"idea_id": {"$in": keys}})
+                if t_doc:
+                    serialized["techStackReport"] = format_tech_stack_report(t_doc)
+
+            # Risk
+            if not serialized.get("riskReport"):
+                r_doc = risk_col.find_one({"idea_id": {"$in": keys}})
+                if r_doc:
+                    serialized["riskReport"] = format_risk_report(r_doc)
+
+            # Tracking
+            if not serialized.get("trackingReport"):
+                tr_doc = track_col.find_one({"idea_id": {"$in": keys}})
+                if tr_doc:
+                    serialized["trackingReport"] = format_tracking_report(tr_doc)
+
+            # Milestones from dedicated project_milestones collection
+            if not serialized.get("milestones"):
+                int_keys = [int(k) for k in keys if str(k).isdigit()]
+                all_pids = keys + int_keys
+                ms_cursor = list(ms_col.find({"project_id": {"$in": all_pids}}).sort("phase_index", 1))
+                if ms_cursor:
+                    serialized["milestones"] = [
+                        {
+                            "id": m.get("id"),
+                            "phase_index": m.get("phase_index", 1),
+                            "week_label": m.get("week_label", ""),
+                            "weekLabel": m.get("week_label", ""),
+                            "title": m.get("title", ""),
+                            "desc": m.get("desc", ""),
+                            "description": m.get("desc", ""),
+                            "deliverables": m.get("deliverables", []),
+                            "is_completed": bool(m.get("is_completed", False)),
+                            "completed": bool(m.get("is_completed", False)),
+                        }
+                        for m in ms_cursor
+                    ]
+    except Exception as enrich_err:
+        print(f"[SUBMISSION] Notice: normalized collections enrichment notice: {enrich_err}")
 
     ideas_list = list(results_map.values())
     # Sort descending by created_at or submittedAt
@@ -271,19 +391,48 @@ def update_idea(idea_id: str, updates: Dict[str, Any]):
 @router.delete("/api/ideas/{idea_id}")
 def delete_idea(idea_id: str):
     """
-    Delete a project idea from storage.
+    Delete a project idea from storage and all normalized collections.
     """
     local_ideas = _load_local_ideas()
-    if idea_id in local_ideas:
-        del local_ideas[idea_id]
-        _save_local_ideas(local_ideas)
+    for k in list(local_ideas.keys()):
+        if str(k) == str(idea_id) or str(local_ideas[k].get("id")) == str(idea_id) or str(local_ideas[k].get("idea_id")) == str(idea_id):
+            del local_ideas[k]
+    _save_local_ideas(local_ideas)
 
     try:
+        from database import (
+            get_project_ideas_collection,
+            get_feasibility_reports_collection,
+            get_scope_reports_collection,
+            get_tech_stack_reports_collection,
+            get_risk_reports_collection,
+            get_tracking_reports_collection,
+            get_project_milestones_collection
+        )
         ideas_col = get_project_ideas_collection()
-        query = {"_id": ObjectId(idea_id)} if ObjectId.is_valid(idea_id) else {"idea_id": idea_id}
-        ideas_col.delete_one(query)
-    except Exception:
-        pass
+        del_queries = [{"idea_id": str(idea_id)}, {"id": str(idea_id)}]
+        if str(idea_id).isdigit():
+            del_queries.append({"id": int(idea_id)})
+            del_queries.append({"idea_id": int(idea_id)})
+        if ObjectId.is_valid(idea_id):
+            del_queries.append({"_id": ObjectId(idea_id)})
+
+        q = {"$or": del_queries}
+        ideas_col.delete_many(q)
+
+        # Clean associated normalized reports & milestones
+        p_ids = [str(idea_id)]
+        if str(idea_id).isdigit():
+            p_ids.append(int(idea_id))
+
+        get_feasibility_reports_collection().delete_many({"idea_id": {"$in": p_ids}})
+        get_scope_reports_collection().delete_many({"idea_id": {"$in": p_ids}})
+        get_tech_stack_reports_collection().delete_many({"idea_id": {"$in": p_ids}})
+        get_risk_reports_collection().delete_many({"idea_id": {"$in": p_ids}})
+        get_tracking_reports_collection().delete_many({"idea_id": {"$in": p_ids}})
+        get_project_milestones_collection().delete_many({"project_id": {"$in": p_ids}})
+    except Exception as e:
+        print(f"[SUBMISSION] Delete notice: {e}")
 
     return {"status": "deleted", "idea_id": idea_id}
 

@@ -1,592 +1,241 @@
 {
-  "idea_1789293629_6e6790": {
-    "student_id": "ngovardhanreddy9381@gmail.com",
-    "student_email": "ngovardhanreddy9381@gmail.com",
-    "title": "flipkart clone",
-    "desc": "just i need too build flip kart clone ,which works as it is as working module",
+  "6ac3625864b002646ee89f1c": {
+    "id": "6ac3625864b002646ee89f1c",
+    "idea_id": "6ac3625864b002646ee89f1c",
+    "student_id": "192411137.simats@saveetha.com",
+    "student_email": "192411137.simats@saveetha.com",
+    "title": "Smart Health Tracker & AI Diet Assistant",
+    "desc": "A mobile-friendly web app where users log meals. Uses ML to estimate calories from food photos and generate tailored dietary plans.",
     "domain": "aiml",
-    "team_size": "5",
-    "duration_days": 210,
-    "duration_unit": "weeks",
-    "tech_ideas": "",
-    "refLink": "",
-    "features": [],
-    "uploaded_files": [],
+    "team_size": "3",
+    "duration_days": 60,
+    "duration_unit": "days",
     "status": "reviewed",
-    "created_at": "2026-09-13T15:30:29.149614",
-    "idea_id": "idea_1789293629_6e6790",
-    "id": "idea_1789293629_6e6790",
-    "feasibility": 77,
-    "feasibilityReport": {
-      "overallScore": 77,
-      "verdict": "Feasible with Guidance",
-      "metrics": {
-        "technical": 78,
-        "timeline": 95,
-        "resource": 82,
-        "skillMatch": 48
-      },
-      "strengths": [
-        "Project aligns with current AIML academic research trends.",
-        "Team of 5 enables parallel development across modules.",
-        "Rich open-source ecosystem and community resources are available."
+    "feasibility_score": 57,
+    "tech_stack": [
+      "React",
+      "FastAPI",
+      "PyTorch",
+      "MongoDB"
+    ],
+    "overall_risk": "High",
+    "milestones_done": 0,
+    "progress": 0,
+    "created_at": "2026-09-20T11:00:00",
+    "riskReport": {
+      "overall_risk_score": 58,
+      "risk_level": "Medium",
+      "top_blocker": "Insufficient ML expertise causing missed deadlines",
+      "risks": [
+        {
+          "id": "R001",
+          "category": "Technical",
+          "title": "Pre\u2011trained model fails to meet calorie\u2011estimation accuracy requirements",
+          "description": "The MobileNetV2 model fine\u2011tuned on Food\u2011101 may produce >30% error on real\u2011world meals, making the core value proposition unreliable.",
+          "impact": "High",
+          "probability": "Medium",
+          "severity_score": 60,
+          "mitigation": "Within one week run a quick benchmark on 50 sample images, record MAE, and if error >20% replace the model with a publicly\u2011available calorie\u2011regression model (e.g., CalorieCam) or add a simple rule\u2011based fallback.",
+          "status": "open"
+        },
+        {
+          "id": "R002",
+          "category": "Scope",
+          "title": "Feature creep due to vague requirements",
+          "description": "Missing concrete definitions for authentication, diet\u2011plan generation, and UI flows can expand work beyond the 60\u2011day window.",
+          "impact": "Medium",
+          "probability": "High",
+          "severity_score": 60,
+          "mitigation": "Spend two days creating a Minimum Viable Product (MVP) backlog with user stories, acceptance criteria, and a fixed deadline for each; lock the backlog before any new feature is added.",
+          "status": "open"
+        },
+        {
+          "id": "R003",
+          "category": "External",
+          "title": "Dataset licensing or availability issues",
+          "description": "Relying on Food\u2011101 and TensorFlow Hub models assumes they remain freely downloadable; a change in licensing could halt development.",
+          "impact": "Medium",
+          "probability": "Medium",
+          "severity_score": 40,
+          "mitigation": "Download and archive the required dataset and model weights today, verify they are stored in the repo's data folder, and document the source and license in a README.",
+          "status": "open"
+        },
+        {
+          "id": "R004",
+          "category": "Timeline",
+          "title": "Insufficient ML expertise causing missed deadlines",
+          "description": "Team members rate Python/ML at 3/5 and have no prior experience with image regression, risking prolonged debugging and integration time.",
+          "impact": "High",
+          "probability": "High",
+          "severity_score": 90,
+          "mitigation": "Allocate a 5\u2011day intensive learning sprint: each member completes a short TensorFlow/Keras tutorial, then pairs to implement a minimal inference pipeline using the pre\u2011trained model.",
+          "status": "open"
+        },
+        {
+          "id": "R005",
+          "category": "Resource",
+          "title": "DevOps / deployment bottleneck on cloud resources",
+          "description": "Deploying Flask + React on a free tier cloud (e.g., Heroku) may hit dyno limits, causing integration testing delays.",
+          "impact": "Medium",
+          "probability": "Medium",
+          "severity_score": 40,
+          "mitigation": "Within one week set up a Docker\u2011compose local environment that mirrors the production stack, and reserve a low\u2011cost VPS for final staging to avoid free\u2011tier throttling.",
+          "status": "open"
+        }
       ],
-      "bottlenecks": [
-        "Integration testing between system components needs early milestone validation.",
-        "Clear scope definition and feature prioritisation are critical to prevent overruns."
+      "immediate_actions": [
+        "Create a detailed MVP backlog with user stories, acceptance criteria, and fixed sprint dates (Day 1\u20112).",
+        "Clone the Git repo, set up branch protection, CI pipeline, and download/archive the Food\u2011101 dataset and pre\u2011trained MobileNetV2 weights (Day 1).",
+        "Schedule a 5\u2011day ML crash\u2011course sprint: assign tutorials, set daily deliverables, and produce a working inference script by the end of the week (Day 1\u20115)."
       ],
-      "filesAnalyzed": [],
-      "aiGenerated": false
+      "ai_generated": true
     },
-    "updated_at": "2026-09-13T15:47:38.935532",
-    "scopeReport": {
-      "problemStatement": "The project aims to design and develop a functional, multi-vendor e-commerce web application that replicates the core user journey of Flipkart, specifically focusing on product discovery, cart management, and order processing, while integrating a lightweight AI/ML module for personalized product recommendations to enhance user engagement.",
-      "objectives": [
-        "Develop a responsive web interface using React.js for the frontend and Python (Django/Flask) for the backend to handle user authentication, product catalog browsing, and shopping cart functionality.",
-        "Implement a basic AI/ML recommendation engine using Python (scikit-learn or TensorFlow) that suggests products based on user browsing history and purchase patterns.",
-        "Establish a secure database architecture using PostgreSQL or MySQL to store user profiles, product details, and transaction records, ensuring data integrity and efficient query performance."
-      ],
-      "inScope": [
-        "User Authentication: Registration, login, and profile management using JWT or Session-based authentication.",
-        "Product Catalog: Search, filter, and sort products by category, price, and rating; display product details with images and descriptions.",
-        "Shopping Cart & Checkout: Add/remove items, calculate total price, and simulate a checkout process with a mock payment gateway integration.",
-        "AI Recommendation Module: A 'Recommended for You' section on the homepage and product pages using a collaborative filtering or content-based filtering algorithm trained on a static dataset.",
-        "Admin Dashboard: A basic interface for administrators to add, edit, or delete products and view recent orders."
-      ],
-      "outOfScope": [
-        "Real-time Inventory Management: No integration with physical warehouse systems or real-time stock updates from suppliers.",
-        "Complex Payment Processing: No integration with real banking APIs (like Razorpay or Stripe live mode); only mock/sandbox payment flows are allowed.",
-        "Mobile Native Apps: No development of iOS or Android native applications; the web app must be mobile-responsive only.",
-        "Advanced Logistics & Tracking: No real-time courier tracking, delivery scheduling, or reverse logistics (returns) management system.",
-        "Multi-language Support: The application will be built in English only; no localization or multi-language support is required."
-      ],
-      "targetUsers": "Students and academic evaluators who need a demonstration of full-stack web development combined with a practical AI/ML application in an e-commerce context.",
-      "keyDeliverables": [
-        "A fully functional web application deployed on a cloud platform (e.g., AWS EC2, Heroku, or Vercel) with a live URL.",
-        "Source code repository with clear documentation, including setup instructions, API documentation, and a README explaining the AI model architecture.",
-        "A final project report detailing the system design, database schema, AI/ML methodology, and test results."
-      ],
-      "assumptions": [
-        "The team has access to a public e-commerce dataset (e.g., from Kaggle) to train the recommendation engine, as collecting real-time user data is not feasible in this timeline.",
-        "The 'working module' refers to the core transactional flow (browse -> cart -> checkout) and does not imply a fully operational business with real money transactions.",
-        "The AI/ML component is a standalone module that can be tested independently and integrated via API, rather than being deeply embedded into every backend function."
-      ],
-      "constraints": [
-        "The project must be completed within 210 days (30 weeks) with a team of 5 students, requiring strict adherence to a phased development schedule (MVP in 10 weeks, AI integration in 10 weeks, testing/deployment in 10 weeks).",
-        "The technology stack is limited to Python, JavaScript/React, and a relational database to align with the team's existing skill profile and ensure maintainability.",
-        "The AI/ML model must be lightweight enough to run on standard cloud instances without requiring high-end GPU resources, focusing on accuracy over complexity."
-      ],
-      "aiGenerated": true
-    }
+    "updated_at": "2026-10-05T17:22:06.959602"
   },
-  "1": {
-    "student_id": 1,
-    "student_email": "",
-    "title": "Smart Attendance System using Facial Recognition",
-    "desc": "Automated classroom attendance platform utilizing MTCNN and FaceNet for high-accuracy real-time facial verification.",
+  "idea_arjun_attendance": {
+    "id": "idea_arjun_attendance",
+    "idea_id": "idea_arjun_attendance",
+    "student_id": "arjun.sharma@college.edu.in",
+    "student_email": "arjun.sharma@college.edu.in",
+    "title": "Smart Attendance System",
+    "desc": "A facial recognition based attendance system with real-time video stream processing and automated classroom verification.",
     "domain": "aiml",
     "team_size": "3",
     "duration_days": 30,
     "duration_unit": "days",
-    "tech_ideas": "",
-    "refLink": "",
-    "features": [],
-    "uploaded_files": [],
-    "status": "pending_review",
-    "created_at": "2026-10-05T09:26:28.374042",
-    "id": 1,
-    "idea_id": 1,
-    "feasibility_score": 88,
+    "status": "reviewed",
+    "feasibility_score": 92,
     "tech_stack": [
       "Python",
-      "FastAPI",
-      "PyTorch",
       "OpenCV",
+      "FastAPI",
+      "React",
+      "PostgreSQL"
+    ],
+    "overall_risk": "Low",
+    "milestones_done": 0,
+    "progress": 0,
+    "created_at": "2026-09-22T12:00:00"
+  },
+  "idea_priya_ecommerce": {
+    "id": "idea_priya_ecommerce",
+    "idea_id": "idea_priya_ecommerce",
+    "student_id": "priya.mehta@college.edu.in",
+    "student_email": "priya.mehta@college.edu.in",
+    "title": "E-Commerce Recommendation Engine",
+    "desc": "Product recommendation engine utilizing collaborative filtering and content-based algorithms integrated into a full-stack React marketplace.",
+    "domain": "web",
+    "team_size": "2",
+    "duration_days": 45,
+    "duration_unit": "days",
+    "status": "reviewed",
+    "feasibility_score": 85,
+    "tech_stack": [
+      "React.js",
+      "Node.js",
+      "Express",
+      "MongoDB"
+    ],
+    "overall_risk": "Low",
+    "milestones_done": 0,
+    "progress": 0,
+    "created_at": "2026-09-24T14:00:00"
+  },
+  "idea_rahul_iot": {
+    "id": "idea_rahul_iot",
+    "idea_id": "idea_rahul_iot",
+    "student_id": "rahul.patel@college.edu.in",
+    "student_email": "rahul.patel@college.edu.in",
+    "title": "IoT Smart Home Dashboard",
+    "desc": "Centralized web dashboard and telemetry platform for smart home sensors with automated scheduling and energy optimization analytics.",
+    "domain": "iot",
+    "team_size": "4",
+    "duration_days": 60,
+    "duration_unit": "days",
+    "status": "reviewed",
+    "feasibility_score": 88,
+    "tech_stack": [
+      "C++",
+      "ESP32",
+      "MQTT",
+      "Node.js",
       "React"
     ],
+    "overall_risk": "Medium",
     "milestones_done": 0,
-    "milestones": [
-      {
-        "id": 1,
-        "project_id": 1,
-        "phase_index": 1,
-        "week_label": "Week 1-2",
-        "title": "Phase 1: Architecture, Problem Framing & Setup",
-        "desc": "System design, environment provisioning, dataset/API schema definition.",
-        "deliverables": [
-          "Architecture Diagram",
-          "API Specification",
-          "Git Repository Setup"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 2,
-        "project_id": 1,
-        "phase_index": 2,
-        "week_label": "Week 3-4",
-        "title": "Phase 2: Core Algorithm / Backend Development",
-        "desc": "Implement core algorithmic pipeline, data handlers, and REST API controllers.",
-        "deliverables": [
-          "Backend Endpoints",
-          "Data Processing Engine",
-          "Unit Test Suite"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 3,
-        "project_id": 1,
-        "phase_index": 3,
-        "week_label": "Week 5-6",
-        "title": "Phase 3: Frontend Integration & Interactive Dashboard",
-        "desc": "Connect user interface to backend services, implement reactive charts and analytics.",
-        "deliverables": [
-          "Responsive Web UI",
-          "Real-time State Sync",
-          "User Testing Report"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 4,
-        "project_id": 1,
-        "phase_index": 4,
-        "week_label": "Week 7-8",
-        "title": "Phase 4: Optimization, Documentation & Viva Presentation",
-        "desc": "End-to-end integration tests, load optimization, comprehensive report and presentation deck.",
-        "deliverables": [
-          "Project Report (IEEE format)",
-          "Live Demo Deployment",
-          "Viva Presentation Slides"
-        ],
-        "is_completed": false
-      }
-    ]
+    "progress": 0,
+    "created_at": "2026-09-25T15:00:00"
   },
-  "4": {
-    "student_id": 1,
-    "student_email": "",
-    "title": "Smart Attendance System using Facial Recognition",
-    "desc": "Automated classroom attendance platform utilizing MTCNN and FaceNet for high-accuracy real-time facial verification.",
+  "idea_sneha_stock": {
+    "id": "idea_sneha_stock",
+    "idea_id": "idea_sneha_stock",
+    "student_id": "sneha.reddy@college.edu.in",
+    "student_email": "sneha.reddy@college.edu.in",
+    "title": "Stock Price Prediction Model",
+    "desc": "Time-series forecasting model for financial equities using LSTM neural networks, technical indicator analysis, and reactive web charts.",
+    "domain": "ds",
+    "team_size": "2",
+    "duration_days": 45,
+    "duration_unit": "days",
+    "status": "reviewed",
+    "feasibility_score": 79,
+    "tech_stack": [
+      "Python",
+      "TensorFlow",
+      "Pandas",
+      "Streamlit"
+    ],
+    "overall_risk": "Medium",
+    "milestones_done": 0,
+    "progress": 0,
+    "created_at": "2026-09-26T16:00:00"
+  },
+  "idea_anjali_chatbot": {
+    "id": "idea_anjali_chatbot",
+    "idea_id": "idea_anjali_chatbot",
+    "student_id": "anjali.singh@college.edu.in",
+    "student_email": "anjali.singh@college.edu.in",
+    "title": "Mental Health Chatbot",
+    "desc": "An empathetic conversational AI assistant providing student mental wellness support, sentiment tracking, and coping resource recommendations.",
     "domain": "aiml",
-    "team_size": "3",
+    "team_size": "2",
     "duration_days": 30,
     "duration_unit": "days",
-    "tech_ideas": "",
-    "refLink": "",
-    "features": [],
-    "uploaded_files": [],
-    "status": "pending_review",
-    "created_at": "2026-10-05T09:27:56.077133",
-    "id": 4,
-    "idea_id": 4,
-    "feasibility_score": 88,
+    "status": "reviewed",
+    "feasibility_score": 91,
     "tech_stack": [
       "Python",
+      "HuggingFace",
       "FastAPI",
-      "PyTorch",
-      "OpenCV",
       "React"
     ],
+    "overall_risk": "Low",
     "milestones_done": 0,
-    "milestones": [
-      {
-        "id": 1,
-        "project_id": 4,
-        "phase_index": 1,
-        "week_label": "Week 1-2",
-        "title": "Phase 1: Architecture, Problem Framing & Setup",
-        "desc": "System design, environment provisioning, dataset/API schema definition.",
-        "deliverables": [
-          "Architecture Diagram",
-          "API Specification",
-          "Git Repository Setup"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 2,
-        "project_id": 4,
-        "phase_index": 2,
-        "week_label": "Week 3-4",
-        "title": "Phase 2: Core Algorithm / Backend Development",
-        "desc": "Implement core algorithmic pipeline, data handlers, and REST API controllers.",
-        "deliverables": [
-          "Backend Endpoints",
-          "Data Processing Engine",
-          "Unit Test Suite"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 3,
-        "project_id": 4,
-        "phase_index": 3,
-        "week_label": "Week 5-6",
-        "title": "Phase 3: Frontend Integration & Interactive Dashboard",
-        "desc": "Connect user interface to backend services, implement reactive charts and analytics.",
-        "deliverables": [
-          "Responsive Web UI",
-          "Real-time State Sync",
-          "User Testing Report"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 4,
-        "project_id": 4,
-        "phase_index": 4,
-        "week_label": "Week 7-8",
-        "title": "Phase 4: Optimization, Documentation & Viva Presentation",
-        "desc": "End-to-end integration tests, load optimization, comprehensive report and presentation deck.",
-        "deliverables": [
-          "Project Report (IEEE format)",
-          "Live Demo Deployment",
-          "Viva Presentation Slides"
-        ],
-        "is_completed": false
-      }
-    ]
+    "progress": 0,
+    "created_at": "2026-09-27T17:00:00"
   },
-  "7": {
-    "student_id": 1,
-    "student_email": "",
-    "title": "Smart Attendance System using Facial Recognition",
-    "desc": "Automated classroom attendance platform utilizing MTCNN and FaceNet for high-accuracy real-time facial verification.",
-    "domain": "aiml",
+  "idea_dev_blockchain": {
+    "id": "idea_dev_blockchain",
+    "idea_id": "idea_dev_blockchain",
+    "student_id": "dev.malhotra@college.edu.in",
+    "student_email": "dev.malhotra@college.edu.in",
+    "title": "Blockchain Voting System",
+    "desc": "A decentralized, immutable electronic voting dApp with voter eligibility verification, smart contracts on Ethereum testnet, and audit trail.",
+    "domain": "blockchain",
     "team_size": "3",
-    "duration_days": 30,
+    "duration_days": 60,
     "duration_unit": "days",
-    "tech_ideas": "",
-    "refLink": "",
-    "features": [],
-    "uploaded_files": [],
-    "status": "pending_review",
-    "created_at": "2026-10-05T09:28:20.414088",
-    "id": 7,
-    "idea_id": 7,
-    "feasibility_score": 88,
+    "status": "reviewed",
+    "feasibility_score": 83,
     "tech_stack": [
-      "Python",
-      "FastAPI",
-      "PyTorch",
-      "OpenCV",
+      "Solidity",
+      "Hardhat",
+      "Ethers.js",
       "React"
     ],
+    "overall_risk": "Medium",
     "milestones_done": 0,
-    "milestones": [
-      {
-        "id": 1,
-        "project_id": 7,
-        "phase_index": 1,
-        "week_label": "Week 1-2",
-        "title": "Phase 1: Architecture, Problem Framing & Setup",
-        "desc": "System design, environment provisioning, dataset/API schema definition.",
-        "deliverables": [
-          "Architecture Diagram",
-          "API Specification",
-          "Git Repository Setup"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 2,
-        "project_id": 7,
-        "phase_index": 2,
-        "week_label": "Week 3-4",
-        "title": "Phase 2: Core Algorithm / Backend Development",
-        "desc": "Implement core algorithmic pipeline, data handlers, and REST API controllers.",
-        "deliverables": [
-          "Backend Endpoints",
-          "Data Processing Engine",
-          "Unit Test Suite"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 3,
-        "project_id": 7,
-        "phase_index": 3,
-        "week_label": "Week 5-6",
-        "title": "Phase 3: Frontend Integration & Interactive Dashboard",
-        "desc": "Connect user interface to backend services, implement reactive charts and analytics.",
-        "deliverables": [
-          "Responsive Web UI",
-          "Real-time State Sync",
-          "User Testing Report"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 4,
-        "project_id": 7,
-        "phase_index": 4,
-        "week_label": "Week 7-8",
-        "title": "Phase 4: Optimization, Documentation & Viva Presentation",
-        "desc": "End-to-end integration tests, load optimization, comprehensive report and presentation deck.",
-        "deliverables": [
-          "Project Report (IEEE format)",
-          "Live Demo Deployment",
-          "Viva Presentation Slides"
-        ],
-        "is_completed": false
-      }
-    ]
-  },
-  "8": {
-    "student_id": 1,
-    "student_email": "",
-    "title": "Smart Attendance System using Facial Recognition",
-    "desc": "Automated classroom attendance platform utilizing MTCNN and FaceNet for high-accuracy real-time facial verification.",
-    "domain": "aiml",
-    "team_size": "3",
-    "duration_days": 30,
-    "duration_unit": "days",
-    "tech_ideas": "",
-    "refLink": "",
-    "features": [],
-    "uploaded_files": [],
-    "status": "pending_review",
-    "created_at": "2026-10-05T09:29:25.708400",
-    "id": 8,
-    "idea_id": 8,
-    "feasibility_score": 88,
-    "tech_stack": [
-      "Python",
-      "FastAPI",
-      "PyTorch",
-      "OpenCV",
-      "React"
-    ],
-    "milestones_done": 0,
-    "milestones": [
-      {
-        "id": 1,
-        "project_id": 8,
-        "phase_index": 1,
-        "week_label": "Week 1-2",
-        "title": "Phase 1: Architecture, Problem Framing & Setup",
-        "desc": "System design, environment provisioning, dataset/API schema definition.",
-        "deliverables": [
-          "Architecture Diagram",
-          "API Specification",
-          "Git Repository Setup"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 2,
-        "project_id": 8,
-        "phase_index": 2,
-        "week_label": "Week 3-4",
-        "title": "Phase 2: Core Algorithm / Backend Development",
-        "desc": "Implement core algorithmic pipeline, data handlers, and REST API controllers.",
-        "deliverables": [
-          "Backend Endpoints",
-          "Data Processing Engine",
-          "Unit Test Suite"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 3,
-        "project_id": 8,
-        "phase_index": 3,
-        "week_label": "Week 5-6",
-        "title": "Phase 3: Frontend Integration & Interactive Dashboard",
-        "desc": "Connect user interface to backend services, implement reactive charts and analytics.",
-        "deliverables": [
-          "Responsive Web UI",
-          "Real-time State Sync",
-          "User Testing Report"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 4,
-        "project_id": 8,
-        "phase_index": 4,
-        "week_label": "Week 7-8",
-        "title": "Phase 4: Optimization, Documentation & Viva Presentation",
-        "desc": "End-to-end integration tests, load optimization, comprehensive report and presentation deck.",
-        "deliverables": [
-          "Project Report (IEEE format)",
-          "Live Demo Deployment",
-          "Viva Presentation Slides"
-        ],
-        "is_completed": false
-      }
-    ]
-  },
-  "11": {
-    "student_id": 1,
-    "student_email": "",
-    "title": "Smart Attendance System using Facial Recognition",
-    "desc": "Automated classroom attendance platform utilizing MTCNN and FaceNet for high-accuracy real-time facial verification.",
-    "domain": "aiml",
-    "team_size": "3",
-    "duration_days": 30,
-    "duration_unit": "days",
-    "tech_ideas": "",
-    "refLink": "",
-    "features": [],
-    "uploaded_files": [],
-    "status": "pending_review",
-    "created_at": "2026-10-05T09:32:59.330830",
-    "id": 11,
-    "idea_id": 11,
-    "feasibility_score": 88,
-    "tech_stack": [
-      "Python",
-      "FastAPI",
-      "PyTorch",
-      "OpenCV",
-      "React"
-    ],
-    "milestones_done": 0,
-    "milestones": [
-      {
-        "id": 1,
-        "project_id": 11,
-        "phase_index": 1,
-        "week_label": "Week 1-2",
-        "title": "Phase 1: Architecture, Problem Framing & Setup",
-        "desc": "System design, environment provisioning, dataset/API schema definition.",
-        "deliverables": [
-          "Architecture Diagram",
-          "API Specification",
-          "Git Repository Setup"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 2,
-        "project_id": 11,
-        "phase_index": 2,
-        "week_label": "Week 3-4",
-        "title": "Phase 2: Core Algorithm / Backend Development",
-        "desc": "Implement core algorithmic pipeline, data handlers, and REST API controllers.",
-        "deliverables": [
-          "Backend Endpoints",
-          "Data Processing Engine",
-          "Unit Test Suite"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 3,
-        "project_id": 11,
-        "phase_index": 3,
-        "week_label": "Week 5-6",
-        "title": "Phase 3: Frontend Integration & Interactive Dashboard",
-        "desc": "Connect user interface to backend services, implement reactive charts and analytics.",
-        "deliverables": [
-          "Responsive Web UI",
-          "Real-time State Sync",
-          "User Testing Report"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 4,
-        "project_id": 11,
-        "phase_index": 4,
-        "week_label": "Week 7-8",
-        "title": "Phase 4: Optimization, Documentation & Viva Presentation",
-        "desc": "End-to-end integration tests, load optimization, comprehensive report and presentation deck.",
-        "deliverables": [
-          "Project Report (IEEE format)",
-          "Live Demo Deployment",
-          "Viva Presentation Slides"
-        ],
-        "is_completed": false
-      }
-    ]
-  },
-  "14": {
-    "student_id": 1,
-    "student_email": "",
-    "title": "Smart Attendance System using Facial Recognition",
-    "desc": "Automated classroom attendance platform utilizing MTCNN and FaceNet for high-accuracy real-time facial verification.",
-    "domain": "aiml",
-    "team_size": "3",
-    "duration_days": 30,
-    "duration_unit": "days",
-    "tech_ideas": "",
-    "refLink": "",
-    "features": [],
-    "uploaded_files": [],
-    "status": "pending_review",
-    "created_at": "2026-10-05T09:49:37.210605",
-    "id": 14,
-    "idea_id": 14,
-    "feasibility_score": 88,
-    "tech_stack": [
-      "Python",
-      "FastAPI",
-      "PyTorch",
-      "OpenCV",
-      "React"
-    ],
-    "milestones_done": 0,
-    "milestones": [
-      {
-        "id": 1,
-        "project_id": 14,
-        "phase_index": 1,
-        "week_label": "Week 1-2",
-        "title": "Phase 1: Architecture, Problem Framing & Setup",
-        "desc": "System design, environment provisioning, dataset/API schema definition.",
-        "deliverables": [
-          "Architecture Diagram",
-          "API Specification",
-          "Git Repository Setup"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 2,
-        "project_id": 14,
-        "phase_index": 2,
-        "week_label": "Week 3-4",
-        "title": "Phase 2: Core Algorithm / Backend Development",
-        "desc": "Implement core algorithmic pipeline, data handlers, and REST API controllers.",
-        "deliverables": [
-          "Backend Endpoints",
-          "Data Processing Engine",
-          "Unit Test Suite"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 3,
-        "project_id": 14,
-        "phase_index": 3,
-        "week_label": "Week 5-6",
-        "title": "Phase 3: Frontend Integration & Interactive Dashboard",
-        "desc": "Connect user interface to backend services, implement reactive charts and analytics.",
-        "deliverables": [
-          "Responsive Web UI",
-          "Real-time State Sync",
-          "User Testing Report"
-        ],
-        "is_completed": false
-      },
-      {
-        "id": 4,
-        "project_id": 14,
-        "phase_index": 4,
-        "week_label": "Week 7-8",
-        "title": "Phase 4: Optimization, Documentation & Viva Presentation",
-        "desc": "End-to-end integration tests, load optimization, comprehensive report and presentation deck.",
-        "deliverables": [
-          "Project Report (IEEE format)",
-          "Live Demo Deployment",
-          "Viva Presentation Slides"
-        ],
-        "is_completed": false
-      }
-    ]
+    "progress": 0,
+    "created_at": "2026-09-28T18:00:00"
   }
 }
