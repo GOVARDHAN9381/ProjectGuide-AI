@@ -37,6 +37,15 @@ app.include_router(mentor.router, tags=["mentor"])
 app.include_router(chat.router, tags=["chat"])
 
 
+@app.on_event("startup")
+def startup_db_check():
+    status = check_db_connection()
+    if status.get("connected"):
+        print(f"[STARTUP SUCCESS] Connected to MongoDB Atlas ({status.get('database')})")
+    else:
+        print(f"[STARTUP WARNING] MongoDB Atlas connection status: {status.get('message')} - {status.get('error', '')}")
+
+
 @app.get("/health")
 @app.get("/api/health")
 def health_check():

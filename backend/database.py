@@ -29,6 +29,9 @@ except Exception:
 def get_database():
     global client, db
     if db is None:
+        if not MONGO_URI or "<username>" in MONGO_URI:
+            print("[DB CRITICAL] MONGO_URI is not configured or using default placeholder! Please set MONGO_URI in Render Dashboard -> Environment Variables.")
+
         try:
             import dns.resolver
             if dns.resolver.default_resolver is None:
@@ -42,24 +45,26 @@ def get_database():
             import certifi
             client = MongoClient(
                 MONGO_URI,
-                serverSelectionTimeoutMS=15000,
-                connectTimeoutMS=15000,
-                socketTimeoutMS=15000,
+                serverSelectionTimeoutMS=10000,
+                connectTimeoutMS=10000,
+                socketTimeoutMS=10000,
                 tlsCAFile=certifi.where()
             )
             client.admin.command('ping')
+            print(f"[DB SUCCESS] Connected to MongoDB Atlas ({DB_NAME})")
         except Exception as e1:
             try:
                 client = MongoClient(
                     MONGO_URI,
-                    serverSelectionTimeoutMS=15000,
-                    connectTimeoutMS=15000,
-                    socketTimeoutMS=15000,
+                    serverSelectionTimeoutMS=10000,
+                    connectTimeoutMS=10000,
+                    socketTimeoutMS=10000,
                     tlsAllowInvalidCertificates=True
                 )
                 client.admin.command('ping')
+                print(f"[DB SUCCESS] Connected to MongoDB Atlas (relaxed TLS) ({DB_NAME})")
             except Exception as e2:
-                print(f"[DB] Notice: Atlas connection error ({e1} / {e2}). Falling back to localhost.")
+                print(f"[DB ERROR] Could not connect to MongoDB Atlas ({e1} / {e2}). Ensure MONGO_URI is set in Render Environment Variables and MongoDB Atlas Network Access has 0.0.0.0/0 enabled.")
                 client = MongoClient(
                     "mongodb://localhost:27017",
                     serverSelectionTimeoutMS=2000
@@ -153,12 +158,33 @@ def is_mongo_available() -> bool:
 
 def check_db_connection():
     """Utility to test whether the MongoDB connection is alive."""
+    if not MONGO_URI or "<username>" in MONGO_URI:
+        return {
+            "connected": False,
+            "database": DB_NAME,
+            "error": "MONGO_URI is missing or contains placeholder '<username>'",
+            "message": "Set MONGO_URI in your Render Dashboard -> Environment Variables to your full MongoDB Atlas connection string."
+        }
+
     try:
         current_db = get_database()
         current_db.command("ping")
-        return {"connected": True, "database": DB_NAME, "message": "MongoDB Atlas connected successfully!"}
+        # Mask credentials for safe inspection
+        import re
+        masked_uri = re.sub(r":([^@]+)@", ":****@", MONGO_URI)
+        return {
+            "connected": True,
+            "database": DB_NAME,
+            "uri": masked_uri,
+            "message": "MongoDB Atlas connected successfully! Writes and updates are active."
+        }
     except (ConnectionFailure, ServerSelectionTimeoutError) as e:
-        return {"connected": False, "database": DB_NAME, "error": str(e), "message": "Failed to connect to MongoDB Atlas. Check your MONGO_URI in .env"}
+        return {
+            "connected": False,
+            "database": DB_NAME,
+            "error": str(e),
+            "message": "Connection timed out. In MongoDB Atlas, go to Network Access -> Add IP Address: 0.0.0.0/0 (Allow access from anywhere)."
+        }
     except Exception as e:
         return {"connected": False, "database": DB_NAME, "error": str(e), "message": "Unexpected error connecting to MongoDB"}
 
