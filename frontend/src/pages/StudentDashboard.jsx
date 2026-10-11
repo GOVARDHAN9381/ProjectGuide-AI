@@ -1,5 +1,27 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import {
+  Activity,
+  Compass,
+  Cpu,
+  TrendingUp,
+  AlertTriangle,
+  FileText,
+  Sparkles,
+  FolderGit2,
+  CheckCircle2,
+  ChevronRight,
+  Zap,
+  RefreshCw,
+  Plus,
+  Clock,
+  Bot,
+  ArrowRight,
+  ShieldCheck,
+  Calendar,
+  Layers,
+  Check
+} from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import ChatbotPanel from '../components/ChatbotPanel';
 import FeasibilityReportModal from '../components/FeasibilityReportModal';
@@ -46,21 +68,34 @@ import {
    SUB-COMPONENTS (tabs rendered inside the shell)
    ──────────────────────────────────────────────── */
 
-/** Compact header bar replacing the old Navbar */
+/** Compact executive header bar */
 function TopBar({ title, subtitle, actions }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '1rem 2rem', borderBottom: '1px solid var(--border)',
-      background: 'rgba(15, 17, 21, 0.85)', backdropFilter: 'blur(16px)',
+      padding: '1rem 2rem', borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+      background: 'rgba(9, 13, 23, 0.88)', backdropFilter: 'blur(20px)',
       position: 'sticky', top: 0, zIndex: 50,
-      boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+      boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
     }}>
       <div>
-        <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text)' }}>{title}</div>
-        {subtitle && <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 2 }}>{subtitle}</div>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h1 style={{ fontSize: '1.18rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.025em', margin: 0 }}>
+            {title}
+          </h1>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '2px 9px', borderRadius: 99,
+            background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)',
+            fontSize: '0.68rem', fontWeight: 700, color: '#34d399', letterSpacing: '0.03em', textTransform: 'uppercase'
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981' }}></span>
+            AI Active
+          </span>
+        </div>
+        {subtitle && <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: 3 }}>{subtitle}</div>}
       </div>
-      <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
         {actions}
       </div>
     </div>
@@ -68,33 +103,47 @@ function TopBar({ title, subtitle, actions }) {
 }
 
 /* ── Skeleton Loader ── */
-function Skeleton({ w = '100%', h = 16, r = 6, mb = 0 }) {
+function Skeleton({ w = '100%', h = 16, r = 8, mb = 0 }) {
   return (
     <div style={{
       width: w, height: h, borderRadius: r,
-      background: 'linear-gradient(90deg,rgba(255,255,255,0.05) 25%,rgba(255,255,255,0.1) 50%,rgba(255,255,255,0.05) 75%)',
+      background: 'linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%)',
       backgroundSize: '200% 100%',
       animation: 'shimmer 1.5s infinite', marginBottom: mb,
     }} />
   );
 }
 
-/* ── Stat Card ── */
-function StatCard({ icon, label, value, sub, color = 'var(--blue)', pct }) {
+/* ── Executive Stat Card ── */
+function StatCard({ icon, label, value, sub, color = '#6366f1', pct }) {
   return (
     <div style={{
-      background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 14, padding: '1.1rem 1.25rem',
-      boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+      background: 'rgba(17, 24, 40, 0.75)',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      borderRadius: 16, padding: '1.2rem 1.35rem',
+      boxShadow: '0 8px 24px -4px rgba(0,0,0,0.45)',
+      backdropFilter: 'blur(16px)',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
-        <span style={{ fontSize: '1.1rem' }}>{icon}</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+          {label}
+        </span>
+        <div style={{
+          width: 32, height: 32, borderRadius: 10,
+          background: `${color}18`, border: `1px solid ${color}35`,
+          color: color, display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          {icon}
+        </div>
       </div>
-      <div style={{ fontSize: '1.5rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</div>
-      {sub && <div style={{ fontSize: '0.72rem', color: 'var(--text-faint)', marginTop: 4 }}>{sub}</div>}
+      <div style={{ fontSize: '1.65rem', fontWeight: 800, color, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+        {value}
+      </div>
+      {sub && <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: 6, lineHeight: 1.35 }}>{sub}</div>}
       {pct !== undefined && (
-        <div style={{ marginTop: '0.6rem', background: 'var(--surface2)', borderRadius: 99, height: 5, overflow: 'hidden' }}>
+        <div style={{ marginTop: '0.8rem', background: 'rgba(255,255,255,0.06)', borderRadius: 99, height: 5, overflow: 'hidden' }}>
           <div style={{ width: `${pct}%`, height: '100%', borderRadius: 99, background: color, transition: 'width 0.6s' }} />
         </div>
       )}
@@ -119,70 +168,90 @@ function DashboardTab({ profile, projects, onOpenSubmitModal, onTabChange }) {
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   const cardStyle = {
-    background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.09)',
-    borderRadius: 14,
-    padding: '1.1rem 1.25rem',
+    background: 'rgba(17, 24, 40, 0.72)',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius: 16,
+    padding: '1.25rem 1.4rem',
+    backdropFilter: 'blur(16px)',
+    boxShadow: '0 8px 24px -4px rgba(0,0,0,0.4)',
+    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
   };
 
   const labelStyle = {
-    fontSize: '0.68rem', fontWeight: 700,
-    color: 'rgba(255,255,255,0.45)',
+    fontSize: '0.7rem', fontWeight: 700,
+    color: '#94a3b8',
     textTransform: 'uppercase', letterSpacing: '0.07em',
-    marginBottom: 6,
+    marginBottom: 8,
+    display: 'flex', alignItems: 'center', gap: 6,
   };
 
-  const valueStyle = (color = '#f1f5f9') => ({
-    fontSize: '1.65rem', fontWeight: 800, color, lineHeight: 1.1,
+  const valueStyle = (color = '#f8fafc') => ({
+    fontSize: '1.7rem', fontWeight: 800, color, lineHeight: 1.1, letterSpacing: '-0.025em',
   });
 
   const subStyle = {
-    fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', marginTop: 4,
+    fontSize: '0.74rem', color: '#64748b', marginTop: 5, lineHeight: 1.35,
   };
 
   // Risk colour
   const riskColor = {
-    Critical: '#ef4444', High: '#ef4444', Medium: '#f59e0b',
-    Low: '#22c55e', None: '#22c55e',
+    Critical: '#f43f5e', High: '#f43f5e', Medium: '#f59e0b',
+    Low: '#10b981', None: '#10b981',
   }[risk?.risk_level] || '#f59e0b';
 
   // Pipeline steps
   const pipeline = [
-    { icon: '📊', name: 'Feasibility', done: !!feas, score: feas?.overallScore ? `${feas.overallScore}%` : null },
-    { icon: '📐', name: 'Scope',        done: !!scope },
-    { icon: '🛠️', name: 'Tech Stack',  done: !!proj?.techStackReport },
-    { icon: '🗺️', name: 'Tracking',   done: !!track, score: track?.overallProgress ? `${track.overallProgress}%` : null },
-    { icon: '⚠️', name: 'Risk',        done: !!risk },
-    { icon: '📝', name: 'Reports',     done: !!(proj?.checkIns?.length) },
+    { icon: <Activity size={14} />,     name: 'Feasibility', done: !!feas, score: feas?.overallScore ? `${feas.overallScore}%` : null },
+    { icon: <Compass size={14} />,      name: 'Scope Check', done: !!scope },
+    { icon: <Cpu size={14} />,          name: 'Tech Stack',  done: !!proj?.techStackReport },
+    { icon: <TrendingUp size={14} />,   name: 'Sprint Track',done: !!track, score: track?.overallProgress ? `${track.overallProgress}%` : null },
+    { icon: <AlertTriangle size={14} />,name: 'Risk Audit',  done: !!risk },
+    { icon: <FileText size={14} />,     name: 'Viva Docs',   done: !!(proj?.checkIns?.length) },
   ];
   const doneCount = pipeline.filter(s => s.done).length;
   const pipelinePct = Math.round((doneCount / pipeline.length) * 100);
 
   return (
-    <div style={{ padding: '1.5rem 2rem' }}>
+    <div style={{ padding: '1.75rem 2.25rem' }}>
 
       {/* ── Welcome Header ── */}
-      <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+      <div style={{ marginBottom: '1.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.3px' }}>
+          <div style={{ fontSize: '1.55rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em' }}>
             {greeting}, {profile?.firstName || 'Student'} 👋
           </div>
-          <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.83rem', marginTop: 4 }}>
-            {[profile?.rollNo, profile?.branch, profile?.year].filter(Boolean).join(' · ') || 'Complete your profile to see details'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 5 }}>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '3px 10px', borderRadius: 99,
+              background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.28)',
+              fontSize: '0.73rem', fontWeight: 600, color: '#a5b4fc'
+            }}>
+              {[profile?.rollNo, profile?.branch, profile?.year].filter(Boolean).join(' • ') || 'Profile Active'}
+            </span>
+            <span style={{ fontSize: '0.73rem', color: '#64748b' }}>• B.Tech Final Year Mentorship</span>
           </div>
         </div>
-        {/* Project selector (only shown when multiple projects exist) */}
+
+        {/* Project selector */}
         {projects.length > 1 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-end' }}>
-            <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-              Viewing Project
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'flex-end' }}>
+            <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              CURRENT PROJECT
             </div>
             <select
               value={selIdx}
               onChange={e => setSelIdx(+e.target.value)}
-              style={{ background: '#ffffff', border: '1px solid #c7d2e0', borderRadius: 8, padding: '0.45rem 0.85rem', color: '#0f172a', fontSize: '0.83rem', cursor: 'pointer', maxWidth: 220 }}
+              style={{
+                background: 'rgba(21, 28, 46, 0.9)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: 10, padding: '0.55rem 1rem',
+                color: '#f8fafc', fontSize: '0.84rem', fontWeight: 600,
+                cursor: 'pointer', maxWidth: 260, outline: 'none',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+              }}
             >
-              {projects.map((p, i) => <option key={i} value={i}>{p.title?.slice(0, 35) || `Project ${i+1}`}</option>)}
+              {projects.map((p, i) => <option key={i} value={i} style={{ background: '#0f1422', color: '#f8fafc' }}>{p.title?.slice(0, 35) || `Project ${i+1}`}</option>)}
             </select>
           </div>
         )}
@@ -191,23 +260,34 @@ function DashboardTab({ profile, projects, onOpenSubmitModal, onTabChange }) {
       {/* ── No Project State ── */}
       {projects.length === 0 && (
         <div style={{
-          textAlign: 'center', padding: '3rem 2rem',
-          background: 'rgba(79,70,229,0.06)', border: '1.5px dashed rgba(79,70,229,0.3)',
-          borderRadius: 16, marginBottom: '1.5rem',
+          textAlign: 'center', padding: '3.5rem 2rem',
+          background: 'rgba(99, 102, 241, 0.05)', border: '1.5px dashed rgba(99, 102, 241, 0.3)',
+          borderRadius: 20, marginBottom: '2rem',
+          boxShadow: '0 12px 32px rgba(0,0,0,0.3)',
         }}>
-          <div style={{ fontSize: '3rem', marginBottom: 12 }}>🚀</div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f1f5f9', marginBottom: 6 }}>
-            No project submitted yet
+          <div style={{
+            width: 60, height: 60, borderRadius: 16,
+            background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fff', marginBottom: 16, boxShadow: '0 0 24px rgba(99, 102, 241, 0.4)'
+          }}>
+            <Sparkles size={28} />
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.45)', marginBottom: '1.25rem' }}>
-            Submit your rough idea — the AI pipeline will build a complete project blueprint automatically.
+          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc', marginBottom: 8, letterSpacing: '-0.02em' }}>
+            No Project Proposal Submitted Yet
+          </div>
+          <div style={{ fontSize: '0.88rem', color: '#94a3b8', maxWidth: 480, margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
+            Submit your rough abstract or title — our multi-agent AI pipeline will instantly evaluate feasibility, generate your IEEE scope, and schedule your semester sprints.
           </div>
           <button onClick={onOpenSubmitModal} style={{
-            padding: '0.7rem 1.75rem', borderRadius: 10, border: 'none',
+            padding: '0.75rem 1.8rem', borderRadius: 12, border: 'none',
             background: 'linear-gradient(135deg,#4f46e5,#7c3aed)', color: '#fff',
             fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer',
+            boxShadow: '0 4px 18px rgba(99, 102, 241, 0.45)',
+            display: 'inline-flex', alignItems: 'center', gap: 8
           }}>
-            💡 Submit Your First Idea
+            <Sparkles size={16} />
+            <span>Submit Your Project Idea</span>
           </button>
         </div>
       )}
@@ -215,95 +295,107 @@ function DashboardTab({ profile, projects, onOpenSubmitModal, onTabChange }) {
       {/* ── Stat Cards ── */}
       {proj && (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1.1rem', marginBottom: '1.75rem' }}>
 
             {/* Feasibility Score */}
             <div style={cardStyle}>
-              <div style={labelStyle}>📊 Feasibility Score</div>
-              <div style={valueStyle(feas ? '#3b82f6' : 'rgba(255,255,255,0.3)')}>
+              <div style={labelStyle}>
+                <Activity size={14} style={{ color: '#38bdf8' }} />
+                <span>Feasibility Score</span>
+              </div>
+              <div style={valueStyle(feas ? '#38bdf8' : 'rgba(255,255,255,0.3)')}>
                 {feas ? `${feas.overallScore}%` : '—'}
               </div>
               <div style={subStyle}>{feas?.verdict || 'Run Feasibility Agent'}</div>
               {feas && (
-                <div style={{ marginTop: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, height: 4, overflow: 'hidden' }}>
-                  <div style={{ width: `${feas.overallScore}%`, height: '100%', background: '#3b82f6', borderRadius: 99, transition: 'width 0.6s' }} />
+                <div style={{ marginTop: 10, background: 'rgba(255,255,255,0.06)', borderRadius: 99, height: 5, overflow: 'hidden' }}>
+                  <div style={{ width: `${feas.overallScore}%`, height: '100%', background: 'linear-gradient(90deg, #38bdf8, #6366f1)', borderRadius: 99, transition: 'width 0.6s' }} />
                 </div>
               )}
             </div>
 
             {/* Total Projects */}
             <div style={cardStyle}>
-              <div style={labelStyle}>📁 Total Projects</div>
-              <div style={valueStyle('#8b5cf6')}>{projects.length}</div>
+              <div style={labelStyle}>
+                <FolderGit2 size={14} style={{ color: '#818cf8' }} />
+                <span>Repository Projects</span>
+              </div>
+              <div style={valueStyle('#818cf8')}>{projects.length}</div>
               <div style={subStyle}>
-                {projects.length === 1 ? '1 project active' : `${projects.length} projects submitted`}
+                {projects.length === 1 ? '1 active proposal' : `${projects.length} tracked projects`}
               </div>
             </div>
 
             {/* Risk Level */}
             <div style={cardStyle}>
-              <div style={labelStyle}>⚠️ Risk Level</div>
+              <div style={labelStyle}>
+                <AlertTriangle size={14} style={{ color: riskColor }} />
+                <span>Risk Assessment</span>
+              </div>
               <div style={valueStyle(risk ? riskColor : 'rgba(255,255,255,0.3)')}>
                 {risk?.risk_level || '—'}
               </div>
               <div style={subStyle}>
-                {risk?.top_blocker ? risk.top_blocker.slice(0, 35) + (risk.top_blocker.length > 35 ? '…' : '') : 'Run Risk Assessment Agent'}
+                {risk?.top_blocker ? risk.top_blocker.slice(0, 35) + (risk.top_blocker.length > 35 ? '…' : '') : 'Risk Matrix Active'}
               </div>
             </div>
 
             {/* Current Progress */}
             <div style={cardStyle}>
-              <div style={labelStyle}>📈 Current Progress</div>
-              <div style={valueStyle(latestCI ? '#22c55e' : 'rgba(255,255,255,0.3)')}>
+              <div style={labelStyle}>
+                <TrendingUp size={14} style={{ color: '#34d399' }} />
+                <span>Semester Completion</span>
+              </div>
+              <div style={valueStyle(latestCI ? '#34d399' : 'rgba(255,255,255,0.3)')}>
                 {latestCI ? `${latestCI.progress_pct}%` : '—'}
               </div>
               <div style={subStyle}>
-                {latestCI ? `Week ${latestCI.week_number} check-in` : 'No check-in submitted yet'}
+                {latestCI ? `Week ${latestCI.week_number} check-in signed` : 'Pending milestone sync'}
               </div>
               {latestCI && (
-                <div style={{ marginTop: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, height: 4, overflow: 'hidden' }}>
-                  <div style={{ width: `${latestCI.progress_pct}%`, height: '100%', background: '#22c55e', borderRadius: 99, transition: 'width 0.6s' }} />
+                <div style={{ marginTop: 10, background: 'rgba(255,255,255,0.06)', borderRadius: 99, height: 5, overflow: 'hidden' }}>
+                  <div style={{ width: `${latestCI.progress_pct}%`, height: '100%', background: 'linear-gradient(90deg, #10b981, #34d399)', borderRadius: 99, transition: 'width 0.6s' }} />
                 </div>
               )}
             </div>
           </div>
 
           {/* ── AI Agent Pipeline Status ── */}
-          <div style={{ ...cardStyle, marginBottom: '1.5rem', padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ ...cardStyle, marginBottom: '1.75rem', padding: '1.4rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 10 }}>
               <div>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-                  AI Agent Pipeline
+                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  INTELLIGENCE PIPELINE STATUS
                 </div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f1f5f9', marginTop: 2 }}>
-                  {proj.title?.slice(0, 50)}{proj.title?.length > 50 ? '…' : ''}
+                <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#f8fafc', marginTop: 3 }}>
+                  {proj.title?.slice(0, 55)}{proj.title?.length > 55 ? '…' : ''}
                 </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ fontSize: '0.75rem', color: doneCount === pipeline.length ? '#22c55e' : 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
-                  {doneCount}/{pipeline.length} completed
-                </div>
-                <div style={{ width: 80, height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
-                  <div style={{ width: `${pipelinePct}%`, height: '100%', background: doneCount === pipeline.length ? '#22c55e' : '#3b82f6', borderRadius: 99, transition: 'width 0.6s' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: '0.78rem', color: doneCount === pipeline.length ? '#34d399' : '#94a3b8', fontWeight: 700 }}>
+                  {doneCount} of {pipeline.length} Modules Verified
+                </span>
+                <div style={{ width: 100, height: 7, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+                  <div style={{ width: `${pipelinePct}%`, height: '100%', background: doneCount === pipeline.length ? '#10b981' : 'linear-gradient(90deg, #6366f1, #38bdf8)', borderRadius: 99, transition: 'width 0.6s' }} />
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
               {pipeline.map((step, i) => (
                 <div key={i} style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '0.45rem 0.85rem',
-                  background: step.done ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${step.done ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)'}`,
-                  borderRadius: 99, fontSize: '0.75rem',
-                  color: step.done ? '#4ade80' : 'rgba(255,255,255,0.4)',
+                  display: 'flex', alignItems: 'center', gap: 7,
+                  padding: '0.5rem 0.95rem',
+                  background: step.done ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${step.done ? 'rgba(16, 185, 129, 0.35)' : 'rgba(255,255,255,0.08)'}`,
+                  borderRadius: 12, fontSize: '0.78rem',
+                  color: step.done ? '#6ee7b7' : '#64748b',
                   fontWeight: 600,
+                  transition: 'all 0.2s',
                 }}>
                   <span>{step.icon}</span>
                   <span>{step.name}</span>
-                  {step.done && <span style={{ color: '#4ade80' }}>✓</span>}
-                  {step.score && <span style={{ color: '#60a5fa', fontWeight: 700 }}>{step.score}</span>}
-                  {!step.done && <span style={{ opacity: 0.4 }}>○</span>}
+                  {step.done && <Check size={13} style={{ color: '#10b981', strokeWidth: 3 }} />}
+                  {step.score && <span style={{ color: '#38bdf8', fontWeight: 800, marginLeft: 2 }}>{step.score}</span>}
                 </div>
               ))}
             </div>
@@ -312,28 +404,35 @@ function DashboardTab({ profile, projects, onOpenSubmitModal, onTabChange }) {
       )}
 
       {/* ── Quick Actions ── */}
-      <div style={{ marginBottom: '0.5rem' }}>
-        <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
-          Quick Actions
+      <div>
+        <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.85rem' }}>
+          WORKBENCH QUICK ACTIONS
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(155px, 1fr))', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem' }}>
           {[
-            { icon: '💡', label: 'Submit Idea',     desc: 'Start a new project',     action: onOpenSubmitModal,              color: '#4f46e5', bg: 'rgba(79,70,229,0.12)',  border: 'rgba(79,70,229,0.25)' },
-            { icon: '🤖', label: 'AI Mentor Chat',  desc: 'Get personalised guidance', action: () => onTabChange('mentor'),  color: '#7c3aed', bg: 'rgba(124,58,237,0.12)', border: 'rgba(124,58,237,0.25)' },
-            { icon: '📈', label: 'Weekly Check-in', desc: 'Update your progress',     action: () => onTabChange('progress'), color: '#16a34a', bg: 'rgba(22,163,74,0.12)',  border: 'rgba(22,163,74,0.25)' },
-            { icon: '📋', label: 'Generate Report', desc: 'Download documents',       action: () => onTabChange('reports'),  color: '#d97706', bg: 'rgba(217,119,6,0.12)',  border: 'rgba(217,119,6,0.25)' },
+            { icon: <Sparkles size={20} />,   label: 'Submit Idea',     desc: 'AI Blueprint generator', action: onOpenSubmitModal,              color: '#6366f1', bg: 'rgba(99,102,241,0.12)', border: 'rgba(99,102,241,0.3)' },
+            { icon: <Bot size={20} />,        label: 'AI Mentor Chat',  desc: '24/7 Context guidance', action: () => onTabChange('mentor'),  color: '#a855f7', bg: 'rgba(168,85,247,0.12)', border: 'rgba(168,85,247,0.3)' },
+            { icon: <TrendingUp size={20} />, label: 'Milestone Sync',  desc: 'Log weekly progress',   action: () => onTabChange('progress'), color: '#10b981', bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.3)' },
+            { icon: <FileText size={20} />,   label: 'Documentation',   desc: 'IEEE synopsis & viva',  action: () => onTabChange('reports'),  color: '#06b6d4', bg: 'rgba(6,182,212,0.12)', border: 'rgba(6,182,212,0.3)' },
           ].map((qa, i) => (
             <button key={i} onClick={qa.action} style={{
               background: qa.bg, border: `1px solid ${qa.border}`,
-              borderRadius: 12, padding: '1rem', cursor: 'pointer', textAlign: 'left',
-              transition: 'all 0.18s', color: 'inherit',
+              borderRadius: 14, padding: '1.1rem', cursor: 'pointer', textAlign: 'left',
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)', color: 'inherit',
+              display: 'flex', flexDirection: 'column', gap: 6
             }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 6px 20px ${qa.color}30`; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = `0 8px 24px ${qa.color}25`;
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
             >
-              <div style={{ fontSize: '1.3rem', marginBottom: 8 }}>{qa.icon}</div>
-              <div style={{ fontSize: '0.83rem', fontWeight: 700, color: '#f1f5f9', marginBottom: 2 }}>{qa.label}</div>
-              <div style={{ fontSize: '0.71rem', color: 'rgba(255,255,255,0.4)' }}>{qa.desc}</div>
+              <div style={{ color: qa.color, marginBottom: 2 }}>{qa.icon}</div>
+              <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc' }}>{qa.label}</div>
+              <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>{qa.desc}</div>
             </button>
           ))}
         </div>

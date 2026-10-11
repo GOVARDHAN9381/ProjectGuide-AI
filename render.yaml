@@ -1,5 +1,5 @@
 services:
-  # ─── 1. FastAPI Python Backend Web Service ───────────────────────────────────
+  # ─── FastAPI Python Backend Web Service on Render ─────────────────────────────
   - type: web
     name: projectguide-ai-backend
     runtime: python
@@ -8,7 +8,7 @@ services:
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
-    healthCheckPath: /
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
@@ -21,19 +21,3 @@ services:
       - key: GROQ_MODEL
         value: groq/llama-3.3-70b-versatile
 
-  # ─── 2. React + Vite Frontend Static Site ─────────────────────────────────────
-  - type: web
-    name: projectguide-ai-frontend
-    runtime: static
-    region: oregon
-    plan: free
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: VITE_API_BASE
-        sync: false

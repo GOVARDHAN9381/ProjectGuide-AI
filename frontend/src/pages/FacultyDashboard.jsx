@@ -1,5 +1,25 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Users,
+  Rocket,
+  Bell,
+  BarChart3,
+  CheckCircle2,
+  RefreshCw,
+  FileSpreadsheet,
+  Search,
+  Filter,
+  Megaphone,
+  ChevronRight,
+  Eye,
+  Check,
+  MessageSquare,
+  Download,
+  AlertCircle,
+  Clock,
+  Sparkles
+} from 'lucide-react';
 import Navbar from '../components/Navbar';
 import ChatbotPanel from '../components/ChatbotPanel';
 import FeasibilityReportModal from '../components/FeasibilityReportModal';
@@ -458,16 +478,26 @@ export default function FacultyDashboard() {
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
-              <button className="fac-btn" onClick={loadData} style={{ ...S.btn, ...S.btnSecondary }}>
-                🔄 Refresh
+            <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <button className="fac-btn" onClick={loadData} style={{
+                ...S.btn, ...S.btnSecondary, display: 'inline-flex', alignItems: 'center', gap: 6
+              }}>
+                <RefreshCw size={14} />
+                <span>Refresh</span>
               </button>
-              <button className="fac-btn" onClick={handleExport} style={{ ...S.btn, ...S.btnSecondary }}>
-                📊 Export CSV
+              <button className="fac-btn" onClick={handleExport} style={{
+                ...S.btn, ...S.btnSecondary, display: 'inline-flex', alignItems: 'center', gap: 6
+              }}>
+                <Download size={14} />
+                <span>Export CSV</span>
               </button>
               <button className="fac-btn" onClick={() => { setFilterStatus('review'); setActiveTab('students'); }}
-                style={{ ...S.btn, ...S.btnPrimary }}>
-                🔔 Pending Reviews ({reviewCount})
+                style={{
+                  ...S.btn, ...S.btnPrimary, display: 'inline-flex', alignItems: 'center', gap: 6,
+                  boxShadow: '0 4px 16px rgba(99, 102, 241, 0.4)'
+                }}>
+                <Bell size={14} />
+                <span>Pending Reviews ({reviewCount})</span>
               </button>
             </div>
           </div>
@@ -475,25 +505,38 @@ export default function FacultyDashboard() {
           {/* ── Stats Grid ── */}
           <div style={{ ...S.statsGrid, animation: 'fadeUp 0.45s ease' }}>
             {[
-              { label: 'Total Students', value: totalCount, sub: 'enrolled this semester', color: '#f1f5f9', icon: '👥', filter: 'all' },
-              { label: 'Active Projects', value: activeCount, sub: 'in progress', color: '#22c55e', icon: '🚀', filter: 'active' },
-              { label: 'Pending Review', value: reviewCount, sub: 'need your attention', color: '#f59e0b', icon: '🔔', filter: 'review' },
-              { label: 'Avg Feasibility', value: `${avgFeas}%`, sub: 'across all projects', color: '#3b82f6', icon: '📊', pct: avgFeas, filter: null },
-              { label: 'Submitted / Done', value: submittedCount, sub: 'project(s)', color: '#8b5cf6', icon: '✅', filter: 'submitted' },
+              { label: 'Total Students', value: totalCount, sub: 'enrolled this semester', color: '#f8fafc', icon: <Users size={18} />, filter: 'all' },
+              { label: 'Active Projects', value: activeCount, sub: 'in progress', color: '#34d399', icon: <Rocket size={18} />, filter: 'active' },
+              { label: 'Pending Review', value: reviewCount, sub: 'need your attention', color: '#fbbf24', icon: <Bell size={18} />, filter: 'review' },
+              { label: 'Avg Feasibility', value: `${avgFeas}%`, sub: 'across all projects', color: '#38bdf8', icon: <BarChart3 size={18} />, pct: avgFeas, filter: null },
+              { label: 'Submitted / Done', value: submittedCount, sub: 'project(s)', color: '#c084fc', icon: <CheckCircle2 size={18} />, filter: 'submitted' },
             ].map((sc, i) => (
               <div key={i} className="stat-card-fac" onClick={() => sc.filter && setFilterStatus(sc.filter)}
                 style={{
                   ...S.statCard, animation: `fadeUp ${0.45 + i * 0.05}s ease`,
-                  borderColor: (filterStatus === sc.filter) ? 'rgba(59,130,246,0.4)' : 'rgba(255,255,255,0.08)',
+                  background: 'rgba(17, 24, 40, 0.75)',
+                  backdropFilter: 'blur(16px)',
+                  borderColor: (filterStatus === sc.filter) ? 'rgba(99,102,241,0.5)' : 'rgba(255,255,255,0.08)',
+                  boxShadow: '0 8px 24px -4px rgba(0,0,0,0.45)',
+                  borderRadius: 16,
+                  padding: '1.2rem',
                 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.4)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{sc.label}</span>
-                  <span style={{ fontSize: '1.1rem' }}>{sc.icon}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{sc.label}</span>
+                  <div style={{
+                    width: 32, height: 32, borderRadius: 9,
+                    background: `${sc.color === '#f8fafc' ? '#6366f1' : sc.color}18`,
+                    border: `1px solid ${sc.color === '#f8fafc' ? '#6366f1' : sc.color}35`,
+                    color: sc.color === '#f8fafc' ? '#818cf8' : sc.color,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    {sc.icon}
+                  </div>
                 </div>
-                <div style={{ fontSize: '1.75rem', fontWeight: 900, color: sc.color, lineHeight: 1 }}>{sc.value}</div>
-                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', marginTop: 5 }}>{sc.sub}</div>
+                <div style={{ fontSize: '1.75rem', fontWeight: 900, color: sc.color, lineHeight: 1, letterSpacing: '-0.02em' }}>{sc.value}</div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: 6 }}>{sc.sub}</div>
                 {sc.pct !== undefined && (
-                  <div style={{ marginTop: 8, background: 'rgba(255,255,255,0.07)', borderRadius: 99, height: 4, overflow: 'hidden' }}>
+                  <div style={{ marginTop: 10, background: 'rgba(255,255,255,0.06)', borderRadius: 99, height: 4, overflow: 'hidden' }}>
                     <div style={{ width: `${sc.pct}%`, height: '100%', background: sc.color, borderRadius: 99, transition: 'width 0.6s' }} />
                   </div>
                 )}
@@ -505,13 +548,13 @@ export default function FacultyDashboard() {
           <div style={{ ...S.layout, animation: 'fadeUp 0.5s ease' }}>
 
             {/* ── Left: Main Panel ── */}
-            <div style={S.mainPanel}>
+            <div style={{ ...S.mainPanel, background: 'rgba(17, 24, 40, 0.75)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 18 }}>
               {/* Tab bar */}
               <div style={S.tabBar}>
                 {[
-                  { id: 'students', label: 'Students', icon: '👥' },
-                  { id: 'analytics', label: 'Analytics', icon: '📈' },
-                  { id: 'broadcast', label: 'Broadcast', icon: '📢' },
+                  { id: 'students', label: 'Students', icon: <Users size={15} /> },
+                  { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={15} /> },
+                  { id: 'broadcast', label: 'Broadcast', icon: <Megaphone size={15} /> },
                 ].map(t => <TabBtn key={t.id} {...t} active={activeTab === t.id} onClick={setActiveTab} />)}
               </div>
 

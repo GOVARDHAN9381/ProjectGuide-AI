@@ -1,5 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Sparkles,
+  Mail,
+  Lock,
+  User,
+  Hash,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ShieldCheck,
+  Cpu,
+  GitBranch,
+  Compass,
+  GraduationCap,
+  Briefcase,
+  CheckCircle2,
+  Zap,
+  Info,
+  AlertCircle
+} from 'lucide-react';
 import { Store } from '../utils/store';
 import { showToast } from '../utils/toast';
 import { loginUser, registerUser } from '../utils/api';
@@ -12,6 +32,7 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [rollNo, setRollNo] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [authError, setAuthError] = useState('');
@@ -23,7 +44,10 @@ export default function Auth() {
         navigate('/faculty-dashboard');
       } else {
         const profile = Store.get('profile') || {};
-        const hasSkills = Boolean(current.hasCompletedProfile || (profile.skills && Object.keys(profile.skills).length > 0));
+        const hasSkills = Boolean(
+          current.hasCompletedProfile ||
+          (profile.skills && Object.keys(profile.skills).length > 0)
+        );
         if (!hasSkills) {
           navigate('/profile');
         } else {
@@ -34,17 +58,20 @@ export default function Auth() {
   }, [navigate]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!email || !password) {
-      showToast('Please fill all required fields.', '⚠️');
+      showToast('Please fill in all required fields.', '⚠️');
+      setAuthError('Please fill in all required fields.');
       return;
     }
     if (password.length < 6) {
       setPasswordError(true);
       showToast('Password must be at least 6 characters.', '⚠️');
+      setAuthError('Password must be at least 6 characters.');
       return;
     }
     setPasswordError(false);
+    setAuthError('');
     setLoading(true);
 
     const cleanEmail = email.trim().toLowerCase();
@@ -54,8 +81,8 @@ export default function Auth() {
         const resp = await loginUser({ email: cleanEmail, password, role });
         const user = resp.user || {};
         const hasCompleted = Boolean(
-          resp.hasCompletedProfile || 
-          user.hasCompletedProfile || 
+          resp.hasCompletedProfile ||
+          user.hasCompletedProfile ||
           (user.skills && Object.keys(user.skills).length > 0)
         );
 
@@ -94,13 +121,11 @@ export default function Auth() {
           if (authUser.role === 'faculty') {
             navigate('/faculty-dashboard');
           } else if (hasCompleted) {
-            // Already registered & gave skills/interests -> directly go to Dashboard!
             navigate('/dashboard');
           } else {
-            // Student has not completed profile yet
             navigate('/profile');
           }
-        }, 600);
+        }, 500);
 
       } catch (err) {
         setLoading(false);
@@ -110,7 +135,7 @@ export default function Auth() {
         if (rawMsg.includes('404') || rawMsg.toLowerCase().includes('not found') || rawMsg.toLowerCase().includes('account not found')) {
           displayMsg = "Account not found. Please click 'Create Account' to register first.";
         } else if (rawMsg.includes('401') || rawMsg.toLowerCase().includes('incorrect password')) {
-          displayMsg = "Incorrect password. Please try again.";
+          displayMsg = "Incorrect password. Please verify and try again.";
         } else {
           try {
             const jsonPart = rawMsg.slice(rawMsg.indexOf('{'));
@@ -182,7 +207,7 @@ export default function Auth() {
           } else {
             navigate('/profile');
           }
-        }, 600);
+        }, 500);
 
       } catch (err) {
         setLoading(false);
@@ -207,22 +232,22 @@ export default function Auth() {
     }
   };
 
-  const fillDemoStudent = () => {
-    setEmail('arjun.sharma@college.edu.in');
-    setPassword('password123');
-    setRole('student');
-    setMode('login');
-    setAuthError('');
-    showToast('Loaded Student demo credentials', '👨‍🎓');
-  };
-
-  const fillDemoFaculty = () => {
-    setEmail('prof.verma@college.edu.in');
-    setPassword('faculty123');
-    setRole('faculty');
-    setMode('login');
-    setAuthError('');
-    showToast('Loaded Faculty demo credentials', '👨‍🏫');
+  const handleQuickDemo = (demoRole) => {
+    if (demoRole === 'student') {
+      setEmail('arjun.sharma@college.edu.in');
+      setPassword('password123');
+      setRole('student');
+      setMode('login');
+      setAuthError('');
+      showToast('Loaded Demo Student profile (Arjun Sharma)', '👨‍🎓');
+    } else {
+      setEmail('prof.verma@college.edu.in');
+      setPassword('faculty123');
+      setRole('faculty');
+      setMode('login');
+      setAuthError('');
+      showToast('Loaded Demo Faculty profile (Prof. Verma)', '👨‍🏫');
+    }
   };
 
   const isReg = mode === 'register';
@@ -235,86 +260,164 @@ export default function Auth() {
       <main className="auth-page">
         <div className="auth-split animate-fade-up">
           
-          {/* Left Panel */}
+          {/* Left Hero Panel */}
           <div className="auth-left">
             <div className="auth-brand">
-              <div className="auth-brand-icon">🎓</div>
-              <span>ProjectGuide<span style={{ color: '#60a5fa' }}>-AI</span></span>
+              <div className="auth-brand-icon">
+                <Sparkles size={20} color="#fff" />
+              </div>
+              <span className="auth-brand-title">
+                ProjectGuide<span className="brand-dot">-AI</span>
+              </span>
             </div>
 
             <div className="auth-left-body">
+              <div className="auth-badge-pill">
+                <span className="badge-pulse"></span>
+                <span>Autonomous Academic Intelligence Engine</span>
+              </div>
+
               <h1 className="auth-left-title">
-                Your AI-Powered<br />Project Guide
+                Supercharge Your Final Year Project with AI.
               </h1>
+              
               <p className="auth-left-desc">
-                Submit your rough idea, get an instant blueprint, and follow a guided milestone roadmap.
+                From initial idea validation to milestone tracking and viva defense documentation — mentored continuously by domain AI.
               </p>
-              <ul className="auth-feature-list">
-                <li>Instant feasibility check &amp; scope analysis</li>
-                <li>AI-recommended tech stack for your skills</li>
-                <li>Milestone roadmap generated based on your timeline</li>
-                <li>Conversational mentor — voice &amp; text support</li>
-                <li>Faculty review &amp; live progress tracking</li>
-              </ul>
+
+              <div className="auth-feature-cards">
+                <div className="auth-feature-item">
+                  <div className="auth-feature-icon">
+                    <Cpu size={16} />
+                  </div>
+                  <div>
+                    <div className="auth-feature-name">Instant Feasibility Scoring</div>
+                    <div className="auth-feature-sub">Deep tech viability, scope check &amp; API validation in seconds.</div>
+                  </div>
+                </div>
+
+                <div className="auth-feature-item">
+                  <div className="auth-feature-icon">
+                    <GitBranch size={16} />
+                  </div>
+                  <div>
+                    <div className="auth-feature-name">Automated Sprint Roadmap</div>
+                    <div className="auth-feature-sub">Milestones calibrated to your college submission calendar.</div>
+                  </div>
+                </div>
+
+                <div className="auth-feature-item">
+                  <div className="auth-feature-icon">
+                    <Compass size={16} />
+                  </div>
+                  <div>
+                    <div className="auth-feature-name">24/7 Contextual AI Mentor</div>
+                    <div className="auth-feature-sub">Interactive code guidance, architectural patterns &amp; risk matrix.</div>
+                  </div>
+                </div>
+
+                <div className="auth-feature-item">
+                  <div className="auth-feature-icon">
+                    <ShieldCheck size={16} />
+                  </div>
+                  <div>
+                    <div className="auth-feature-name">Faculty Review &amp; Signoff</div>
+                    <div className="auth-feature-sub">Seamless audit trails, automated IEEE synopsis &amp; defense reports.</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats Bar */}
+              <div className="auth-stats-bar">
+                <div className="auth-stat-col">
+                  <div className="auth-stat-num">98.5%</div>
+                  <div className="auth-stat-lbl">Viva Pass Rate</div>
+                </div>
+                <div className="auth-stat-div"></div>
+                <div className="auth-stat-col">
+                  <div className="auth-stat-num">12+</div>
+                  <div className="auth-stat-lbl">Engg Domains</div>
+                </div>
+                <div className="auth-stat-div"></div>
+                <div className="auth-stat-col">
+                  <div className="auth-stat-num">24/7</div>
+                  <div className="auth-stat-lbl">Active Mentoring</div>
+                </div>
+              </div>
             </div>
 
             <div className="auth-left-footer">
-              © 2026 ProjectGuide-AI — Infosys Project
+              <span className="footer-dot"></span>
+              <span>ProjectGuide-AI Academic Suite • Infosys Project</span>
             </div>
           </div>
 
-          {/* Right Panel */}
+          {/* Right Form Panel */}
           <div className="auth-right">
             <div className="auth-form-header">
-              <h2 className="auth-form-title">{isReg ? 'Create Account' : 'Welcome Back'}</h2>
+              <h2 className="auth-form-title">
+                {isReg ? 'Create Researcher Account' : 'Welcome to Workspace'}
+              </h2>
               <p className="auth-form-sub">
-                {isReg ? 'Set up your account to start AI project mentoring' : 'Sign in to your account to continue'}
+                {isReg 
+                  ? 'Set up your credentials to begin guided AI project lifecycle'
+                  : 'Enter your credentials to access your dashboard and project plan'}
               </p>
             </div>
 
-            <div className="auth-tabs">
+            {/* Mode Switcher Tabs */}
+            <div className="auth-segmented-switch">
               <button 
                 type="button"
-                className={`auth-tab ${!isReg ? 'active' : ''}`} 
+                className={`auth-segment-btn ${!isReg ? 'active' : ''}`} 
                 onClick={() => { setMode('login'); setAuthError(''); }}
               >
                 Sign In
               </button>
               <button 
                 type="button"
-                className={`auth-tab ${isReg ? 'active' : ''}`} 
+                className={`auth-segment-btn ${isReg ? 'active' : ''}`} 
                 onClick={() => { setMode('register'); setAuthError(''); }}
               >
                 Create Account
               </button>
             </div>
 
-            <div className="role-pills">
-              <label className={`role-pill ${role === 'student' ? 'selected' : ''}`}>
-                <input 
-                  type="radio" 
-                  name="userRole" 
-                  value="student" 
-                  checked={role === 'student'} 
-                  onChange={() => { setRole('student'); setAuthError(''); }} 
-                />
-                👨‍🎓 Student
-              </label>
-              <label className={`role-pill ${role === 'faculty' ? 'selected' : ''}`}>
-                <input 
-                  type="radio" 
-                  name="userRole" 
-                  value="faculty" 
-                  checked={role === 'faculty'} 
-                  onChange={() => { setRole('faculty'); setAuthError(''); }} 
-                />
-                👨‍🏫 Faculty
-              </label>
+            {/* Role Selection Cards */}
+            <div className="role-selector-label">SELECT YOUR PLATFORM ROLE</div>
+            <div className="role-cards-grid">
+              <div 
+                className={`role-select-card ${role === 'student' ? 'selected' : ''}`}
+                onClick={() => { setRole('student'); setAuthError(''); }}
+              >
+                <div className="role-card-header">
+                  <div className="role-card-icon student">
+                    <GraduationCap size={18} />
+                  </div>
+                  {role === 'student' && <CheckCircle2 size={16} className="role-check-icon" />}
+                </div>
+                <div className="role-card-title">Student Researcher</div>
+                <div className="role-card-desc">Submit ideas, generate sprint plans &amp; chat with AI</div>
+              </div>
+
+              <div 
+                className={`role-select-card ${role === 'faculty' ? 'selected' : ''}`}
+                onClick={() => { setRole('faculty'); setAuthError(''); }}
+              >
+                <div className="role-card-header">
+                  <div className="role-card-icon faculty">
+                    <Briefcase size={18} />
+                  </div>
+                  {role === 'faculty' && <CheckCircle2 size={16} className="role-check-icon" />}
+                </div>
+                <div className="role-card-title">Faculty Advisor</div>
+                <div className="role-card-desc">Review batch cohorts, sign off milestones &amp; grade vivas</div>
+              </div>
             </div>
 
             {authError && (
-              <div className="auth-alert-box">
-                <span style={{ fontSize: '1.2rem' }}>⚠️</span>
+              <div className="auth-alert-banner">
+                <AlertCircle size={18} className="alert-icon" />
                 <span>{authError}</span>
               </div>
             )}
@@ -324,64 +427,95 @@ export default function Auth() {
               {isReg && (
                 <div className="form-group">
                   <label className="form-label">Full Name</label>
-                  <input 
-                    className="form-input" 
-                    type="text" 
-                    placeholder="e.g. Arjun Sharma"
-                    value={fullName}
-                    onChange={(e) => { setFullName(e.target.value); setAuthError(''); }}
-                  />
+                  <div className="input-with-icon">
+                    <User size={16} className="input-icon" />
+                    <input 
+                      className="form-input" 
+                      type="text" 
+                      placeholder="e.g. Arjun Sharma"
+                      value={fullName}
+                      required={isReg}
+                      onChange={(e) => { setFullName(e.target.value); setAuthError(''); }}
+                    />
+                  </div>
                 </div>
               )}
 
               <div className="form-group">
-                <label className="form-label">Institute Email</label>
-                <input 
-                  className="form-input" 
-                  type="email" 
-                  placeholder="student@college.edu.in" 
-                  required 
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setAuthError(''); }}
-                />
+                <label className="form-label">Institute Email Address</label>
+                <div className="input-with-icon">
+                  <Mail size={16} className="input-icon" />
+                  <input 
+                    className="form-input" 
+                    type="email" 
+                    placeholder="student@college.edu.in" 
+                    required 
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setAuthError(''); }}
+                  />
+                </div>
               </div>
 
               <div className="form-group">
                 <label className="form-label">Password</label>
-                <input 
-                  className="form-input" 
-                  type="password" 
-                  placeholder="••••••••" 
-                  required 
-                  autoComplete={isReg ? 'new-password' : 'current-password'}
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setAuthError(''); }}
-                />
+                <div className="input-with-icon">
+                  <Lock size={16} className="input-icon" />
+                  <input 
+                    className="form-input has-toggle" 
+                    type={showPassword ? 'text' : 'password'} 
+                    placeholder="••••••••" 
+                    required 
+                    autoComplete={isReg ? 'new-password' : 'current-password'}
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setAuthError(''); }}
+                  />
+                  <button 
+                    type="button" 
+                    className="pwd-toggle-btn"
+                    onClick={() => setShowPassword(v => !v)}
+                    tabIndex="-1"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
                 {passwordError && (
-                  <span className="form-error">Password must be at least 6 characters.</span>
+                  <span className="form-error">Password must contain at least 6 characters.</span>
                 )}
               </div>
 
               {isReg && (
                 <div className="form-group">
-                  <label className="form-label">Roll Number / Faculty ID</label>
-                  <input 
-                    className="form-input" 
-                    type="text" 
-                    placeholder={role === 'faculty' ? 'e.g. FAC001' : 'e.g. 21CS101'}
-                    value={rollNo}
-                    onChange={(e) => setRollNo(e.target.value)}
-                  />
+                  <label className="form-label">
+                    {role === 'faculty' ? 'Faculty ID / Employee Code' : 'University Roll Number'}
+                  </label>
+                  <div className="input-with-icon">
+                    <Hash size={16} className="input-icon" />
+                    <input 
+                      className="form-input" 
+                      type="text" 
+                      placeholder={role === 'faculty' ? 'e.g. FAC-2026' : 'e.g. 21CS101'}
+                      value={rollNo}
+                      onChange={(e) => setRollNo(e.target.value)}
+                    />
+                  </div>
                 </div>
               )}
 
               {!isReg && (
                 <div className="form-extra">
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                    <input type="checkbox" defaultChecked style={{ accentColor: 'var(--blue)' }} /> Remember me
+                  <label className="remember-checkbox">
+                    <input type="checkbox" defaultChecked />
+                    <span>Remember my session</span>
                   </label>
-                  <a href="#forgot" onClick={(e) => { e.preventDefault(); showToast('Password reset link sent to your email!', '📧'); }}>
+                  <a 
+                    href="#forgot" 
+                    className="forgot-link"
+                    onClick={(e) => { 
+                      e.preventDefault(); 
+                      showToast('Password reset link sent to registered email!', '📧'); 
+                    }}
+                  >
                     Forgot password?
                   </a>
                 </div>
@@ -389,19 +523,59 @@ export default function Auth() {
 
               <button
                 type="submit"
-                className="btn btn-primary btn-full btn-lg"
-                style={{ marginTop: '0.25rem' }}
+                className="btn btn-primary btn-full btn-lg auth-submit-btn"
                 disabled={loading}
               >
-                {loading ? '⏳ Authenticating...' : (isReg ? '✨ Create Account & Proceed' : 'Sign In')}
+                {loading ? (
+                  <span className="auth-btn-loading">
+                    <span className="btn-spinner"></span>
+                    <span>Validating credentials...</span>
+                  </span>
+                ) : (
+                  <>
+                    <span>{isReg ? 'Create Account & Begin' : 'Sign In to Workspace'}</span>
+                    <ArrowRight size={17} />
+                  </>
+                )}
               </button>
             </form>
 
-            <div className="demo-hint">
-              💡 <strong>Quick Demo:</strong>{' '}
-              <span onClick={fillDemoStudent}>Student Login</span> or{' '}
-              <span onClick={fillDemoFaculty}>Faculty Login</span>
+            {/* Quick Demo Access Bar */}
+            <div className="auth-demo-section">
+              <div className="demo-header">
+                <span className="demo-line"></span>
+                <span className="demo-title">QUICK DEMO ACCESS (1-CLICK FILL)</span>
+                <span className="demo-line"></span>
+              </div>
+              <div className="demo-cards-row">
+                <button
+                  type="button"
+                  className="demo-card-btn student"
+                  onClick={() => handleQuickDemo('student')}
+                >
+                  <div className="demo-card-avatar">👨‍🎓</div>
+                  <div className="demo-card-info">
+                    <div className="demo-card-name">Student Account</div>
+                    <div className="demo-card-sub">Arjun Sharma • B.Tech CSE</div>
+                  </div>
+                  <Zap size={14} className="demo-card-zap" />
+                </button>
+
+                <button
+                  type="button"
+                  className="demo-card-btn faculty"
+                  onClick={() => handleQuickDemo('faculty')}
+                >
+                  <div className="demo-card-avatar">👨‍🏫</div>
+                  <div className="demo-card-info">
+                    <div className="demo-card-name">Faculty Account</div>
+                    <div className="demo-card-sub">Prof. Verma • Project Guide</div>
+                  </div>
+                  <Zap size={14} className="demo-card-zap" />
+                </button>
+              </div>
             </div>
+
           </div>
         </div>
       </main>
