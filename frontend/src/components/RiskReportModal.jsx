@@ -11,7 +11,7 @@ import { useEffect, useRef } from 'react';
  *  - Full risk register table (colour-coded by risk level)
  *  - Reasoning chain (step-by-step derivation from Agents 1, 2, 3)
  */
-export default function RiskReportModal({ report, project, onClose }) {
+export default function RiskReportModal({ report, project, onClose, onRegenerate, isRegenerating }) {
   const backdropRef = useRef(null);
 
   useEffect(() => {
@@ -86,6 +86,7 @@ export default function RiskReportModal({ report, project, onClose }) {
         boxShadow: `0 0 60px ${riskColor}18, 0 24px 48px rgba(0,0,0,0.6)`,
         scrollbarWidth: 'thin',
       }}>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
 
         {/* ── Header ── */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
@@ -114,16 +115,36 @@ export default function RiskReportModal({ report, project, onClose }) {
               <span>Chained from Feasibility + Scope + Tech Stack Reports</span>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-              color: '#fff', borderRadius: '0.5rem', padding: '0.4rem 0.8rem',
-              cursor: 'pointer', fontSize: '0.85rem', flexShrink: 0,
-            }}
-          >
-            ✕ Close
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {onRegenerate && (
+              <button
+                onClick={() => onRegenerate(project)}
+                disabled={isRegenerating}
+                title="Regenerate Risk Assessment"
+                style={{
+                  background: isRegenerating ? `${riskColor}30` : `${riskColor}18`,
+                  border: `1px solid ${riskColor}50`,
+                  color: riskColor, borderRadius: '0.5rem', padding: '0.4rem 0.85rem',
+                  cursor: isRegenerating ? 'not-allowed' : 'pointer', fontSize: '0.82rem', fontWeight: 700,
+                  display: 'flex', alignItems: 'center', gap: '0.4rem',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <span style={{ display: 'inline-block', animation: isRegenerating ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+                <span>{isRegenerating ? 'Regenerating...' : 'Regenerate'}</span>
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              style={{
+                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+                color: '#fff', borderRadius: '0.5rem', padding: '0.4rem 0.8rem',
+                cursor: 'pointer', fontSize: '0.85rem', flexShrink: 0,
+              }}
+            >
+              ✕ Close
+            </button>
+          </div>
         </div>
 
         {/* ── Overall Risk Badge + Gauge ── */}
@@ -363,6 +384,40 @@ export default function RiskReportModal({ report, project, onClose }) {
             </div>
           </div>
         )}
+
+        {/* ── Footer Actions ── */}
+        <div style={{
+          marginTop: '2rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem'
+        }}>
+          {onRegenerate ? (
+            <button
+              onClick={() => onRegenerate(project)}
+              disabled={isRegenerating}
+              style={{
+                background: isRegenerating ? `${riskColor}30` : `${riskColor}18`,
+                border: `1px solid ${riskColor}50`,
+                color: riskColor, borderRadius: '0.5rem', padding: '0.5rem 1.1rem',
+                cursor: isRegenerating ? 'not-allowed' : 'pointer', fontSize: '0.84rem', fontWeight: 700,
+                display: 'flex', alignItems: 'center', gap: '0.4rem',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <span style={{ display: 'inline-block', animation: isRegenerating ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+              <span>{isRegenerating ? 'Regenerating Risk Analysis...' : 'Regenerate Risk Assessment'}</span>
+            </button>
+          ) : <div />}
+          <button
+            onClick={onClose}
+            style={{
+              padding: '0.5rem 1.25rem', borderRadius: '0.5rem',
+              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+              color: '#cbd5e1', fontSize: '0.84rem', fontWeight: 600, cursor: 'pointer'
+            }}
+          >
+            Close
+          </button>
+        </div>
 
       </div>
     </div>

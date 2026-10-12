@@ -103,15 +103,20 @@ export default function SprintTimelineView({
             style={{
               padding: '0.45rem 0.95rem',
               borderRadius: 8,
-              border: '1px solid rgba(255,255,255,0.12)',
-              background: 'rgba(255,255,255,0.05)',
-              color: '#e2e8f0',
+              border: '1px solid rgba(16,185,129,0.3)',
+              background: isRerunning ? 'rgba(16,185,129,0.2)' : 'rgba(16,185,129,0.12)',
+              color: '#34d399',
               fontSize: '0.75rem',
               fontWeight: 700,
-              cursor: isRerunning ? 'not-allowed' : 'pointer'
+              cursor: isRerunning ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              transition: 'all 0.15s ease'
             }}
           >
-            {isRerunning ? '⟳ Syncing...' : '🔄 Re-run Tracking'}
+            <span style={{ display: 'inline-block', animation: isRerunning ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+            <span>{isRerunning ? 'Regenerating...' : 'Regenerate Roadmap'}</span>
           </button>
         </div>
       </div>

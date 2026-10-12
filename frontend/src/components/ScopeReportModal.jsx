@@ -27,7 +27,7 @@ function Item({ text, icon, iconColor }) {
   );
 }
 
-export default function ScopeReportModal({ isOpen, onClose, report, project, onProceedToTechStack }) {
+export default function ScopeReportModal({ isOpen, onClose, report, project, onProceedToTechStack, onRegenerate, isRegenerating }) {
   if (!isOpen || !report) return null;
 
   const {
@@ -67,7 +67,10 @@ export default function ScopeReportModal({ isOpen, onClose, report, project, onP
       }}
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <style>{`@keyframes scopeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
+      <style>{`
+        @keyframes scopeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+      `}</style>
 
       <div style={{
         width: '100%', maxWidth: 740, maxHeight: '90vh',
@@ -110,12 +113,33 @@ export default function ScopeReportModal({ isOpen, onClose, report, project, onP
                 }}>🔗 Chained with Agent 1</span>
               )}
             </div>
-            <button onClick={onClose} style={{
-              width:30, height:30, borderRadius:'50%',
-              background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.12)',
-              color:'rgba(255,255,255,0.5)', fontSize:'0.9rem', cursor:'pointer',
-              display:'flex', alignItems:'center', justifyContent:'center',
-            }}>✕</button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {onRegenerate && (
+                <button
+                  onClick={() => onRegenerate(project)}
+                  disabled={isRegenerating}
+                  title="Regenerate Scope Definition"
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    padding: '4px 10px', borderRadius: 99,
+                    background: isRegenerating ? 'rgba(139,92,246,0.25)' : 'rgba(139,92,246,0.15)',
+                    border: '1px solid rgba(139,92,246,0.38)',
+                    color: '#c4b5fd', fontSize: '0.72rem', fontWeight: 700,
+                    cursor: isRegenerating ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <span style={{ display: 'inline-block', animation: isRegenerating ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+                  <span>{isRegenerating ? 'Regenerating...' : 'Regenerate'}</span>
+                </button>
+              )}
+              <button onClick={onClose} style={{
+                width:30, height:30, borderRadius:'50%',
+                background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.12)',
+                color:'rgba(255,255,255,0.5)', fontSize:'0.9rem', cursor:'pointer',
+                display:'flex', alignItems:'center', justifyContent:'center',
+              }}>✕</button>
+            </div>
           </div>
 
           {/* Title */}
@@ -376,14 +400,35 @@ export default function ScopeReportModal({ isOpen, onClose, report, project, onP
           gap: '0.75rem', flexWrap: 'wrap',
           background: 'rgba(0,0,0,0.2)',
         }}>
-          <button onClick={handleCopy} style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '0.42rem 0.9rem', borderRadius: 8,
-            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-            color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
-          }}>
-            📋 Copy Report
-          </button>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button onClick={handleCopy} style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '0.42rem 0.9rem', borderRadius: 8,
+              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+              color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
+            }}>
+              📋 Copy Report
+            </button>
+            {onRegenerate && (
+              <button
+                onClick={() => onRegenerate(project)}
+                disabled={isRegenerating}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '0.42rem 0.95rem', borderRadius: 8,
+                  background: isRegenerating ? 'rgba(139,92,246,0.2)' : 'rgba(139,92,246,0.12)',
+                  border: '1px solid rgba(139,92,246,0.35)',
+                  color: '#c4b5fd', fontSize: '0.8rem', fontWeight: 700,
+                  cursor: isRegenerating ? 'not-allowed' : 'pointer',
+                  opacity: isRegenerating ? 0.7 : 1,
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <span style={{ display: 'inline-block', animation: isRegenerating ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+                <span>{isRegenerating ? 'Regenerating...' : 'Regenerate Scope'}</span>
+              </button>
+            )}
+          </div>
           <div style={{ display: 'flex', gap: 8 }}>
             {onProceedToTechStack && project && (
               <button

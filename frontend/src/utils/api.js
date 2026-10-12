@@ -261,7 +261,16 @@ export function getFacultyExportUrl() {
 }
 
 export async function fetchMentorSummary(projectId) {
+  // Returns: { summary, aiGenerated, healthScore, healthLabel, progress, riskLevel, blockers, pendingMilestones }
   const res = await fetch(`${API_BASE}/faculty/mentor-summary/${encodeURIComponent(projectId)}`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
-}
+}
+
+export async function fetchHealthMonitor() {
+  // Returns: { projects, grouped, cohortSummary }
+  const res = await fetch(`${API_BASE}/faculty/health-monitor`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+

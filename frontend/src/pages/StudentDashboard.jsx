@@ -28,6 +28,7 @@ import FeasibilityReportModal from '../components/FeasibilityReportModal';
 import ScopeReportModal from '../components/ScopeReportModal';
 import TechStackReportModal from '../components/TechStackReportModal';
 import TrackingReportModal from '../components/TrackingReportModal';
+import RiskReportModal from '../components/RiskReportModal';
 import TimelinePlannerTab from '../components/TimelinePlannerTab';
 import RiskHeatmapMatrix from '../components/RiskHeatmapMatrix';
 import SprintTimelineView from '../components/SprintTimelineView';
@@ -2638,6 +2639,10 @@ export default function StudentDashboard() {
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
   const [trackingProjectTitle, setTrackingProjectTitle] = useState(null);
 
+  const [selectedRiskReport, setSelectedRiskReport] = useState(null);
+  const [isRiskModalOpen, setIsRiskModalOpen] = useState(false);
+  const [runningRiskProjectTitle, setRunningRiskProjectTitle] = useState(null);
+
   // Idea form state
   const [ideaTitle, setIdeaTitle] = useState('');
   const [ideaDesc, setIdeaDesc] = useState('');
@@ -2950,6 +2955,49 @@ export default function StudentDashboard() {
     }
   };
 
+  const handleRunRiskForProject = async (proj, pIndex = null) => {
+    const user = Store.get('currentUser');
+    const email = user?.email;
+    setRunningRiskProjectTitle(proj.title);
+    try {
+      const report = await fetchRiskAssessment({
+        title: proj.title,
+        desc: proj.desc || '',
+        domain: (proj.domain || 'web').toLowerCase(),
+        teamSize: String(proj.teamSize || 3),
+        durationDays: parseInt(proj.durationDays) || 30,
+        techIdeas: proj.techIdeas || '',
+        features: proj.features || [],
+        studentSkills: profile?.skills || {},
+        feasibilityReport: proj.feasibilityReport || null,
+        scopeReport: proj.scopeReport || null,
+        techStackReport: proj.techStackReport || null,
+      });
+
+      let currentProjs = email ? Store.getUserProjects(email) : [...projects];
+      let targetIdx = pIndex;
+      if (targetIdx === null) targetIdx = currentProjs.findIndex(p => p.title === proj.title || (p.id && p.id === proj.id));
+      if (targetIdx !== -1 && targetIdx !== null && currentProjs[targetIdx]) {
+        currentProjs[targetIdx] = { ...currentProjs[targetIdx], riskReport: report };
+      }
+      if (email) Store.setUserProjects(email, currentProjs);
+      setProjects(currentProjs);
+
+      const ideaId = proj.id || proj.idea_id;
+      if (ideaId) updateIdeaInBackend(ideaId, { riskReport: report }).catch(() => {});
+
+      setSelectedRiskReport(report);
+      setSelectedProject(proj);
+      setIsRiskModalOpen(true);
+      showToast('Risk assessment complete! ⚠️', '✅');
+    } catch (err) {
+      console.error('Risk agent failed:', err);
+      showToast('Risk agent failed. Backend running?', '❌');
+    } finally {
+      setRunningRiskProjectTitle(null);
+    }
+  };
+
   const handleUpdateMilestoneEvidence = (projIdx, milestoneId, evidenceUrl) => {
     const user = Store.get('currentUser');
     const email = user?.email;
@@ -3255,6 +3303,15 @@ export default function StudentDashboard() {
         .agent-pill.ready { background: #f1f5f9; color: #475569; border-color: rgba(15,23,42,0.12); }
         .agent-pill.ready:hover { background: rgba(79,70,229,0.08); color: #4f46e5; border-color: rgba(79,70,229,0.25); }
         .agent-pill.locked { background: #f8fafc; color: #94a3b8; border-color: rgba(15,23,42,0.08); cursor: not-allowed; }
+        .agent-regen-btn {
+          display: inline-flex; align-items: center; justify-content: center;
+          padding: 1px 4px; margin-left: 3px; border-radius: 99px;
+          font-size: 0.65rem; opacity: 0.75; transition: all 0.15s ease;
+          background: rgba(0,0,0,0.05);
+        }
+        .agent-regen-btn:hover {
+          opacity: 1; transform: scale(1.15); background: rgba(0,0,0,0.12);
+        }
         .agent-spin { display: inline-block; animation: spin 1s linear infinite; }
         @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         .search-bar {
@@ -3267,10 +3324,56 @@ export default function StudentDashboard() {
       `}</style>
 
       {/* Agent Report Modals */}
-      {isReportModalOpen && <FeasibilityReportModal isOpen={isReportModalOpen} report={selectedReport} project={selectedProject} onClose={() => setIsReportModalOpen(false)} />}
-      {isScopeModalOpen && <ScopeReportModal isOpen={isScopeModalOpen} report={selectedScopeReport} project={selectedProject} onClose={() => setIsScopeModalOpen(false)} />}
-      {isTechStackModalOpen && <TechStackReportModal report={selectedTechStackReport} project={selectedProject} onClose={() => setIsTechStackModalOpen(false)} />}
-      {isTrackingModalOpen && <TrackingReportModal report={selectedTrackingReport} project={selectedProject} onClose={() => setIsTrackingModalOpen(false)} onToggleMilestone={handleToggleMilestone} />}
+      {isReportModalOpen && (
+        <FeasibilityReportModal
+          isOpen={isReportModalOpen}
+          report={selectedReport}
+          project={selectedProject}
+          onClose={() => setIsReportModalOpen(false)}
+          onRegenerate={() => handleCheckFeasibility(selectedProject)}
+          isRegenerating={analyzingProjectTitle === selectedProject?.title}
+          onProceedToScope={handleRunScope}
+        />
+      )}
+      {isScopeModalOpen && (
+        <ScopeReportModal
+          isOpen={isScopeModalOpen}
+          report={selectedScopeReport}
+          project={selectedProject}
+          onClose={() => setIsScopeModalOpen(false)}
+          onRegenerate={() => handleRunScope(selectedProject)}
+          isRegenerating={scopingProjectTitle === selectedProject?.title}
+          onProceedToTechStack={handleRunTechStack}
+        />
+      )}
+      {isTechStackModalOpen && (
+        <TechStackReportModal
+          report={selectedTechStackReport}
+          project={selectedProject}
+          onClose={() => setIsTechStackModalOpen(false)}
+          onRegenerate={() => handleRunTechStack(selectedProject)}
+          isRegenerating={techStackingProjectTitle === selectedProject?.title}
+        />
+      )}
+      {isTrackingModalOpen && (
+        <TrackingReportModal
+          report={selectedTrackingReport}
+          project={selectedProject}
+          onClose={() => setIsTrackingModalOpen(false)}
+          onToggleMilestone={handleToggleMilestone}
+          onRegenerate={() => handleRunTracking(selectedProject)}
+          isRegenerating={trackingProjectTitle === selectedProject?.title}
+        />
+      )}
+      {isRiskModalOpen && (
+        <RiskReportModal
+          report={selectedRiskReport}
+          project={selectedProject}
+          onClose={() => setIsRiskModalOpen(false)}
+          onRegenerate={() => handleRunRiskForProject(selectedProject)}
+          isRegenerating={runningRiskProjectTitle === selectedProject?.title}
+        />
+      )}
 
       {/* Sidebar */}
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
@@ -3642,6 +3745,16 @@ export default function StudentDashboard() {
                           else handleCheckFeasibility(proj, pIdx);
                         }}>
                         {analyzingProjectTitle === proj.title ? <span className="agent-spin">⟳</span> : '📊'} Feasibility {proj.feasibilityReport ? `${proj.feasibilityReport.overallScore}%` : ''}
+                        {proj.feasibilityReport && analyzingProjectTitle !== proj.title && (
+                          <span
+                            className="agent-regen-btn"
+                            title="Regenerate Feasibility Analysis"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCheckFeasibility(proj, pIdx);
+                            }}
+                          >🔄</span>
+                        )}
                       </span>
                       <span className={`agent-pill ${scopingProjectTitle === proj.title ? 'running' : proj.scopeReport ? 'done' : 'ready'}`}
                         onClick={() => {
@@ -3649,6 +3762,16 @@ export default function StudentDashboard() {
                           else handleRunScope(proj, pIdx);
                         }}>
                         {scopingProjectTitle === proj.title ? <span className="agent-spin">⟳</span> : '📐'} Scope {proj.scopeReport ? '✓' : ''}
+                        {proj.scopeReport && scopingProjectTitle !== proj.title && (
+                          <span
+                            className="agent-regen-btn"
+                            title="Regenerate Scope Definition"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRunScope(proj, pIdx);
+                            }}
+                          >🔄</span>
+                        )}
                       </span>
                       <span className={`agent-pill ${techStackingProjectTitle === proj.title ? 'running' : proj.techStackReport ? 'done' : 'ready'}`}
                         onClick={() => {
@@ -3656,6 +3779,16 @@ export default function StudentDashboard() {
                           else handleRunTechStack(proj, pIdx);
                         }}>
                         {techStackingProjectTitle === proj.title ? <span className="agent-spin">⟳</span> : '🛠️'} Tech Stack {proj.techStackReport ? '✓' : ''}
+                        {proj.techStackReport && techStackingProjectTitle !== proj.title && (
+                          <span
+                            className="agent-regen-btn"
+                            title="Regenerate Tech Stack Recommendation"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRunTechStack(proj, pIdx);
+                            }}
+                          >🔄</span>
+                        )}
                       </span>
                       <span className={`agent-pill ${trackingProjectTitle === proj.title ? 'running' : proj.trackingReport ? 'done' : (!proj.feasibilityReport || !proj.scopeReport) ? 'locked' : 'ready'}`}
                         onClick={() => {
@@ -3663,10 +3796,38 @@ export default function StudentDashboard() {
                           else handleRunTracking(proj, pIdx);
                         }}>
                         {trackingProjectTitle === proj.title ? <span className="agent-spin">⟳</span> : '🗺️'} Milestones {proj.trackingReport ? `${proj.trackingReport.overallProgress || 0}%` : ''}
+                        {proj.trackingReport && trackingProjectTitle !== proj.title && (
+                          <span
+                            className="agent-regen-btn"
+                            title="Regenerate Milestone Roadmap"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRunTracking(proj, pIdx);
+                            }}
+                          >🔄</span>
+                        )}
                       </span>
-                      <span className={`agent-pill ${proj.riskReport ? 'done' : 'ready'}`}
-                        onClick={() => setActiveTab('milestones')}>
-                        ⚠️ Risk {proj.riskReport ? '✓' : ''}
+                      <span className={`agent-pill ${runningRiskProjectTitle === proj.title ? 'running' : proj.riskReport ? 'done' : 'ready'}`}
+                        onClick={() => {
+                          if (proj.riskReport) {
+                            setSelectedRiskReport(proj.riskReport);
+                            setSelectedProject(proj);
+                            setIsRiskModalOpen(true);
+                          } else {
+                            handleRunRiskForProject(proj, pIdx);
+                          }
+                        }}>
+                        {runningRiskProjectTitle === proj.title ? <span className="agent-spin">⟳</span> : '⚠️'} Risk {proj.riskReport ? '✓' : ''}
+                        {proj.riskReport && runningRiskProjectTitle !== proj.title && (
+                          <span
+                            className="agent-regen-btn"
+                            title="Regenerate Risk Assessment"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRunRiskForProject(proj, pIdx);
+                            }}
+                          >🔄</span>
+                        )}
                       </span>
                     </div>
                   </div>

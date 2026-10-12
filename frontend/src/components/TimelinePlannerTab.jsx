@@ -46,9 +46,14 @@ export default function TimelinePlannerTab({ userProjects = [] }) {
     fetchTimelines();
   }, []);
 
-  const handleGenerateTimeline = async (e) => {
-    e.preventDefault();
-    if (!projectName.trim()) return;
+  const handleGenerateTimeline = async (e, customParams = null) => {
+    if (e) e.preventDefault();
+    const pName = customParams ? customParams.project_name : projectName;
+    const dLine = customParams ? customParams.deadline : deadline;
+    const hPerDay = customParams ? customParams.hours_per_day : hoursPerDay;
+    const cTasks = customParams ? customParams.completed_tasks : completedTasks;
+
+    if (!pName || !pName.trim()) return;
 
     setLoading(true);
     try {
@@ -56,10 +61,10 @@ export default function TimelinePlannerTab({ userProjects = [] }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          project_name: projectName,
-          deadline: parseInt(deadline, 10),
-          hours_per_day: parseFloat(hoursPerDay),
-          completed_tasks: completedTasks.trim() || 'None',
+          project_name: pName,
+          deadline: parseInt(dLine, 10),
+          hours_per_day: parseFloat(hPerDay),
+          completed_tasks: (cTasks && cTasks.trim()) ? cTasks.trim() : 'None',
         }),
       });
 
@@ -316,16 +321,47 @@ export default function TimelinePlannerTab({ userProjects = [] }) {
                   </div>
                 </div>
 
-                <div style={{
-                  padding: '0.4rem 0.9rem',
-                  borderRadius: 99,
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  background: selectedProject.deadline_status === 'Within Deadline' ? 'rgba(74,222,128,0.12)' : 'rgba(248,113,113,0.12)',
-                  border: `1px solid ${selectedProject.deadline_status === 'Within Deadline' ? 'rgba(74,222,128,0.3)' : 'rgba(248,113,113,0.3)'}`,
-                  color: selectedProject.deadline_status === 'Within Deadline' ? '#4ade80' : '#f87171',
-                }}>
-                  {selectedProject.deadline_status === 'Within Deadline' ? '✅ Within Deadline' : '⚠️ At Risk'} ({selectedProject.total_task_days}/{selectedProject.deadline_days} days)
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleGenerateTimeline(null, {
+                      project_name: selectedProject.project_name,
+                      deadline: selectedProject.deadline_days,
+                      hours_per_day: selectedProject.hours_per_day,
+                      completed_tasks: selectedProject.completed_tasks || 'None'
+                    })}
+                    disabled={loading}
+                    title="Regenerate this AI timeline"
+                    style={{
+                      padding: '0.4rem 0.85rem',
+                      borderRadius: 8,
+                      border: '1px solid rgba(99,102,241,0.35)',
+                      background: loading ? 'rgba(99,102,241,0.2)' : 'rgba(99,102,241,0.12)',
+                      color: '#a5b4fc',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 5,
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <span style={{ display: 'inline-block', animation: loading ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+                    <span>{loading ? 'Regenerating...' : 'Regenerate Timeline'}</span>
+                  </button>
+
+                  <div style={{
+                    padding: '0.4rem 0.9rem',
+                    borderRadius: 99,
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    background: selectedProject.deadline_status === 'Within Deadline' ? 'rgba(74,222,128,0.12)' : 'rgba(248,113,113,0.12)',
+                    border: `1px solid ${selectedProject.deadline_status === 'Within Deadline' ? 'rgba(74,222,128,0.3)' : 'rgba(248,113,113,0.3)'}`,
+                    color: selectedProject.deadline_status === 'Within Deadline' ? '#4ade80' : '#f87171',
+                  }}>
+                    {selectedProject.deadline_status === 'Within Deadline' ? '✅ Within Deadline' : '⚠️ At Risk'} ({selectedProject.total_task_days}/{selectedProject.deadline_days} days)
+                  </div>
                 </div>
               </div>
 

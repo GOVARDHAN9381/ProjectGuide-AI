@@ -601,12 +601,13 @@ def export_csv_report():
 @router.get("/mentor-summary/{project_id}")
 def get_mentor_summary(project_id: str):
     """
-    Generate an AI Mentor Summary (executive summary) for the faculty dashboard.
-    This gives the faculty member a quick overview of project health, blockers, and progress.
+    Generate a rich AI Mentor Summary for the faculty dashboard.
+    Uses full project context: progress, milestones, feasibility, scope, tech stack,
+    risk report, and blockers to give faculty actionable insight.
     """
     import os
     try:
-        # Load project data
+        # ── Load project document ──────────────────────────────────────────────
         project_doc = None
         if is_mongo_available():
             ideas_col = get_project_ideas_collection()
@@ -619,8 +620,7 @@ def get_mentor_summary(project_id: str):
                 except Exception:
                     pass
                 project_doc = ideas_col.find_one({"$or": query_conditions})
-        
-        # Local fallback
+
         if not project_doc:
             from database import DATA_DIR
             import json
@@ -630,67 +630,172 @@ def get_mentor_summary(project_id: str):
                 ideas_data = json.loads(ideas_file.read_text(encoding="utf-8"))
                 project_doc = (
                     ideas_data.get(project_id)
-                    or next((v for v in ideas_data.values() if v.get("idea_id") == project_id or v.get("id") == project_id), None)
+                    or next(
+                        (v for v in ideas_data.values()
+                         if v.get("idea_id") == project_id or v.get("id") == project_id),
+                        None
+                    )
                 )
-                
+
         if not project_doc:
             raise HTTPException(status_code=404, detail="Project not found.")
 
-        # Build context
-        title = project_doc.get("title", "Untitled")
-        status = project_doc.get("status", "unknown")
-        
-        tracking = None
-        if is_mongo_available():
-            tracking = get_database()["tracking_reports"].find_one({"idea_id": project_doc.get("idea_id") or project_id})
-        
-        progress = tracking.get("report", {}).get("overallProgress", 0) if tracking else 0
-        milestones = tracking.get("report", {}).get("milestones", []) if tracking else []
-        milestones_done = sum(1 for m in milestones if m.get("completed"))
-        total_milestones = len(milestones) if milestones else 4
+        # ── Extract all available context ─────────────────────────────────────
+        title        = project_doc.get("title", "Untitled")
+        domain       = project_doc.get("domain", "N/A")
+        status       = project_doc.get("status", "unknown")
+        desc         = project_doc.get("desc", "")
+        team_size    = project_doc.get("teamSize") or project_doc.get("team_size", "N/A")
+        duration     = project_doc.get("durationDays") or project_doc.get("duration_days", "N/A")
+        faculty_fb   = project_doc.get("facultyFeedback", "")
 
-        # Generate via LLM
-        from groq import Groq
-        api_key = os.getenv("GROQ_API_KEY")
-        summary = ""
+        feas_report  = project_doc.get("feasibilityReport") or {}
+        scope_report = project_doc.get("scopeReport") or {}
+        tech_report  = project_doc.get("techStackReport") or {}
+        risk_report  = project_doc.get("riskReport") or {}
+
+        feas_score   = feas_report.get("overallScore") or project_doc.get("feasibility", 0)
+        feas_verdict = feas_report.get("verdict", "")
+        scope_stmt   = scope_report.get("problemStatement", "")
+        deliverables = scope_report.get("deliverables", [])
+
+        # Tech stack
+        tech_rec     = tech_report.get("recommendedStack") or tech_report.get("recommended") or {}
+        tech_list: list = []
+        if isinstance(tech_rec, dict):
+            tech_list = [v for v in tech_rec.values() if isinstance(v, str) and v]
+        elif isinstance(tech_rec, list):
+            tech_list = tech_rec
+        if not tech_list and project_doc.get("techIdeas"):
+            tech_list = [t.strip() for t in str(project_doc["techIdeas"]).split(",") if t.strip()]
+
+        # Risk context
+        risk_level   = risk_report.get("overallRisk") or risk_report.get("riskLevel", "")
+        top_risks    = risk_report.get("risks", [])
+        if isinstance(top_risks, list):
+            top_risks = [r.get("title") or r.get("name") or str(r) for r in top_risks[:3]]
+
+        # Tracking / milestones
+        tracking     = None
+        if is_mongo_available():
+            tracking = get_database()["tracking_reports"].find_one(
+                {"idea_id": project_doc.get("idea_id") or project_id}
+            )
+
+        progress         = 0
+        milestones_done  = 0
+        total_milestones = 4
+        pending_ms_titles: list = []
+        blockers: list = []
+
+        if tracking and tracking.get("report"):
+            tr = tracking["report"]
+            progress         = tr.get("overallProgress", 0)
+            milestones       = tr.get("milestones", [])
+            total_milestones = len(milestones) if milestones else 4
+            milestones_done  = sum(1 for m in milestones if m.get("completed"))
+            pending_ms_titles = [
+                m.get("title", f"Milestone {m.get('id','?')}")
+                for m in milestones if not m.get("completed")
+            ][:3]
+            blockers = tr.get("blockers", [])
+            if isinstance(blockers, list):
+                blockers = [b if isinstance(b, str) else b.get("description", str(b)) for b in blockers[:3]]
+
+        # ── Compute health score (0-100) ──────────────────────────────────────
+        health_score = round(
+            (progress * 0.45)
+            + (min(int(feas_score or 0), 100) * 0.25)
+            + ((milestones_done / max(total_milestones, 1)) * 100 * 0.30)
+        )
+        if risk_level in ("high", "critical"):
+            health_score = max(0, health_score - 15)
+        health_label = (
+            "Excellent" if health_score >= 80
+            else "On Track" if health_score >= 60
+            else "Needs Attention" if health_score >= 35
+            else "At Risk"
+        )
+
+        # ── Build LLM prompt with full context ────────────────────────────────
+        prompt_lines = [
+            "You are an AI academic project advisor. Write a concise 4-sentence mentor summary for a faculty member.",
+            "Use the structured project data below. Do NOT start with 'The project'. Be direct and professional.",
+            "",
+            f"Project: {title} ({domain})",
+            f"Status: {status} | Team: {team_size} members | Duration: {duration} days",
+            f"Description: {desc[:200] if desc else 'N/A'}",
+            f"Feasibility: {feas_score}% ({feas_verdict})",
+            f"Overall Progress: {progress}% ({milestones_done}/{total_milestones} milestones done)",
+            f"Health Score: {health_score}/100 — {health_label}",
+        ]
+        if scope_stmt:
+            prompt_lines.append(f"Scope / Problem: {scope_stmt[:180]}")
+        if deliverables:
+            prompt_lines.append(f"Key Deliverables: {', '.join(str(d) for d in deliverables[:3])}")
+        if tech_list:
+            prompt_lines.append(f"Tech Stack: {', '.join(tech_list[:6])}")
+        if risk_level:
+            prompt_lines.append(f"Risk Level: {risk_level}")
+        if top_risks:
+            prompt_lines.append(f"Top Risks: {'; '.join(top_risks)}")
+        if blockers:
+            prompt_lines.append(f"Blockers: {'; '.join(blockers)}")
+        if pending_ms_titles:
+            prompt_lines.append(f"Pending Milestones: {', '.join(pending_ms_titles)}")
+        if faculty_fb:
+            prompt_lines.append(f"Previous Faculty Feedback: {faculty_fb[:120]}")
+        prompt_lines += [
+            "",
+            "Write 4 sentences: (1) current status & progress, (2) key strengths or risks, "
+            "(3) most critical pending action or blocker, (4) recommended faculty intervention if any.",
+            "Be specific, concise, and actionable.",
+        ]
+        prompt = "\n".join(prompt_lines)
+
+        # ── Call LLM ──────────────────────────────────────────────────────────
+        api_key    = os.getenv("GROQ_API_KEY")
+        summary    = ""
         ai_generated = False
 
         if api_key:
+            from groq import Groq
             client = Groq(api_key=api_key)
-            prompt = (
-                f"You are a project management AI assistant for faculty. "
-                f"Write a concise, 3-sentence executive summary about the following student project:\n"
-                f"Title: {title}\n"
-                f"Status: {status}\n"
-                f"Progress: {progress}% ({milestones_done}/{total_milestones} milestones completed)\n\n"
-                f"Focus on the health of the project, their progress, and any immediate action the faculty might need to take. Keep it professional."
-            )
-            
             try:
                 resp = client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
+                    model="llama-3.3-70b-versatile",
                     messages=[{"role": "user", "content": prompt}],
-                    temperature=0.3,
-                    max_tokens=200,
+                    temperature=0.35,
+                    max_tokens=280,
                 )
-                summary = resp.choices[0].message.content.strip()
+                summary      = resp.choices[0].message.content.strip()
                 ai_generated = True
             except Exception as e:
                 print(f"[FACULTY/MENTOR_SUMMARY] LLM Error: {e}")
-                
+
+        # ── Fallback heuristic summary ────────────────────────────────────────
         if not summary:
-            # Fallback heuristic
-            health = "On Track" if progress >= 50 else "Needs Attention" if progress > 0 else "Not Started"
+            pending_str  = f"Next milestone: {pending_ms_titles[0]}. " if pending_ms_titles else ""
+            blocker_str  = f"Active blocker: {blockers[0]}. " if blockers else ""
+            risk_str     = f"Risk level is {risk_level}. " if risk_level else ""
             summary = (
-                f"The project '{title}' is currently {status} with an overall progress of {progress}%. "
-                f"The team has completed {milestones_done} out of {total_milestones} milestones. "
-                f"Project health is estimated as: {health}."
+                f"'{title}' is {status} at {progress}% progress "
+                f"({milestones_done}/{total_milestones} milestones, health: {health_label}). "
+                f"{pending_str}{blocker_str}{risk_str}"
+                f"Feasibility scored {feas_score}% ({feas_verdict}). "
+                f"Faculty review {'recommended' if health_score < 50 else 'not immediately required'}."
             )
 
         return {
-            "project_id": project_id,
-            "summary": summary,
-            "aiGenerated": ai_generated
+            "project_id":   project_id,
+            "summary":      summary,
+            "aiGenerated":  ai_generated,
+            "healthScore":  health_score,
+            "healthLabel":  health_label,
+            "progress":     progress,
+            "riskLevel":    risk_level,
+            "blockers":     blockers,
+            "pendingMilestones": pending_ms_titles,
         }
 
     except HTTPException:
@@ -698,3 +803,138 @@ def get_mentor_summary(project_id: str):
     except Exception as e:
         print(f"[FACULTY/MENTOR_SUMMARY] Error: {e}")
         return {"error": str(e), "summary": "Failed to generate summary."}
+
+
+# ─── GET /faculty/health ───────────────────────────────────────────────────────
+
+@router.get("/health-monitor")
+def get_cohort_health():
+    """
+    Compute project health scores for every project in the cohort.
+    Returns per-project health data grouped by status:
+      - at_risk    (health < 35)
+      - attention  (35 ≤ health < 60)
+      - on_track   (60 ≤ health < 80)
+      - excellent  (health ≥ 80)
+    Also returns cohort-level aggregates.
+    """
+    projects = []
+
+    if is_mongo_available():
+        try:
+            db          = get_database()
+            ideas_col   = get_project_ideas_collection()
+            tracking_col = get_tracking_reports_collection()
+
+            all_ideas = list(ideas_col.find())
+            for idea in all_ideas:
+                idea_id = idea.get("idea_id") or str(idea.get("_id", ""))
+
+                feas_report  = idea.get("feasibilityReport") or {}
+                risk_report  = idea.get("riskReport")        or {}
+                scope_report = idea.get("scopeReport")       or {}
+
+                feas_score = _safe_int(
+                    feas_report.get("overallScore") or idea.get("feasibility") or 0, 0
+                )
+                risk_level = (risk_report.get("overallRisk") or risk_report.get("riskLevel") or "").lower()
+
+                tracking = tracking_col.find_one({"idea_id": idea_id})
+                progress         = 0
+                milestones_done  = 0
+                total_milestones = 0
+                blockers         = []
+                velocity         = 0.0
+
+                if tracking and tracking.get("report"):
+                    tr               = tracking["report"]
+                    progress         = tr.get("overallProgress", 0)
+                    mss              = tr.get("milestones", [])
+                    total_milestones = len(mss)
+                    milestones_done  = sum(1 for m in mss if m.get("completed"))
+                    blockers_raw     = tr.get("blockers", [])
+                    if isinstance(blockers_raw, list):
+                        blockers = [
+                            b if isinstance(b, str) else b.get("description", str(b))
+                            for b in blockers_raw
+                        ]
+                    # Velocity: milestones completed per week (approx)
+                    duration_days = _safe_int(idea.get("durationDays") or idea.get("duration_days") or 30, 30)
+                    weeks_elapsed = max(1, duration_days / 7 * (progress / 100)) if progress > 0 else 1
+                    velocity = round(milestones_done / weeks_elapsed, 2)
+
+                # Health formula
+                ms_ratio      = (milestones_done / total_milestones * 100) if total_milestones > 0 else 0
+                health_score  = round(progress * 0.45 + feas_score * 0.25 + ms_ratio * 0.30)
+                if risk_level in ("high", "critical"):
+                    health_score = max(0, health_score - 15)
+                if blockers:
+                    health_score = max(0, health_score - min(10, len(blockers) * 5))
+
+                health_label = (
+                    "excellent"  if health_score >= 80
+                    else "on_track"  if health_score >= 60
+                    else "attention" if health_score >= 35
+                    else "at_risk"
+                )
+
+                # Student info
+                student_email = idea.get("student_email") or idea.get("student_id") or ""
+                student_name  = student_email.split("@")[0].replace(".", " ").title()
+                user = db["users"].find_one({"email": student_email.lower()})
+                if user:
+                    student_name = user.get("name") or student_name
+
+                projects.append({
+                    "projectId":       idea_id,
+                    "title":           idea.get("title", "Untitled"),
+                    "domain":          idea.get("domain", "web"),
+                    "status":          idea.get("status", "pending"),
+                    "studentEmail":    student_email,
+                    "studentName":     student_name,
+                    "healthScore":     health_score,
+                    "healthLabel":     health_label,
+                    "progress":        progress,
+                    "feasibility":     feas_score,
+                    "riskLevel":       risk_level,
+                    "milestonesDone":  milestones_done,
+                    "totalMilestones": total_milestones,
+                    "velocity":        velocity,
+                    "blockerCount":    len(blockers),
+                    "blockers":        blockers[:3],
+                    "hasAIReports":    bool(feas_report.get("overallScore")),
+                })
+
+        except Exception as e:
+            print(f"[FACULTY/HEALTH] MongoDB error: {e}")
+
+    # Sort by health ascending (worst first)
+    projects.sort(key=lambda p: p["healthScore"])
+
+    # Cohort aggregates
+    total = len(projects)
+    avg_health    = round(sum(p["healthScore"] for p in projects) / total) if total else 0
+    avg_progress  = round(sum(p["progress"]    for p in projects) / total) if total else 0
+    at_risk_count = sum(1 for p in projects if p["healthLabel"] == "at_risk")
+    attention_count = sum(1 for p in projects if p["healthLabel"] == "attention")
+
+    grouped = {
+        "at_risk":   [p for p in projects if p["healthLabel"] == "at_risk"],
+        "attention": [p for p in projects if p["healthLabel"] == "attention"],
+        "on_track":  [p for p in projects if p["healthLabel"] == "on_track"],
+        "excellent": [p for p in projects if p["healthLabel"] == "excellent"],
+    }
+
+    return {
+        "projects":      projects,
+        "grouped":       grouped,
+        "cohortSummary": {
+            "total":          total,
+            "avgHealth":      avg_health,
+            "avgProgress":    avg_progress,
+            "atRiskCount":    at_risk_count,
+            "attentionCount": attention_count,
+            "onTrackCount":   sum(1 for p in projects if p["healthLabel"] == "on_track"),
+            "excellentCount": sum(1 for p in projects if p["healthLabel"] == "excellent"),
+        },
+    }

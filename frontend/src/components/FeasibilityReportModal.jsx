@@ -32,7 +32,7 @@ function MetricBar({ icon, label, value }) {
   );
 }
 
-export default function FeasibilityReportModal({ isOpen, onClose, report, project, onProceedToScope }) {
+export default function FeasibilityReportModal({ isOpen, onClose, report, project, onProceedToScope, onRegenerate, isRegenerating }) {
   if (!isOpen || !report) return null;
 
   const {
@@ -75,7 +75,10 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
         overflow: 'hidden',
         animation: 'rptSlide 0.28s cubic-bezier(.22,1,.36,1)',
       }}>
-        <style>{`@keyframes rptSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
+        <style>{`
+          @keyframes rptSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+          @keyframes spin{to{transform:rotate(360deg)}}
+        `}</style>
 
         {/* ══ SCORE HERO BANNER ══ */}
         <div style={{ height: 5, background: `linear-gradient(90deg, ${c.text}, ${c.text}55)` }} />
@@ -99,12 +102,33 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
                 padding: '2px 10px', borderRadius: 999,
               }}>{domain}</span>
             </div>
-            <button onClick={onClose} style={{
-              width: 30, height: 30, borderRadius: '50%',
-              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-              color: '#94a3b8', fontSize: '0.9rem', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>✕</button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {onRegenerate && (
+                <button
+                  onClick={() => onRegenerate(project)}
+                  disabled={isRegenerating}
+                  title="Regenerate Feasibility Analysis"
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    padding: '4px 10px', borderRadius: 99,
+                    background: isRegenerating ? 'rgba(99,102,241,0.25)' : 'rgba(99,102,241,0.15)',
+                    border: '1px solid rgba(99,102,241,0.35)',
+                    color: '#a5b4fc', fontSize: '0.72rem', fontWeight: 700,
+                    cursor: isRegenerating ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <span style={{ display: 'inline-block', animation: isRegenerating ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+                  <span>{isRegenerating ? 'Regenerating...' : 'Regenerate'}</span>
+                </button>
+              )}
+              <button onClick={onClose} style={{
+                width: 30, height: 30, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                color: '#94a3b8', fontSize: '0.9rem', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>✕</button>
+            </div>
           </div>
 
           {/* Row 2 — BIG score + project info */}
@@ -268,14 +292,35 @@ export default function FeasibilityReportModal({ isOpen, onClose, report, projec
           gap: '0.75rem', flexWrap: 'wrap',
           background: 'rgba(10,14,26,0.95)',
         }}>
-          <button onClick={handleCopy} style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '0.45rem 1rem', borderRadius: 9,
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-            color: '#e2e8f0', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
-          }}>
-            📋 Copy Report
-          </button>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button onClick={handleCopy} style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '0.45rem 1rem', borderRadius: 9,
+              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+              color: '#e2e8f0', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+            }}>
+              📋 Copy Report
+            </button>
+            {onRegenerate && (
+              <button
+                onClick={() => onRegenerate(project)}
+                disabled={isRegenerating}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '0.45rem 1rem', borderRadius: 9,
+                  background: isRegenerating ? 'rgba(99,102,241,0.2)' : 'rgba(99,102,241,0.12)',
+                  border: '1px solid rgba(99,102,241,0.35)',
+                  color: '#a5b4fc', fontSize: '0.82rem', fontWeight: 700,
+                  cursor: isRegenerating ? 'not-allowed' : 'pointer',
+                  opacity: isRegenerating ? 0.7 : 1,
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <span style={{ display: 'inline-block', animation: isRegenerating ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+                <span>{isRegenerating ? 'Regenerating...' : 'Regenerate Analysis'}</span>
+              </button>
+            )}
+          </div>
           <div style={{ display: 'flex', gap: 8 }}>
             {onProceedToScope && project && (
               <button

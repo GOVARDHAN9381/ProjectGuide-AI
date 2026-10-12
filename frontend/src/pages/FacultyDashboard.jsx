@@ -1,24 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Users,
-  Rocket,
-  Bell,
-  BarChart3,
-  CheckCircle2,
-  RefreshCw,
-  FileSpreadsheet,
-  Search,
-  Filter,
-  Megaphone,
-  ChevronRight,
-  Eye,
-  Check,
-  MessageSquare,
-  Download,
-  AlertCircle,
-  Clock,
-  Sparkles
+  Users, Rocket, Bell, BarChart3, CheckCircle2, RefreshCw,
+  FileSpreadsheet, Search, Filter, Megaphone, ChevronRight,
+  Eye, Check, MessageSquare, Download, AlertCircle, Clock,
+  Sparkles, Activity, TrendingUp, ShieldAlert,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import ChatbotPanel from '../components/ChatbotPanel';
@@ -30,14 +16,9 @@ import { Store, fmtRelative, fmtDate } from '../utils/store';
 import { showToast } from '../utils/toast';
 import { SKILLS, LEVEL_LABELS } from '../utils/constants';
 import {
-  fetchFacultyCohort,
-  fetchFacultyActivity,
-  fetchFacultyAnalytics,
-  submitFacultyReview,
-  submitMilestoneSignoff,
-  broadcastAnnouncement,
-  fetchFacultyAnnouncements,
-  getFacultyExportUrl,
+  fetchFacultyCohort, fetchFacultyActivity, fetchFacultyAnalytics,
+  submitFacultyReview, submitMilestoneSignoff, broadcastAnnouncement,
+  fetchFacultyAnnouncements, getFacultyExportUrl, fetchHealthMonitor,
 } from '../utils/api';
 
 /* ─── Constants ─────────────────────────────────────────────────────────────── */
@@ -79,6 +60,22 @@ const STATUS_COLORS = {
   pending_revision:{ bg: 'rgba(239,68,68,0.12)',   color: '#ef4444', border: 'rgba(239,68,68,0.3)' },
 };
 
+const HEALTH_META = {
+  at_risk:   { label: 'At Risk',     color: '#ef4444', bg: 'rgba(239,68,68,0.12)',  border: 'rgba(239,68,68,0.3)',  icon: '🚨' },
+  attention: { label: 'Needs Attn', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', icon: '⚠️' },
+  on_track:  { label: 'On Track',   color: '#3b82f6', bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.3)', icon: '✅' },
+  excellent: { label: 'Excellent',  color: '#22c55e', bg: 'rgba(34,197,94,0.12)',  border: 'rgba(34,197,94,0.3)',  icon: '🏆' },
+};
+
+function computeHealthKey(score) {
+  return score >= 80 ? 'excellent' : score >= 60 ? 'on_track' : score >= 35 ? 'attention' : 'at_risk';
+}
+
+function computeHealthScore(pct, feas, milestonesDone, totalMilestones) {
+  const msRatio = totalMilestones > 0 ? (milestonesDone / totalMilestones) * 100 : 0;
+  return Math.round(pct * 0.45 + feas * 0.25 + msRatio * 0.30);
+}
+
 /* ─── Small shared UI helpers ────────────────────────────────────────────────── */
 
 function StatusBadge({ status }) {
@@ -116,6 +113,42 @@ function MiniProgressBar({ pct, color = '#3b82f6' }) {
   );
 }
 
+/** SVG half-circle health gauge */
+function HealthGauge({ score = 0, size = 90 }) {
+  const key = computeHealthKey(score);
+  const meta = HEALTH_META[key];
+  const r = size / 2 - 8;
+  const arc = Math.PI * r;
+  return (
+    <div style={{ position: 'relative', width: size, height: size / 2 + 14, flexShrink: 0 }}>
+      <svg width={size} height={size / 2 + 8} viewBox={`0 0 ${size} ${size / 2 + 4}`}>
+        <path d={`M 8,${size/2} A ${r},${r} 0 0 1 ${size-8},${size/2}`}
+          fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={7} strokeLinecap="round" />
+        <path d={`M 8,${size/2} A ${r},${r} 0 0 1 ${size-8},${size/2}`}
+          fill="none" stroke={meta.color} strokeWidth={7} strokeLinecap="round"
+          strokeDasharray={arc} strokeDashoffset={arc - (score / 100) * arc}
+          style={{ transition: 'stroke-dashoffset 0.8s ease', filter: `drop-shadow(0 0 4px ${meta.color}80)` }} />
+      </svg>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, textAlign: 'center',
+        fontSize: '1rem', fontWeight: 900, color: meta.color, lineHeight: 1 }}>
+        {score}
+        <div style={{ fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)', fontWeight: 600 }}>/ 100</div>
+      </div>
+    </div>
+  );
+}
+
+/** Compact color-coded health pill for table */
+function HealthPill({ score }) {
+  const meta = HEALTH_META[computeHealthKey(score)];
+  return (
+    <span style={{ fontSize: '0.68rem', fontWeight: 800, color: meta.color,
+      background: meta.bg, border: `1px solid ${meta.border}`, borderRadius: 6, padding: '2px 7px' }}>
+      {meta.icon} {score}
+    </span>
+  );
+}
+
 function TabBtn({ id, label, icon, active, onClick }) {
   return (
     <button
@@ -144,8 +177,10 @@ export default function FacultyDashboard() {
   const [activity, setActivity] = useState([]);
   const [analytics, setAnalytics] = useState({});
   const [announcements, setAnnouncements] = useState([]);
+  const [healthData, setHealthData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activityLoading, setActivityLoading] = useState(true);
+  const [healthLoading, setHealthLoading] = useState(false);
 
   // Filters & Search
   const [filterStatus, setFilterStatus] = useState('all');
@@ -160,8 +195,9 @@ export default function FacultyDashboard() {
   const [feedback, setFeedback] = useState('');
   const [reviewStatus, setReviewStatus] = useState('active');
   const [savingReview, setSavingReview] = useState(false);
-  const [signingOff, setSigningOff] = useState(null); // milestone_id being signed off
+  const [signingOff, setSigningOff] = useState(null);
   const [mentorSummary, setMentorSummary] = useState(null);
+  const [mentorMeta, setMentorMeta] = useState(null); // { healthScore, riskLevel, blockers, pendingMilestones }
   const [loadingSummary, setLoadingSummary] = useState(false);
 
   // Report modals
@@ -207,6 +243,16 @@ export default function FacultyDashboard() {
     }
   }, []);
 
+  const loadHealthData = useCallback(async () => {
+    setHealthLoading(true);
+    try {
+      const data = await fetchHealthMonitor().catch(() => null);
+      setHealthData(data);
+    } finally {
+      setHealthLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     const currentUser = Store.get('currentUser');
     if (!currentUser || currentUser.role !== 'faculty') {
@@ -217,6 +263,11 @@ export default function FacultyDashboard() {
     loadData();
     loadActivity();
   }, [navigate, loadData, loadActivity]);
+
+  // Lazy-load health monitor data on first tab switch
+  useEffect(() => {
+    if (activeTab === 'health' && !healthData && !healthLoading) loadHealthData();
+  }, [activeTab, healthData, healthLoading, loadHealthData]);
 
   /* ── Derived stats ── */
   const totalCount    = students.length;
@@ -254,12 +305,21 @@ export default function FacultyDashboard() {
     setDrawerTab('overview');
     setIsDrawerOpen(true);
     setMentorSummary(null);
+    setMentorMeta(null);
     if (student.project?.id) {
       setLoadingSummary(true);
       try {
         const { fetchMentorSummary } = await import('../utils/api');
         const sum = await fetchMentorSummary(student.project.id);
         setMentorSummary(sum.summary);
+        setMentorMeta({
+          healthScore:       sum.healthScore,
+          healthLabel:       sum.healthLabel,
+          riskLevel:         sum.riskLevel,
+          blockers:          sum.blockers || [],
+          pendingMilestones: sum.pendingMilestones || [],
+          aiGenerated:       sum.aiGenerated,
+        });
       } catch(e) {
         setMentorSummary("Failed to load mentor summary.");
       } finally {
@@ -267,6 +327,7 @@ export default function FacultyDashboard() {
       }
     }
   };
+
 
   const closeDrawer = () => {
     setIsDrawerOpen(false);
@@ -394,13 +455,13 @@ export default function FacultyDashboard() {
     sideCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '1.25rem' },
     tabBar: { display: 'flex', padding: '0 1rem', borderBottom: '1px solid var(--border)', gap: 4 },
     tableHeader: {
-      display: 'grid', gridTemplateColumns: '2fr 2fr 1.5fr 1fr 1fr',
+      display: 'grid', gridTemplateColumns: '2fr 2fr 1.2fr 0.8fr 0.8fr 1fr',
       padding: '0.65rem 1.25rem', fontSize: '0.68rem', fontWeight: 700,
       textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-faint)',
       borderBottom: '1px solid var(--border)',
     },
     row: {
-      display: 'grid', gridTemplateColumns: '2fr 2fr 1.5fr 1fr 1fr',
+      display: 'grid', gridTemplateColumns: '2fr 2fr 1.2fr 0.8fr 0.8fr 1fr',
       padding: '0.85rem 1.25rem', borderBottom: '1px solid var(--border)',
       alignItems: 'center', transition: 'background 0.15s', cursor: 'pointer',
     },
@@ -453,6 +514,7 @@ export default function FacultyDashboard() {
         @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         @keyframes spin { to{transform:rotate(360deg)} }
         .fac-row:hover { background: rgba(255,255,255,0.03) !important; }
+        .health-row:hover { background: rgba(255,255,255,0.04) !important; }
         .stat-card-fac:hover { border-color: rgba(59,130,246,0.3) !important; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
         .fac-btn:hover { opacity: 0.85; transform: translateY(-1px); }
         input::placeholder { color: rgba(255,255,255,0.3); }
@@ -498,6 +560,10 @@ export default function FacultyDashboard() {
                 }}>
                 <Bell size={14} />
                 <span>Pending Reviews ({reviewCount})</span>
+              </button>
+              <button className="fac-btn" onClick={() => setActiveTab('health')}
+                style={{ ...S.btn, background: 'linear-gradient(135deg,#ef4444,#b91c1c)', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: 6, boxShadow: '0 4px 16px rgba(239,68,68,0.3)' }}>
+                <Activity size={14} /><span>Health Monitor</span>
               </button>
             </div>
           </div>
@@ -552,9 +618,10 @@ export default function FacultyDashboard() {
               {/* Tab bar */}
               <div style={S.tabBar}>
                 {[
-                  { id: 'students', label: 'Students', icon: <Users size={15} /> },
-                  { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={15} /> },
-                  { id: 'broadcast', label: 'Broadcast', icon: <Megaphone size={15} /> },
+                  { id: 'students', label: 'Students',       icon: <Users size={15} /> },
+                  { id: 'health',   label: 'Health Monitor', icon: <Activity size={15} /> },
+                  { id: 'analytics', label: 'Analytics',     icon: <BarChart3 size={15} /> },
+                  { id: 'broadcast', label: 'Broadcast',     icon: <Megaphone size={15} /> },
                 ].map(t => <TabBtn key={t.id} {...t} active={activeTab === t.id} onClick={setActiveTab} />)}
               </div>
 
@@ -592,6 +659,7 @@ export default function FacultyDashboard() {
                     <div>Student</div>
                     <div>Project</div>
                     <div>Progress</div>
+                    <div>Health</div>
                     <div>Status</div>
                     <div style={{ textAlign: 'right' }}>Actions</div>
                   </div>
@@ -622,6 +690,8 @@ export default function FacultyDashboard() {
                     const pct = mainP?.overallProgress || (total > 0 ? Math.round((done / total) * 100) : 0);
                     const dm = DOMAIN_META[mainP?.domain] || DOMAIN_META.web;
                     const barColor = pct >= 70 ? '#22c55e' : pct >= 40 ? '#3b82f6' : '#f59e0b';
+                    const feas = mainP?.feasibility || 0;
+                    const healthScore = computeHealthScore(pct, feas, done, total);
 
                     return (
                       <div key={s.id || s.email}
@@ -676,6 +746,13 @@ export default function FacultyDashboard() {
                           )}
                         </div>
 
+                        {/* Health */}
+                        <div>
+                          {mainP
+                            ? <HealthPill score={healthScore} />
+                            : <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.8rem' }}>—</span>}
+                        </div>
+
                         {/* Status */}
                         <div>
                           <StatusBadge status={s.status} />
@@ -711,8 +788,147 @@ export default function FacultyDashboard() {
                 </>
               )}
 
+              {/* ── TAB: Health Monitor ── */}
+              {activeTab === 'health' && (() => {
+                const hs = healthData;
+                const cs = hs?.cohortSummary || {};
+                const grouped = hs?.grouped || {};
+                return (
+                  <div style={{ padding: '1.5rem' }}>
+                    {/* Header row */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                      <div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#f1f5f9', marginBottom: 3 }}>🏥 Cohort Health Monitor</div>
+                        <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.4)' }}>AI-computed scores: progress · feasibility · milestones · risk signals</div>
+                      </div>
+                      <button className="fac-btn" onClick={loadHealthData}
+                        style={{ ...S.btn, ...S.btnSecondary, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.76rem' }}>
+                        <RefreshCw size={13} /> Refresh
+                      </button>
+                    </div>
+
+                    {healthLoading && (
+                      <div style={{ textAlign: 'center', padding: '3rem', color: 'rgba(255,255,255,0.3)' }}>
+                        <div style={{ fontSize: '1.5rem', animation: 'spin 1s linear infinite', display: 'inline-block' }}>⟳</div>
+                        <div style={{ marginTop: '0.5rem', fontSize: '0.82rem' }}>Computing health scores…</div>
+                      </div>
+                    )}
+
+                    {!healthLoading && !hs && (
+                      <div style={{ textAlign: 'center', padding: '3rem', color: 'rgba(255,255,255,0.3)' }}>
+                        <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>📡</div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>No health data available</div>
+                        <div style={{ fontSize: '0.75rem', marginTop: 6 }}>MongoDB connection required for live scores</div>
+                      </div>
+                    )}
+
+                    {!healthLoading && hs && (<>
+                      {/* Cohort summary cards */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                        {[
+                          { label: 'Avg Health', value: cs.avgHealth || 0, suffix: '/100', color: cs.avgHealth >= 60 ? '#22c55e' : cs.avgHealth >= 35 ? '#f59e0b' : '#ef4444', icon: '🏥' },
+                          { label: 'At Risk',     value: cs.atRiskCount || 0,    suffix: '', color: '#ef4444', icon: '🚨' },
+                          { label: 'Needs Attn', value: cs.attentionCount || 0, suffix: '', color: '#f59e0b', icon: '⚠️' },
+                          { label: 'Avg Progress', value: cs.avgProgress || 0, suffix: '%', color: '#3b82f6', icon: '📈' },
+                        ].map((c, i) => (
+                          <div key={i} style={{ background: `${c.color}08`, border: `1px solid ${c.color}22`, borderRadius: 12, padding: '0.85rem 1rem' }}>
+                            <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.4)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 5 }}>{c.icon} {c.label}</div>
+                            <div style={{ fontSize: '1.55rem', fontWeight: 900, color: c.color }}>{c.value}<span style={{ fontSize: '0.8rem', fontWeight: 600, color: `${c.color}80` }}>{c.suffix}</span></div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Priority groups */}
+                      {[
+                        { key: 'at_risk',   label: 'At Risk',         color: '#ef4444', icon: '🚨' },
+                        { key: 'attention', label: 'Needs Attention', color: '#f59e0b', icon: '⚠️' },
+                        { key: 'on_track',  label: 'On Track',        color: '#3b82f6', icon: '✅' },
+                        { key: 'excellent', label: 'Excellent',       color: '#22c55e', icon: '🏆' },
+                      ].map(({ key, label, color, icon }) => {
+                        const group = grouped[key] || [];
+                        if (!group.length) return null;
+                        return (
+                          <div key={key} style={{ marginBottom: '1.25rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '0.75rem' }}>
+                              <span>{icon}</span>
+                              <span style={{ fontSize: '0.76rem', fontWeight: 800, color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label} ({group.length})</span>
+                              <div style={{ flex: 1, height: 1, background: `${color}22` }} />
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+                              {group.map((p, i) => {
+                                const dm = DOMAIN_META[p.domain] || { label: p.domain, icon: '📁', color: '#64748b' };
+                                return (
+                                  <div key={i} className="health-row" style={{
+                                    background: `${color}05`, border: `1px solid ${color}1a`,
+                                    borderRadius: 10, padding: '0.75rem 0.9rem',
+                                    display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '0.75rem', alignItems: 'center',
+                                    transition: 'background 0.15s',
+                                  }}>
+                                    {/* Circular gauge */}
+                                    <div style={{
+                                      width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
+                                      background: `conic-gradient(${color} ${(p.healthScore || 0) * 3.6}deg, rgba(255,255,255,0.06) 0deg)`,
+                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                      boxShadow: `0 0 10px ${color}30`,
+                                    }}>
+                                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#0a1120',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        fontSize: '0.65rem', fontWeight: 900, color }}>
+                                        {p.healthScore || 0}
+                                      </div>
+                                    </div>
+                                    {/* Info */}
+                                    <div style={{ minWidth: 0 }}>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.title}</span>
+                                        <span style={{ fontSize: '0.65rem', color: dm.color, background: dm.color+'15', border: `1px solid ${dm.color}30`, padding: '1px 5px', borderRadius: 99, flexShrink: 0 }}>{dm.icon}</span>
+                                      </div>
+                                      <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>👤 {p.studentName} · {p.progress}% progress · Feas: {p.feasibility}%</div>
+                                      {/* Progress bar */}
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <div style={{ flex: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 99, height: 4, overflow: 'hidden' }}>
+                                          <div style={{ width: `${p.progress}%`, height: '100%', background: color, borderRadius: 99, boxShadow: `0 0 6px ${color}60` }} />
+                                        </div>
+                                        <span style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', flexShrink: 0 }}>{p.milestonesDone}/{p.totalMilestones} ms</span>
+                                      </div>
+                                      {p.blockers?.length > 0 && (
+                                        <div style={{ marginTop: 4, fontSize: '0.67rem', color: '#fca5a5', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                          <AlertCircle size={10} color="#ef4444" /> {p.blockers[0]}
+                                        </div>
+                                      )}
+                                    </div>
+                                    {/* Risk badge */}
+                                    <div style={{ flexShrink: 0, textAlign: 'right' }}>
+                                      {p.riskLevel && (
+                                        <span style={{
+                                          fontSize: '0.63rem', fontWeight: 800, textTransform: 'uppercase', borderRadius: 5, padding: '2px 6px',
+                                          color: p.riskLevel === 'high' || p.riskLevel === 'critical' ? '#ef4444' : p.riskLevel === 'medium' ? '#f59e0b' : '#22c55e',
+                                          background: p.riskLevel === 'high' || p.riskLevel === 'critical' ? 'rgba(239,68,68,0.1)' : p.riskLevel === 'medium' ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.1)',
+                                          border: `1px solid ${p.riskLevel === 'high' || p.riskLevel === 'critical' ? 'rgba(239,68,68,0.3)' : p.riskLevel === 'medium' ? 'rgba(245,158,11,0.3)' : 'rgba(34,197,94,0.3)'}`,
+                                        }}>{p.riskLevel} risk</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {hs.projects?.length === 0 && (
+                        <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.3)' }}>
+                          No project data found. Students must submit their ideas and run AI agents first.
+                        </div>
+                      )}
+                    </>)}
+                  </div>
+                );
+              })()}
+
               {/* ── TAB: Analytics ── */}
               {activeTab === 'analytics' && (
+
                 <div style={{ padding: '1.5rem' }}>
                   <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f1f5f9', marginBottom: '1.25rem' }}>
                     📈 Cohort Analytics
@@ -893,10 +1109,11 @@ export default function FacultyDashboard() {
                 <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f1f5f9', marginBottom: '0.85rem' }}>⚡ Quick Filters</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {[
-                    { label: '🔔 Pending Reviews', action: () => { setFilterStatus('review'); setActiveTab('students'); } },
-                    { label: '📊 Analytics View', action: () => setActiveTab('analytics') },
+                    { label: '🏥 Health Monitor',    action: () => { setActiveTab('health'); loadHealthData(); } },
+                    { label: '🔔 Pending Reviews',   action: () => { setFilterStatus('review'); setActiveTab('students'); } },
+                    { label: '📊 Analytics View',    action: () => setActiveTab('analytics') },
                     { label: '📢 Broadcast Message', action: () => setActiveTab('broadcast') },
-                    { label: '🔄 Refresh Data', action: loadData },
+                    { label: '🔄 Refresh Data',      action: loadData },
                   ].map((qf, i) => (
                     <button key={i} className="fac-btn" onClick={qf.action}
                       style={{ ...S.btn, ...S.btnSecondary, textAlign: 'left', width: '100%', padding: '0.55rem 0.9rem', fontSize: '0.78rem' }}>
@@ -963,24 +1180,75 @@ export default function FacultyDashboard() {
 
                     <div style={S.divider} />
 
-                    {/* Mentor Summary */}
+                    {/* Enhanced Mentor Summary */}
                     {mainP && (
-                      <div style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.1), rgba(99,102,241,0.1))', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 12, padding: '1rem', marginBottom: '1.25rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                          <span style={{ fontSize: '1.1rem' }}>🤖</span>
-                          <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#60a5fa' }}>AI Mentor Summary</span>
-                        </div>
-                        {loadingSummary ? (
-                          <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <span style={{ animation: 'spin 1s linear infinite' }}>⟳</span> Analyzing project health...
+                      <div style={{ marginBottom: '1.25rem' }}>
+                        {/* Summary card */}
+                        <div style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(99,102,241,0.08))', border: '1px solid rgba(59,130,246,0.25)', borderRadius: 13, padding: '1rem', marginBottom: (mentorMeta && !loadingSummary) ? '0.65rem' : 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                            <span style={{ fontSize: '1.05rem' }}>🤖</span>
+                            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#60a5fa' }}>AI Mentor Summary</span>
+                            {mentorMeta?.aiGenerated && (
+                              <span style={{ fontSize: '0.6rem', color: '#a78bfa', background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.3)', borderRadius: 99, padding: '1px 7px', fontWeight: 700 }}>✨ AI</span>
+                            )}
                           </div>
-                        ) : (
-                          <div style={{ fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.6 }}>
-                            {mentorSummary || "No summary available."}
+                          {loadingSummary ? (
+                            <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⟳</span> Analyzing project with AI…
+                            </div>
+                          ) : (
+                            <div style={{ fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.65 }}>
+                              {mentorSummary || 'No summary available.'}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Health gauge + metadata row */}
+                        {!loadingSummary && mentorMeta && (
+                          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.75rem', alignItems: 'start' }}>
+                            {/* Gauge */}
+                            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '0.75rem 0.85rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                              <HealthGauge score={mentorMeta.healthScore || 0} size={84} />
+                              <div style={{ fontSize: '0.64rem', color: 'rgba(255,255,255,0.35)', textAlign: 'center' }}>Health Score</div>
+                            </div>
+                            {/* Right metadata */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingTop: 4 }}>
+                              {mentorMeta.riskLevel && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                                  <ShieldAlert size={12} color="#f59e0b" />
+                                  <span style={{ fontSize: '0.71rem', color: 'rgba(255,255,255,0.45)' }}>Risk:</span>
+                                  <span style={{ fontSize: '0.69rem', fontWeight: 800, textTransform: 'uppercase',
+                                    color: mentorMeta.riskLevel === 'high' || mentorMeta.riskLevel === 'critical' ? '#ef4444' : mentorMeta.riskLevel === 'medium' ? '#f59e0b' : '#22c55e' }}>
+                                    {mentorMeta.riskLevel}
+                                  </span>
+                                </div>
+                              )}
+                              {mentorMeta.blockers?.length > 0 && (
+                                <div>
+                                  <div style={{ fontSize: '0.64rem', color: 'rgba(255,255,255,0.3)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 3 }}>Blockers</div>
+                                  {mentorMeta.blockers.map((b, i) => (
+                                    <div key={i} style={{ fontSize: '0.7rem', color: '#fca5a5', display: 'flex', gap: 5, marginBottom: 2 }}>
+                                      <span style={{ color: '#ef4444', flexShrink: 0 }}>•</span>{b}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {mentorMeta.pendingMilestones?.length > 0 && (
+                                <div>
+                                  <div style={{ fontSize: '0.64rem', color: 'rgba(255,255,255,0.3)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 3 }}>Pending</div>
+                                  {mentorMeta.pendingMilestones.map((m, i) => (
+                                    <div key={i} style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', display: 'flex', gap: 5, marginBottom: 2 }}>
+                                      <span style={{ color: '#f59e0b', flexShrink: 0 }}>⏳</span>{m}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>
                     )}
+
 
                     {/* Projects */}
 

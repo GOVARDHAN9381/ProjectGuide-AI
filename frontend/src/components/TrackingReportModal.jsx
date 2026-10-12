@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react';
  *  - Faculty review checkpoints timeline
  *  - Export / Print roadmap
  */
-export default function TrackingReportModal({ report, project, onClose, onToggleMilestone }) {
+export default function TrackingReportModal({ report, project, onClose, onToggleMilestone, onRegenerate, isRegenerating }) {
   const backdropRef = useRef(null);
   const [activeTab, setActiveTab] = useState('roadmap'); // 'roadmap' | 'checkpoints' | 'actions'
   const [expandedPhase, setExpandedPhase] = useState(null);
@@ -90,6 +90,7 @@ export default function TrackingReportModal({ report, project, onClose, onToggle
         scrollbarWidth: 'thin',
         color: '#e2e8f0',
       }}>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
 
         {/* ── Header ── */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
@@ -120,6 +121,24 @@ export default function TrackingReportModal({ report, project, onClose, onToggle
           </div>
 
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {onRegenerate && (
+              <button
+                onClick={() => onRegenerate(project)}
+                disabled={isRegenerating}
+                title="Regenerate Milestone Roadmap"
+                style={{
+                  background: isRegenerating ? 'rgba(16,185,129,0.25)' : 'rgba(16,185,129,0.12)',
+                  border: '1px solid rgba(16,185,129,0.35)',
+                  color: '#34d399', borderRadius: '0.5rem', padding: '0.4rem 0.85rem',
+                  cursor: isRegenerating ? 'not-allowed' : 'pointer', fontSize: '0.82rem', fontWeight: 700,
+                  display: 'flex', alignItems: 'center', gap: '0.4rem',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <span style={{ display: 'inline-block', animation: isRegenerating ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+                <span>{isRegenerating ? 'Regenerating...' : 'Regenerate'}</span>
+              </button>
+            )}
             <button
               onClick={handleExport}
               title="Download text roadmap"
@@ -496,20 +515,45 @@ export default function TrackingReportModal({ report, project, onClose, onToggle
           color: 'rgba(255,255,255,0.4)'
         }}>
           <div>💡 Tip: Mark deliverables as completed to update your faculty guide in real-time.</div>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.15)',
-              color: '#fff',
-              borderRadius: '0.5rem',
-              padding: '0.45rem 1rem',
-              cursor: 'pointer',
-              fontWeight: 600
-            }}
-          >
-            Done
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {onRegenerate && (
+              <button
+                onClick={() => onRegenerate(project)}
+                disabled={isRegenerating}
+                style={{
+                  background: isRegenerating ? 'rgba(16,185,129,0.2)' : 'rgba(16,185,129,0.12)',
+                  border: '1px solid rgba(16,185,129,0.35)',
+                  color: '#34d399',
+                  borderRadius: '0.5rem',
+                  padding: '0.45rem 1rem',
+                  cursor: isRegenerating ? 'not-allowed' : 'pointer',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <span style={{ display: 'inline-block', animation: isRegenerating ? 'spin 1s linear infinite' : 'none' }}>🔄</span>
+                <span>{isRegenerating ? 'Regenerating Roadmap...' : 'Regenerate Roadmap'}</span>
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                color: '#fff',
+                borderRadius: '0.5rem',
+                padding: '0.45rem 1rem',
+                cursor: 'pointer',
+                fontWeight: 600
+              }}
+            >
+              Done
+            </button>
+          </div>
         </div>
 
       </div>
