@@ -58,7 +58,10 @@ def _load_local_users() -> Dict[str, Any]:
         data = json.loads(USERS_FILE.read_text(encoding="utf-8"))
         # Ensure default demo users are always present
         for k, v in DEFAULT_USERS.items():
-            if k not in data:
+            stored_user = data.get(k)
+            if isinstance(stored_user, dict):
+                data[k] = {**v, **stored_user}
+            else:
                 data[k] = v
         return data
     except Exception:

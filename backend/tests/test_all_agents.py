@@ -125,8 +125,8 @@ def test_health():
     print("  HEALTH CHECKS")
     print("══════════════════════════════════════")
 
-    r = client.get(f"{BASE}/", timeout=5)
-    check(r.status_code == 200, "Backend / health endpoint returns 200",
+    r = client.get(f"{BASE}/health", timeout=5)
+    check(r.status_code == 200, "Backend /health endpoint returns 200",
           f"Response: {r.json()}")
 
     r2 = client.get(f"{BASE}/db-health", timeout=5)

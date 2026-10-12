@@ -180,7 +180,21 @@ def run_scope_agent(
     api_key = os.getenv("GROQ_API_KEY_SCOPE") or os.getenv("GROQ_API_KEY")
     if not api_key:
         print("[SCOPE AGENT] No GROQ API key found — using fallback.")
-        return _build_fallback_report(idea_data)
+        report = _build_fallback_report(idea_data)
+        if feasibility_report:
+            score = feasibility_report.get("overallScore", "unavailable")
+            verdict = feasibility_report.get("verdict", "not provided")
+            report["feasibilityAlignment"] = (
+                f"The project scope reflects the feasibility assessment "
+                f"(score: {score}%, verdict: {verdict}) and keeps the deliverables "
+                "focused on the core idea."
+            )
+        else:
+            report["feasibilityAlignment"] = (
+                "No feasibility assessment was provided; this scope is based on "
+                "the submitted project idea."
+            )
+        return report
 
     title = idea_data.get("title", "Untitled Project")
     desc = idea_data.get("desc", "No description provided")

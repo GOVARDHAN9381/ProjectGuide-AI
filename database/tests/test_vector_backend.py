@@ -1,8 +1,12 @@
 import os
+import importlib
 
 
-def test_vector_backend_config_prefers_actian():
-    os.environ["RAG_VECTOR_DB_BACKEND"] = "actian"
-    from rag.config import VECTOR_DB_BACKEND
+def test_vector_backend_config_prefers_actian(monkeypatch):
+    import rag.config as config
 
-    assert VECTOR_DB_BACKEND == "actian"
+    with monkeypatch.context() as scoped_env:
+        scoped_env.setenv("RAG_VECTOR_DB_BACKEND", "actian")
+        config = importlib.reload(config)
+        assert config.VECTOR_DB_BACKEND == "actian"
+    importlib.reload(config)

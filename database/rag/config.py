@@ -5,6 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 KNOWLEDGE_DIR = os.environ.get("RAG_KNOWLEDGE_DIR", str(BASE_DIR / "knowledge"))
 VECTOR_STORE_DIR = os.environ.get("RAG_VECTOR_STORE_DIR", str(BASE_DIR / "rag" / "vector_store"))
+VECTOR_DB_BACKEND = os.environ.get("RAG_VECTOR_DB_BACKEND", "chroma").strip().lower()
 
 # ChromaDB settings
 COLLECTION_NAME = os.environ.get("RAG_COLLECTION_NAME", "agrisight_knowledge")

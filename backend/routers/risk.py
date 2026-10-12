@@ -4,25 +4,32 @@ POST /api/risk-assessment  →  Run Risk Agent
 """
 import traceback
 from fastapi import APIRouter
-from pydantic import BaseModel
-from typing import Optional, Dict, Any
+from pydantic import BaseModel, field_validator
+from typing import Dict, Any
 
 router = APIRouter()
 
 
 class RiskRequest(BaseModel):
     title: str
-    desc: Optional[str] = ""
-    domain: Optional[str] = "web"
-    teamSize: Optional[str] = "3"
-    durationDays: Optional[int] = 30
-    techIdeas: Optional[str] = ""
-    features: Optional[list] = []
-    studentSkills: Optional[Dict[str, Any]] = {}
-    feasibilityReport: Optional[Dict[str, Any]] = None
-    scopeReport: Optional[Dict[str, Any]] = None
-    techStackReport: Optional[Dict[str, Any]] = None
-    checkInData: Optional[Dict[str, Any]] = None
+    desc: str = ""
+    domain: str = "web"
+    teamSize: str = "3"
+    durationDays: int = 30
+    techIdeas: str = ""
+    features: list = []
+    studentSkills: Dict[str, Any] = {}
+    feasibilityReport: Dict[str, Any]
+    scopeReport: Dict[str, Any]
+    techStackReport: Dict[str, Any]
+    checkInData: Dict[str, Any] = {}
+
+    @field_validator("feasibilityReport", "scopeReport", "techStackReport")
+    @classmethod
+    def require_upstream_report(cls, value):
+        if not value:
+            raise ValueError("Upstream report must not be empty")
+        return value
 
 
 @router.post("/api/risk-assessment")
