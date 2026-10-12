@@ -24,8 +24,19 @@
     "password": "password123",
     "name": "Arjun Sharma",
     "role": "student",
+    "rollNo": "21CS101",
     "branch": "CSE",
     "year": "3rd Year",
+    "skills": {
+      "python": 3,
+      "opencv": 2,
+      "react": 2,
+      "flask": 2
+    },
+    "domains": [
+      "aiml",
+      "web"
+    ],
     "hasCompletedProfile": true,
     "createdAt": "2026-09-01T00:00:00Z"
   },
@@ -84,8 +95,11 @@
     "password": "faculty123",
     "name": "Prof. Rajesh Verma",
     "role": "faculty",
+    "rollNo": "FAC001",
     "branch": "CSE",
     "year": "Faculty",
+    "skills": {},
+    "domains": [],
     "hasCompletedProfile": true,
     "createdAt": "2026-09-01T00:00:00Z"
   }

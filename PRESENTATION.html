@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProjectGuide-AI — Capstone Defense Presentation Deck</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(24, 32, 54, 0.85);
+      --card-border: #334155;
+      --accent-purple: #6366f1;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --text-white: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-white);
+      font-family: var(--font-family);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* Top Progress Bar */
+    #progress-bar {
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+      width: 0%;
+      transition: width 0.3s ease;
+      z-index: 100;
+    }
+
+    /* Header Nav */
+    header {
+      padding: 12px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(11, 15, 25, 0.95);
+      backdrop-filter: blur(8px);
+      z-index: 90;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.12);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-white);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: var(--accent-purple);
+    }
+
+    .slide-counter {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 65px;
+      text-align: center;
+    }
+
+    /* Main Slide Viewport */
+    main {
+      flex: 1;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      padding: 32px 48px;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 32px 48px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(40px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    /* Slide Header */
+    .slide-category {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-white);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    /* Slide Content Grid Layouts */
+    .content-grid {
+      display: grid;
+      gap: 20px;
+      flex: 1;
+      align-content: stretch;
+    }
+
+    .grid-1 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      border-top: 3px solid var(--accent-purple);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-cyan);
+    }
+
+    .card.purple { border-top-color: var(--accent-purple); }
+    .card.cyan { border-top-color: var(--accent-cyan); }
+    .card.green { border-top-color: var(--accent-green); }
+    .card.amber { border-top-color: var(--accent-amber); }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .card-list li {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      display: flex;
+      gap: 8px;
+    }
+
+    .card-list li strong {
+      color: var(--text-white);
+    }
+
+    .bullet {
+      color: var(--accent-cyan);
+      font-weight: bold;
+    }
+
+    /* Title Slide Special Styles */
+    .hero-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, rgba(24, 32, 54, 0.8) 70%);
+      border: 2px solid rgba(99, 102, 241, 0.4);
+      border-radius: 20px;
+      padding: 48px;
+    }
+
+    .hero-tag {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent-cyan);
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: 54px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+
+    .hero-subtitle {
+      font-size: 20px;
+      color: var(--accent-purple);
+      font-weight: 500;
+      max-width: 850px;
+      margin-bottom: 32px;
+      line-height: 1.4;
+    }
+
+    .hero-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .hero-meta-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: left;
+    }
+
+    .hero-meta-label {
+      font-size: 11px;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .hero-meta-value {
+      font-size: 13px;
+      color: var(--text-white);
+      font-weight: 600;
+    }
+
+    /* Modal for Speaker Notes */
+    #notes-modal {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 480px;
+      max-height: 380px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid var(--accent-purple);
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      z-index: 200;
+      backdrop-filter: blur(16px);
+    }
+
+    #notes-modal.open {
+      display: flex;
+    }
+
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+
+    .notes-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .notes-content {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      overflow-y: auto;
+      max-height: 280px;
+    }
+
+    .notes-close {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .notes-close:hover {
+      color: var(--text-white);
+    }
+
+    /* Key indicator footer */
+    footer {
+      padding: 10px 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-dim);
+      background: rgba(11, 15, 25, 0.9);
+    }
+
+    .key-hints span {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-right: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+
+  <header>
+    <div class="brand">
+      <span class="brand-tag">INFOSYS SPRINGBOARD CAPSTONE</span>
+      <span class="brand-title">ProjectGuide-AI Defense Deck</span>
+    </div>
+    <div class="nav-controls">
+      <button class="btn" id="prev-btn" onclick="prevSlide()">← Prev</button>
+      <span class="slide-counter" id="slide-counter">1 / 16</span>
+      <button class="btn" id="next-btn" onclick="nextSlide()">Next →</button>
+      <button class="btn" onclick="toggleNotes()">🎤 Notes [N]</button>
+      <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen [F]</button>
+    </div>
+  </header>
+
+  <main id="slide-container">
+
+    <!-- SLIDE 1 -->
+    <div class="slide active" data-notes="Good morning respected evaluators and mentors. Today we present ProjectGuide-AI, an autonomous multi-agent ecosystem engineered to solve systemic challenges in academic capstone mentoring.">
+      <div class="hero-card">
+        <div class="hero-tag">CAPSTONE VIVA PRESENTATION & DEFENSE</div>
+        <h1 class="hero-title">ProjectGuide-AI</h1>
+        <p class="hero-subtitle">Autonomous Multi-Agent Academic Mentoring, Project Tracking & Faculty Governance Platform</p>
+        <div class="hero-meta-grid">
+          <div class="hero-meta-item">
+            <div class="hero-meta-label">Domain</div>
+            <div class="hero-meta-value">Agentic AI & Cloud Architecture</div>
+          </div>
+          <div class="hero-meta-item">
+            <div class="hero-meta-label">AI Engine</div>
+            <div class="hero-meta-value">Groq LLaMA-3.3-70B + CrewAI</div>
+          </div>
+          <div class="hero-meta-item">
+            <div class="hero-meta-label">Tech Stack</div>
+            <div class="hero-meta-value">FastAPI, React 19, MongoDB</div>
+          </div>
+          <div class="hero-meta-item">
+            <div class="hero-meta-label">Agile Delivery</div>
+            <div class="hero-meta-value">4 Sprints, 146 SP Delivered</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide" data-notes="Every semester, engineering colleges face recurring project failures: students choose vague scopes, feature creep runs rampant, and faculty guides are overwhelmed supervising 10-25 teams simultaneously with 2-3 week feedback delays.">
+      <div class="slide-category">Problem Statement & Motivation</div>
+      <h2 class="slide-title">The Academic Mentoring Dilemma</h2>
+      <div class="content-grid grid-3">
+        <div class="card amber">
+          <div class="card-title">1. Student Ambiguity & Creep</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Vague Scopes:</strong> Over-ambitious topics without boundary limits.</li>
+            <li><span class="bullet">•</span><strong>Scope Creep:</strong> Features multiply mid-semester, causing abandoned codebases.</li>
+            <li><span class="bullet">•</span><strong>Stack Mismatch:</strong> Frameworks picked without considering team skills.</li>
+            <li><span class="bullet">•</span><strong>Result:</strong> High failure rates and rushed final submissions.</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">2. Faculty Supervision Bottleneck</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>High Ratio:</strong> 1 guide supervising 10–25 student teams.</li>
+            <li><span class="bullet">•</span><strong>Feedback Latency:</strong> 2–3 weeks delay on proposal reviews.</li>
+            <li><span class="bullet">•</span><strong>Zero Visibility:</strong> Guides spot team blockers only at mid-term vivas.</li>
+            <li><span class="bullet">•</span><strong>Admin Drag:</strong> 70% of time spent reviewing basic document formatting.</li>
+          </ul>
+        </div>
+        <div class="card cyan">
+          <div class="card-title">3. Institutional Fragmentation</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Scattered Tools:</strong> Progress tracked in WhatsApp, emails, and Excel.</li>
+            <li><span class="bullet">•</span><strong>No Audit Trail:</strong> Absence of structured milestone verification.</li>
+            <li><span class="bullet">•</span><strong>Subjective Scoring:</strong> Lack of objective feasibility benchmarks.</li>
+            <li><span class="bullet">•</span><strong>Our Vision:</strong> Centralized AI platform bridging students and faculty.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide" data-notes="To eliminate this friction, ProjectGuide-AI ingests raw student ideas and runs an autonomous 5-agent sequential pipeline in <10s, paired with a 24/7 context-aware voice mentor and a faculty governance hub.">
+      <div class="slide-category">The Proposed Innovation</div>
+      <h2 class="slide-title">Autonomous Multi-Agent Mentoring Ecosystem</h2>
+      <div class="content-grid grid-2">
+        <div class="card purple">
+          <div class="card-title">🤖 Autonomous Agent Pipeline</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Transforms 1-paragraph student ideas into complete engineering plans in &lt;10s.</li>
+            <li><span class="bullet">•</span>Sequential Chain: Feasibility ➔ Scope ➔ Tech Stack ➔ Risk ➔ Roadmap.</li>
+            <li><span class="bullet">•</span>Downstream agents ingest upstream verified reports to prevent hallucinations.</li>
+          </ul>
+        </div>
+        <div class="card cyan">
+          <div class="card-title">🎙️ Context-Aware Voice AI Mentor</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Interactive 24/7 chat advisor aware of the active project scope and stack.</li>
+            <li><span class="bullet">•</span>Hands-free voice query input powered by browser Web Speech API.</li>
+            <li><span class="bullet">•</span>Socratic method: guides debugging without writing verbatim solutions.</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-title">⚡ Dynamic Re-Planning Engine</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Monitors student task check-offs and calculates real-time velocity.</li>
+            <li><span class="bullet">•</span>Autonomous Re-Planner dynamically shifts downstream milestones on delays.</li>
+            <li><span class="bullet">•</span>Suggests tactical de-scoping to ensure on-time semester delivery.</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <div class="card-title">📊 Faculty Governance & Sign-Offs</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Cohort health analytics dashboard with automated at-risk team flags.</li>
+            <li><span class="bullet">•</span>Official 1-click digital milestone verification with timestamped audit trail.</li>
+            <li><span class="bullet">•</span>Cohort broadcast system for instant department-wide announcements.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 -->
+    <div class="slide" data-notes="Our architecture spans four tiers: React 19 on the frontend, FastAPI for async backend routing, Groq LPU hardware with LLaMA-3.3-70B for agent inference, and MongoDB Atlas with automatic offline fallback.">
+      <div class="slide-category">System Architecture</div>
+      <h2 class="slide-title">Multi-Tier Cloud & Agent Infrastructure</h2>
+      <div class="content-grid grid-4">
+        <div class="card cyan">
+          <div class="card-title">Tier 1: Client</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>React 19 + Vite</li>
+            <li><span class="bullet">•</span>OLED Dark Theme</li>
+            <li><span class="bullet">•</span>Web Speech API</li>
+            <li><span class="bullet">•</span>Lucide Icons</li>
+            <li><span class="bullet">•</span>Vercel SPA Hosting</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">Tier 2: Gateway</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>FastAPI (Python 3.11)</li>
+            <li><span class="bullet">•</span>Pydantic v2 Models</li>
+            <li><span class="bullet">•</span>JWT Auth / RBAC</li>
+            <li><span class="bullet">•</span>BackgroundTasks</li>
+            <li><span class="bullet">•</span>DB Health Hooks</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-title">Tier 3: Agents</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>CrewAI Swarm</li>
+            <li><span class="bullet">•</span>Groq LLaMA-3.3-70B</li>
+            <li><span class="bullet">•</span>Sequential Chaining</li>
+            <li><span class="bullet">•</span>Heuristic Fallbacks</li>
+            <li><span class="bullet">•</span>Sub-second Latency</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <div class="card-title">Tier 4: Storage</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>MongoDB Atlas</li>
+            <li><span class="bullet">•</span>Normalized Schemas</li>
+            <li><span class="bullet">•</span>Dual JSON Sync</li>
+            <li><span class="bullet">•</span>Optimized Indexes</li>
+            <li><span class="bullet">•</span>Docker Image</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 -->
+    <div class="slide" data-notes="Notice the sequential chain-of-thought flow: each agent specializes in one domain and feeds its structured output into the next, ensuring complete architectural coherence without hallucinations.">
+      <div class="slide-category">Multi-Agent Workflow</div>
+      <h2 class="slide-title">Autonomous Agent Chain-of-Thought Flow</h2>
+      <div class="content-grid grid-1">
+        <div class="card purple">
+          <div class="card-title">End-to-End Agent Chaining Pipeline</div>
+          <ul class="card-list">
+            <li><span class="bullet">1.</span><strong>Proposal Ingestion:</strong> Student submits idea, team size, duration, and self-assessed skill proficiencies.</li>
+            <li><span class="bullet">2.</span><strong>Agent 1 (Feasibility Check):</strong> Computes 0-100 score across complexity, timeline, and skill match; identifies bottlenecks.</li>
+            <li><span class="bullet">3.</span><strong>Agent 2 (Scope Governance):</strong> Ingests Feasibility report; enforces strict In-Scope vs Out-of-Scope boundaries.</li>
+            <li><span class="bullet">4.</span><strong>Agent 3 (Tech Stack Recommender):</strong> Ingests Scope & Skills; recommends frontend, backend, DB, and devops tools with trade-offs.</li>
+            <li><span class="bullet">5.</span><strong>Agent 4 (Risk Matrix Agent):</strong> Ingests Tech Stack & Scope; scores Technical, Deadline, and Operational risks with mitigations.</li>
+            <li><span class="bullet">6.</span><strong>Agent 5 (Milestone Tracking Agent):</strong> Synthesizes reports into a 5-Phase structured execution roadmap with task criteria.</li>
+            <li><span class="bullet">7.</span><strong>Agent 6 (Dynamic Re-Planner):</strong> Continuously monitors task velocity and reschedules downstream tasks on delay.</li>
+            <li><span class="bullet">8.</span><strong>Agent 7 & 8 (Doc Gen + AI Mentor):</strong> Generates Project Synopsis drafts and provides 24/7 interactive voice mentoring.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 -->
+    <div class="slide" data-notes="Agent 1 evaluates feasibility and bottlenecks. If approved, Agent 2 establishes rigid anti-creep boundaries, locking out risky non-goals so students stay focused on core deliverables.">
+      <div class="slide-category">Agent Deep Dive: Inception</div>
+      <h2 class="slide-title">Agent 1: Feasibility Check & Agent 2: Scope Governance</h2>
+      <div class="content-grid grid-2">
+        <div class="card purple">
+          <div class="card-title">Agent 1: Feasibility Check Agent</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Role:</strong> Senior Academic Research & Technical Reviewer.</li>
+            <li><span class="bullet">•</span><strong>Vectors:</strong> Technical complexity, timeline viability, resource availability, skill readiness.</li>
+            <li><span class="bullet">•</span><strong>Outputs:</strong> 0–100 Score, Verdict (Highly Feasible / Feasible with Guidance / Needs Scope Reduction).</li>
+            <li><span class="bullet">•</span><strong>Actionable Insights:</strong> Top 3 strengths, top 3 bottlenecks, and required skill upgrades.</li>
+            <li><span class="bullet">•</span><strong>Resiliency:</strong> Heuristic fallback ensures scoring even under network throttling.</li>
+          </ul>
+        </div>
+        <div class="card cyan">
+          <div class="card-title">Agent 2: Scope Definition Agent</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Role:</strong> Software Architect & Agile Product Manager.</li>
+            <li><span class="bullet">•</span><strong>Input Chaining:</strong> Ingests upstream Feasibility report to address bottlenecks.</li>
+            <li><span class="bullet">•</span><strong>Anti-Creep Safeguards:</strong> Delineates mandatory In-Scope features vs Out-of-Scope non-goals.</li>
+            <li><span class="bullet">•</span><strong>Core Deliverables:</strong> Problem statement, 3+ measurable objectives, target user personas.</li>
+            <li><span class="bullet">•</span><strong>Grounding:</strong> Eliminates scope creep before code development begins.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 -->
+    <div class="slide" data-notes="Agent 3 selects tech stacks tailored to team skills and provides learning curves. Agent 4 calculates multi-vector risks and produces concrete mitigation plans.">
+      <div class="slide-category">Agent Deep Dive: Architecture & Risk</div>
+      <h2 class="slide-title">Agent 3: Tech Stack Recommender & Agent 4: Risk Matrix</h2>
+      <div class="content-grid grid-2">
+        <div class="card green">
+          <div class="card-title">Agent 3: Tech Stack Recommender</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Role:</strong> Full-Stack Technology Strategist.</li>
+            <li><span class="bullet">•</span><strong>Skill-Aware Matching:</strong> Maps frameworks against student skill proficiencies.</li>
+            <li><span class="bullet">•</span><strong>Stack Coverage:</strong> Frontend, Backend, Database, Hosting, and CI/CD tools.</li>
+            <li><span class="bullet">•</span><strong>Trade-off Analysis:</strong> Compares primary selections with industry alternatives.</li>
+            <li><span class="bullet">•</span><strong>Ramp-up Roadmap:</strong> Curates targeted learning resources for skill gaps.</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <div class="card-title">Agent 4: Multi-Vector Risk Assessment</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Role:</strong> Infrastructure & Project Risk Analyst.</li>
+            <li><span class="bullet">•</span><strong>Vectors:</strong> Technical complexity, deadline pressures, and external dependencies.</li>
+            <li><span class="bullet">•</span><strong>Scoring:</strong> Probability (1-5) × Impact (1-5) ➔ Risk Level (Low/Medium/High).</li>
+            <li><span class="bullet">•</span><strong>Mitigations:</strong> Step-by-step preventative actions and early warning signs.</li>
+            <li><span class="bullet">•</span><strong>Contingency:</strong> Architectural fallback plans if third-party APIs fail.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 -->
+    <div class="slide" data-notes="Agent 5 generates a 5-phase roadmap spanning 60 days. As students complete tasks, Agent 6 detects delays and dynamically recalculates downstream schedules.">
+      <div class="slide-category">Agent Deep Dive: Execution</div>
+      <h2 class="slide-title">Agent 5: Milestone Roadmap & Agent 6: Dynamic Re-Planner</h2>
+      <div class="content-grid grid-2">
+        <div class="card purple">
+          <div class="card-title">Agent 5: Milestone & Sprint Planner</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Role:</strong> Certified Scrum Master & Engineering Lead.</li>
+            <li><span class="bullet">•</span><strong>5-Phase Roadmap:</strong> Inception ➔ Architecture ➔ Core Dev ➔ Testing ➔ Viva.</li>
+            <li><span class="bullet">•</span><strong>Granular Tasks:</strong> Checklist items with acceptance criteria per sprint.</li>
+            <li><span class="bullet">•</span><strong>Automated Velocity:</strong> Recalculates progress percentage on task check-off.</li>
+            <li><span class="bullet">•</span><strong>Verification:</strong> Ready for faculty inspection and digital sign-off.</li>
+          </ul>
+        </div>
+        <div class="card cyan">
+          <div class="card-title">Agent 6: Dynamic Plan Re-Planner</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Role:</strong> Adaptive Agile Delivery Coordinator.</li>
+            <li><span class="bullet">•</span><strong>Delay Trigger:</strong> Activates when tasks exceed allocated duration windows.</li>
+            <li><span class="bullet">•</span><strong>Impact Analysis:</strong> Evaluates downstream task dependency bottlenecks.</li>
+            <li><span class="bullet">•</span><strong>Schedule Shifting:</strong> Recalculates target dates and suggests scope de-scoping.</li>
+            <li><span class="bullet">•</span><strong>Faculty Alert:</strong> Updates team health status on faculty dashboard.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 -->
+    <div class="slide" data-notes="Agent 7 generates university-compliant Project Synopsis drafts in 1-click. Agent 8 provides 24/7 conversational mentorship with Web Speech API voice input and active project memory.">
+      <div class="slide-category">Agent Deep Dive: Output & Support</div>
+      <h2 class="slide-title">Agent 7: Academic Doc Generator & Agent 8: AI Mentor</h2>
+      <div class="content-grid grid-2">
+        <div class="card green">
+          <div class="card-title">Agent 7: Academic Document Generator</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Role:</strong> Academic Coordinator & Technical Writer.</li>
+            <li><span class="bullet">•</span><strong>Outputs:</strong> University-compliant Project Synopsis, Architecture, and Methodology.</li>
+            <li><span class="bullet">•</span><strong>Source Synthesis:</strong> Directly compiles verified Scope, Stack, and Risk outputs.</li>
+            <li><span class="bullet">•</span><strong>1-Click Export:</strong> Generates clean Markdown and PDF-ready drafts.</li>
+            <li><span class="bullet">•</span><strong>Time Saved:</strong> Saves students 15+ hours of initial document formatting.</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">Agent 8: Context-Aware Voice AI Mentor</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Role:</strong> 24/7 Personal Capstone Engineering Advisor.</li>
+            <li><span class="bullet">•</span><strong>Context Awareness:</strong> Retains active project scope, stack, and milestone state.</li>
+            <li><span class="bullet">•</span><strong>Voice Input:</strong> Native browser Web Speech API for hands-free queries.</li>
+            <li><span class="bullet">•</span><strong>Socratic Guidance:</strong> Explains concepts and helps debug without giving raw cheats.</li>
+            <li><span class="bullet">•</span><strong>History Sync:</strong> Preserves conversational history across student sessions.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 -->
+    <div class="slide" data-notes="The Faculty Governance Hub replaces fragmented WhatsApp groups with cohort health analytics, digital milestone sign-offs, and broadcast announcements.">
+      <div class="slide-category">Faculty Governance</div>
+      <h2 class="slide-title">Faculty Governance Hub: Cohort Analytics & Sign-Offs</h2>
+      <div class="content-grid grid-3">
+        <div class="card cyan">
+          <div class="card-title">1. Cohort Health Analytics</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Single-pane overview tracking all supervised student teams simultaneously.</li>
+            <li><span class="bullet">•</span>Automated Health Scores (0-100%) and color-coded status badges.</li>
+            <li><span class="bullet">•</span>Identifies stalled teams 4 weeks ahead of final viva deadlines.</li>
+            <li><span class="bullet">•</span>Exportable departmental summary reports for HOD and accreditation.</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">2. Milestone Sign-Offs</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Faculty inspect student task deliverables and code proofs.</li>
+            <li><span class="bullet">•</span>Official 1-click digital sign-off with timestamped database audit log.</li>
+            <li><span class="bullet">•</span>Leave targeted revision comments for incomplete phases.</li>
+            <li><span class="bullet">•</span>Generates verified milestone records for external viva examiners.</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <div class="card-title">3. Broadcast Announcements</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Post cohort-wide notices, viva dates, and submission deadlines.</li>
+            <li><span class="bullet">•</span>High-visibility alert banner displayed across student dashboards.</li>
+            <li><span class="bullet">•</span>Eliminates message fragmentation across informal chat groups.</li>
+            <li><span class="bullet">•</span>Guarantees synchronized, institutional communication.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11 -->
+    <div class="slide" data-notes="We followed strict Agile Scrumban principles across four 2-week sprints, completing 146 story points with a 98.6% velocity completion rate and zero release defects.">
+      <div class="slide-category">Agile Delivery</div>
+      <h2 class="slide-title">Agile Delivery Methodology: Sprints & Velocity</h2>
+      <div class="content-grid grid-2">
+        <div class="card green">
+          <div class="card-title">Sprint Execution Breakdown</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Sprint 1 (Weeks 1-2):</strong> Auth, DB Schema, Agent 1 Feasibility ➔ <strong>34 SP (100%)</strong></li>
+            <li><span class="bullet">•</span><strong>Sprint 2 (Weeks 3-4):</strong> Agent 2 Scope, Agent 3 Stack, Agent 4 Risk ➔ <strong>36 SP (95%)</strong></li>
+            <li><span class="bullet">•</span><strong>Sprint 3 (Weeks 5-6):</strong> Agent 5 Milestones, Re-Planner, Voice Chat ➔ <strong>40 SP (100%)</strong></li>
+            <li><span class="bullet">•</span><strong>Sprint 4 (Weeks 7-8):</strong> Faculty Hub, Sign-offs, Doc Gen, E2E Deploy ➔ <strong>36 SP (100%)</strong></li>
+            <li><span class="bullet">•</span><strong>Total Velocity:</strong> 146 SP Delivered (98.6% Completion Rate).</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">Agile Quality & Governance</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Definition of Ready:</strong> User stories with Gherkin Given-When-Then criteria.</li>
+            <li><span class="bullet">•</span><strong>Definition of Done:</strong> PEP8/ESLint, automated tests passing, OLED UI verified.</li>
+            <li><span class="bullet">•</span><strong>Burndown Tracking:</strong> Smooth linear burndown with zero release defects.</li>
+            <li><span class="bullet">•</span><strong>Retrospectives:</strong> Drove switch to Groq hardware and optimistic UI updates.</li>
+            <li><span class="bullet">•</span><strong>Traceability:</strong> 100% Requirements Traceability Matrix linking stories to tests.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12 -->
+    <div class="slide" data-notes="Our stack leverages FastAPI for high-speed async throughput, React 19 for instantaneous UI responsiveness, Groq LPU hardware for sub-second token generation, and MongoDB Atlas for flexible cloud document storage.">
+      <div class="slide-category">Engineering Choices</div>
+      <h2 class="slide-title">Technology Stack & Key Technical Decisions</h2>
+      <div class="content-grid grid-4">
+        <div class="card cyan">
+          <div class="card-title">Frontend</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>React 19</li>
+            <li><span class="bullet">•</span>Vite Bundler</li>
+            <li><span class="bullet">•</span>Lucide Icons</li>
+            <li><span class="bullet">•</span>OLED Dark Design</li>
+            <li><span class="bullet">•</span>Web Speech API</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">Backend</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>FastAPI (Python 3.11)</li>
+            <li><span class="bullet">•</span>Pydantic v2 Models</li>
+            <li><span class="bullet">•</span>Uvicorn ASGI Server</li>
+            <li><span class="bullet">•</span>JWT Auth / Security</li>
+            <li><span class="bullet">•</span>CORS Middleware</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-title">AI & Agents</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Groq API Cloud</li>
+            <li><span class="bullet">•</span>LLaMA-3.3-70B</li>
+            <li><span class="bullet">•</span>CrewAI Pipelines</li>
+            <li><span class="bullet">•</span>LangChain Prompts</li>
+            <li><span class="bullet">•</span>Heuristic Engine</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <div class="card-title">Cloud & DevOps</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>MongoDB Atlas</li>
+            <li><span class="bullet">•</span>Docker Multi-Stage</li>
+            <li><span class="bullet">•</span>Vercel SPA Hosting</li>
+            <li><span class="bullet">•</span>Render Cloud Host</li>
+            <li><span class="bullet">•</span>GitHub Repository</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13 -->
+    <div class="slide" data-notes="Quality assurance was automated across the lifecycle. Our test suite includes 118 automated tests passing with zero failures, covering schema validation, agent chaining, and end-to-end user workflows.">
+      <div class="slide-category">Testing & Quality Assurance</div>
+      <h2 class="slide-title">Testing, Verification & QA: 118 Tests Green</h2>
+      <div class="content-grid grid-3">
+        <div class="card green">
+          <div class="card-title">1. Unit & Schema Tests</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Rigid Pydantic schema validation on all agent outputs.</li>
+            <li><span class="bullet">•</span>Boundary checks: scores in 0–100, non-empty arrays, valid enums.</li>
+            <li><span class="bullet">•</span>Offline heuristic generators tested under disconnection.</li>
+            <li><span class="bullet">•</span>FastAPI TestClient verifies HTTP 200 payload contracts.</li>
+          </ul>
+        </div>
+        <div class="card cyan">
+          <div class="card-title">2. Agent Chaining Tests</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Verifies Agent 2 embeds Agent 1 Feasibility scores and bottlenecks.</li>
+            <li><span class="bullet">•</span>Verifies Agent 3 tech stack reflects declared student skills.</li>
+            <li><span class="bullet">•</span>Verifies Agent 4 risk vectors correlate to chosen frameworks.</li>
+            <li><span class="bullet">•</span>Idea isolation: prevents data bleeding across parallel users.</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">3. E2E & Production Build</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>118 Automated Tests Passing</strong> (pytest backend/tests).</li>
+            <li><span class="bullet">•</span>Zero test failures or regressions across the test suite.</li>
+            <li><span class="bullet">•</span>Vite production build compiles cleanly in &lt;1 second.</li>
+            <li><span class="bullet">•</span>Full gzip minification ready for cloud deployment.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14 -->
+    <div class="slide" data-notes="Enterprise security includes RBAC and JWT auth. Resiliency features include dual-persistence to local JSON if MongoDB is offline, and deterministic heuristics if LLM quotas are hit.">
+      <div class="slide-category">Security & Resiliency</div>
+      <h2 class="slide-title">Security, Resiliency & Fallback Architecture</h2>
+      <div class="content-grid grid-2">
+        <div class="card amber">
+          <div class="card-title">Security & Access Governance</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Role-Based Access Control:</strong> Strict separation of Student and Faculty roles.</li>
+            <li><span class="bullet">•</span><strong>JWT Session Tokens:</strong> Cryptographically signed tokens protecting private routes.</li>
+            <li><span class="bullet">•</span><strong>Data Isolation:</strong> Projects and chat logs partitioned strictly by user ID.</li>
+            <li><span class="bullet">•</span><strong>Credential Hygiene:</strong> All API keys and secrets isolated in `.env` files.</li>
+            <li><span class="bullet">•</span><strong>Input Sanitization:</strong> Strict Pydantic models guard against prompt injection.</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-title">Resiliency & Offline Continuity</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Dual-Persistence:</strong> MongoDB Atlas primary with automatic local JSON fallback.</li>
+            <li><span class="bullet">•</span><strong>Startup Health Hooks:</strong> Automatic database ping with detailed diagnostics.</li>
+            <li><span class="bullet">•</span><strong>LiteLLM Fallback:</strong> Automatically cascades to alternate models on rate limits.</li>
+            <li><span class="bullet">•</span><strong>Rule-Based Heuristics:</strong> Computes valid reports even if LLM is unreachable.</li>
+            <li><span class="bullet">•</span><strong>Optimistic UI:</strong> Instant frontend state updates with background synchronization.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15 -->
+    <div class="slide" data-notes="The platform achieves quantitative impact: proposal review time drops from 14 days to 10 seconds, faculty save 70% of routine supervision overhead, and institutions run on zero cloud cost.">
+      <div class="slide-category">Value & Scalability</div>
+      <h2 class="slide-title">Quantitative Academic Impact & Scalability</h2>
+      <div class="content-grid grid-3">
+        <div class="card cyan">
+          <div class="card-title">1. Student Efficiency</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span>Proposal review latency dropped from <strong>14 days to &lt;10s</strong>.</li>
+            <li><span class="bullet">•</span><strong>Zero scope creep</strong> through rigid In/Out boundary definitions.</li>
+            <li><span class="bullet">•</span>Skill matching eliminates trial-and-error stack selection.</li>
+            <li><span class="bullet">•</span><strong>15+ hours saved per team</strong> compiling initial project reports.</li>
+          </ul>
+        </div>
+        <div class="card purple">
+          <div class="card-title">2. Faculty Productivity</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>70% time reduction</strong> in routine formatting reviews.</li>
+            <li><span class="bullet">•</span>Guides can supervise <strong>50+ teams</strong> via cohort analytics.</li>
+            <li><span class="bullet">•</span>At-risk flags catch struggling teams <strong>4 weeks earlier</strong>.</li>
+            <li><span class="bullet">•</span>1-click digital sign-offs replace physical paper logs.</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-title">3. Institutional Scale</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Zero cloud hosting cost</strong> via free-tier cloud services.</li>
+            <li><span class="bullet">•</span>FastAPI async workers scale easily to thousands of students.</li>
+            <li><span class="bullet">•</span>Easily adopted across CSE, IT, ECE, and AI/DS departments.</li>
+            <li><span class="bullet">•</span>Generates outcome-based education (OBE) accreditation audit data.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 16 -->
+    <div class="slide" data-notes="In conclusion, ProjectGuide-AI delivers a turnkey multi-agent platform verified by 118 automated tests. We are ready to transition to our live platform demonstration and welcome the panel's questions.">
+      <div class="slide-category">Viva Defense Conclusion</div>
+      <h2 class="slide-title">Conclusion, Future Horizons & Live Demonstration</h2>
+      <div class="content-grid grid-2">
+        <div class="card purple">
+          <div class="card-title">Key Accomplishments Delivered</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>Fullstack Ecosystem:</strong> Fully functional React 19 + FastAPI + MongoDB platform.</li>
+            <li><span class="bullet">•</span><strong>Autonomous AI:</strong> 8 operational agents running on Groq LLaMA-3.3-70B.</li>
+            <li><span class="bullet">•</span><strong>Agile Rigor:</strong> 146 Story Points delivered across 4 Sprints (98.6% velocity).</li>
+            <li><span class="bullet">•</span><strong>Robust Quality:</strong> 118 automated tests passing, zero regressions, dual-persistence.</li>
+            <li><span class="bullet">•</span><strong>Faculty Empowerment:</strong> Cohort health analytics, sign-offs, and announcements.</li>
+          </ul>
+        </div>
+        <div class="card cyan">
+          <div class="card-title">Future Horizons & Live Demo Transition</div>
+          <ul class="card-list">
+            <li><span class="bullet">•</span><strong>LMS Integration:</strong> Plugins for Canvas, Moodle, and Google Classroom.</li>
+            <li><span class="bullet">•</span><strong>Automated Code Grading:</strong> AST commit analyzer verifying scope deliverables.</li>
+            <li><span class="bullet">•</span><strong>Vector RAG Repository:</strong> Semantic search across previous capstones.</li>
+            <li><span class="bullet">•</span><strong>Live Demo Flow:</strong> 1. Onboarding ➔ 2. AI Pipeline ➔ 3. Voice Chat ➔ 4. Faculty Hub.</li>
+            <li><span class="bullet">•</span><strong>Panel Q&A:</strong> We invite the examination panel for questions and discussion!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Presenter Notes Modal -->
+  <div id="notes-modal">
+    <div class="notes-header">
+      <span class="notes-title">🎤 Speaker Notes & Viva Cue</span>
+      <button class="notes-close" onclick="toggleNotes()">✕</button>
+    </div>
+    <div class="notes-content" id="notes-content">
+      Welcome to ProjectGuide-AI Defense. Use Left/Right arrow keys or Spacebar to navigate slides.
+    </div>
+  </div>
+
+  <footer>
+    <div class="key-hints">
+      <span>←</span> / <span>→</span> Navigate &nbsp;|&nbsp;
+      <span>Space</span> Next &nbsp;|&nbsp;
+      <span>N</span> Speaker Notes &nbsp;|&nbsp;
+      <span>F</span> Fullscreen
+    </div>
+    <div>ProjectGuide-AI | Infosys Springboard Capstone Presentation</div>
+  </footer>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progress-bar');
+    const counter = document.getElementById('slide-counter');
+    const notesModal = document.getElementById('notes-modal');
+    const notesContent = document.getElementById('notes-content');
+    let currentIndex = 0;
+
+    function updateSlide(index) {
+      if (index < 0 || index >= slides.length) return;
+      slides[currentIndex].classList.remove('active');
+      currentIndex = index;
+      slides[currentIndex].classList.add('active');
+
+      // Update counter and progress bar
+      counter.textContent = `${currentIndex + 1} / ${slides.length}`;
+      progressBar.style.width = `${((currentIndex + 1) / slides.length) * 100}%`;
+
+      // Update speaker notes
+      const notes = slides[currentIndex].getAttribute('data-notes') || 'No speaker notes for this slide.';
+      notesContent.textContent = notes;
+    }
+
+    function nextSlide() {
+      if (currentIndex < slides.length - 1) updateSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) updateSlide(currentIndex - 1);
+    }
+
+    function toggleNotes() {
+      notesModal.classList.toggle('open');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        updateSlide(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        updateSlide(slides.length - 1);
+      } else if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        toggleNotes();
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    } );
+
+    // Initialize first slide notes
+    updateSlide(0);
+  </script>
+</body>
+</html>

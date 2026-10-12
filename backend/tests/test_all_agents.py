@@ -291,7 +291,7 @@ def test_scope_agent(feasibility_report=None):
         log("WARN", "feasibilityReport not embedded in scope response — check chaining logic")
 
     # Feasibility alignment field
-    align = d.get("feasibilityAlignment", "")
+    align = d.get("feasibilityAlignment") or ""
     check(bool(align) and len(align) > 20,
           "feasibilityAlignment is populated",
           f"{align[:100]}")

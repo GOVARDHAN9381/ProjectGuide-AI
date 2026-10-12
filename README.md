@@ -53,6 +53,18 @@
 
 ---
 
+## 📚 Capstone Deliverables & Evaluation Documents
+
+| Document / Asset | Format | Description |
+|---|---|---|
+| [**PowerPoint Presentation (PPT)**](file:///c:/infosys%20project/ai-mentor-platform/ProjectGuide_AI_Capstone_Presentation.pptx) | `.pptx` | 16-Slide High-Aesthetic 16:9 Presentation Deck for Viva Defense |
+| [**Interactive Browser Slide Deck**](file:///c:/infosys%20project/ai-mentor-platform/PRESENTATION.html) | `.html` | Standalone browser presentation with keyboard shortcuts, speaker notes, and fullscreen mode |
+| [**Master Presentation Guide**](file:///c:/infosys%20project/ai-mentor-platform/PRESENTATION_DECK.md) | `.md` | Slide-by-slide visual layout, 15-minute speaker script, and Top 10 Viva Q&A answers |
+| [**Comprehensive Agile Documentation**](file:///c:/infosys%20project/ai-mentor-platform/AGILE_DOCUMENTATION.md) | `.md` | Agile Charter, RACI, User Stories (Gherkin), Sprints 1–4 logs, Velocity, Burndown, Retrospectives & RTM |
+| [**15-Minute Live Demo Script**](file:///c:/infosys%20project/ai-mentor-platform/DEMO_SCRIPT_AND_CODE_WALKTHROUGH.md) | `.md` | Step-by-step UI and VS Code code walkthrough script for project reviewers |
+
+---
+
 ## 🛠️ Tech Stack
 
 | Layer | Technologies |
