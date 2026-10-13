@@ -13,6 +13,7 @@ DB_NAME = os.getenv("DB_NAME", "ProjectGuide-AI")
 
 client = None
 db = None
+_mongo_online = None
 
 
 # Fix Windows dnspython resolver initialization if needed
@@ -142,18 +143,20 @@ def _ensure_indexes(database):
 
 
 def is_mongo_available() -> bool:
-    """Check MongoDB availability."""
+    """Check MongoDB availability safely."""
     global _mongo_online, client
     if _mongo_online is True:
         return True
     try:
         current_db = get_database()
-        current_db.command("ping")
-        _mongo_online = True
-        return True
-    except Exception:
-        _mongo_online = None
+        if current_db is not None:
+            current_db.command("ping")
+            _mongo_online = True
+            return True
         return False
+    except Exception:
+        return False
+
 
 
 def check_db_connection():

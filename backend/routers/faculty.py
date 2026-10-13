@@ -168,23 +168,58 @@ def get_cohort():
     results = []
 
     # --- Try MongoDB path ---
-    if is_mongo_available():
-        try:
+    try:
+        if is_mongo_available():
             db = get_database()
-            users_col  = db["users"]
-            ideas_col  = get_project_ideas_collection()
+            users_col    = db["users"]
+            ideas_col    = get_project_ideas_collection()
             tracking_col = get_tracking_reports_collection()
+            students_col = db["students"]
 
-            # Fetch all student users
-            all_users = list(users_col.find({"role": "student"}).sort("createdAt", -1))
+            # 1. Fetch all student users from users collection
+            all_users = list(users_col.find({"role": {"$ne": "faculty"}}).sort("createdAt", -1))
+            user_emails = {((u.get("email") or "").strip().lower()) for u in all_users if u.get("email")}
 
-            # Build a map: email -> list of ideas
+            # 2. Add any students from students_col not already present
+            try:
+                for s in students_col.find():
+                    sem = (s.get("email") or "").strip().lower()
+                    if sem and sem not in user_emails:
+                        user_emails.add(sem)
+                        all_users.append({
+                            "_id": s.get("_id"),
+                            "email": sem,
+                            "name": s.get("name", sem.split("@")[0].title()),
+                            "rollNo": s.get("rollNo") or s.get("roll_no", "21CS101"),
+                            "branch": s.get("branch", "CSE"),
+                            "year": s.get("year", "3rd Year"),
+                            "skills": s.get("skills", {}),
+                            "role": "student",
+                            "createdAt": s.get("createdAt") or _utcnow_str(),
+                        })
+            except Exception as e:
+                print(f"[FACULTY/COHORT] students_col merge note: {e}")
+
+            # 3. Build a map: email -> list of ideas, and discover missing student records
             all_ideas = list(ideas_col.find().sort("created_at", -1))
             ideas_by_email: Dict[str, list] = {}
             for idea in all_ideas:
                 email = (idea.get("student_email") or idea.get("student_id") or "").strip().lower()
                 if email:
                     ideas_by_email.setdefault(email, []).append(idea)
+                    if email not in user_emails:
+                        user_emails.add(email)
+                        all_users.append({
+                            "_id": idea.get("_id"),
+                            "email": email,
+                            "name": email.split("@")[0].replace(".", " ").title(),
+                            "rollNo": "21CS101",
+                            "branch": "CSE",
+                            "year": "3rd Year",
+                            "skills": {},
+                            "role": "student",
+                            "createdAt": idea.get("created_at") or _utcnow_str(),
+                        })
 
             for u in all_users:
                 email = (u.get("email") or "").strip().lower()
@@ -227,10 +262,11 @@ def get_cohort():
                     "project": projects[0] if projects else None,
                 })
 
-            return results
+            if results:
+                return results
 
-        except Exception as e:
-            print(f"[FACULTY/COHORT] MongoDB error: {e}. Falling back to local data.")
+    except Exception as e:
+        print(f"[FACULTY/COHORT] MongoDB error: {e}. Falling back to local data.")
 
     # --- Fallback: read ideas.json locally ---
     try:
@@ -286,7 +322,8 @@ def get_cohort():
         return results
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Could not load cohort data: {e}")
+        print(f"[FACULTY/COHORT] Local fallback error: {e}")
+        return results
 
 
 # ─── GET /faculty/activity ─────────────────────────────────────────────────────
