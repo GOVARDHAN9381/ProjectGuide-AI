@@ -56,6 +56,18 @@ def health_check():
     }
 
 
+@app.get("/api/debug-status")
+def debug_status():
+    key = os.getenv("GROQ_API_KEY") or os.getenv("GROQ_API_KEY_FEASIBILITY") or ""
+    return {
+        "has_groq_key": bool(key),
+        "key_prefix": (key[:8] + "...") if len(key) >= 8 else None,
+        "groq_model": os.getenv("GROQ_MODEL"),
+        "version": "v2.1-ed9a200",
+    }
+
+
+
 @app.get("/student/{student_id}")
 def get_student_by_id(student_id: str):
     """Retrieve a student by integer id or string id/email."""
