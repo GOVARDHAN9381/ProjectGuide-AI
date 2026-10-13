@@ -2800,7 +2800,7 @@ export default function StudentDashboard() {
       const filesToSend = [];
       for (const f of filesRaw) { if (f.dataUrl) { const b64 = f.dataUrl.split(',')[1] || ''; filesToSend.push({ name: f.name, contentBase64: b64, contentType: f.type }); } }
       const feasReport = proj.feasibilityReport || null;
-      const rawScopeReport = await fetchScopeReport({ idea_id: proj.id || proj.idea_id || '', student_email: email || '', title: proj.title || 'Academic Project', desc: proj.desc || '', domain: (proj.domain || 'web').toLowerCase(), teamSize: String(proj.teamSize || 3), durationDays: parseInt(proj.durationDays) || 30, techIdeas: proj.techIdeas || '', features: proj.features || [], studentSkills: profile?.skills || {}, uploadedFiles: filesToSend, feasibilityReport: feasReport });
+      const rawScopeReport = await fetchScopeReport({ idea_id: String(proj.id || proj.idea_id || ''), student_email: email || '', title: proj.title || 'Academic Project', desc: proj.desc || '', domain: (proj.domain || 'web').toLowerCase(), teamSize: String(proj.teamSize || 3), durationDays: parseInt(proj.durationDays) || 30, techIdeas: proj.techIdeas || '', features: proj.features || [], studentSkills: profile?.skills || {}, uploadedFiles: filesToSend, feasibilityReport: feasReport });
       const chainedFeasReport = rawScopeReport.feasibilityReport || feasReport;
       const scopeReport = { ...rawScopeReport, feasibilityReport: chainedFeasReport };
       let currentProjs = email ? Store.getUserProjects(email) : [...projects];
@@ -2824,7 +2824,7 @@ export default function StudentDashboard() {
     setTechStackingProjectTitle(proj.title);
     try {
       const chainedFeasReport = proj.scopeReport?.feasibilityReport || proj.feasibilityReport;
-      const techStackReport = await fetchTechStackReport({ title: proj.title || 'Academic Project', desc: proj.desc || '', domain: (proj.domain || 'web').toLowerCase(), teamSize: String(proj.teamSize || 3), durationDays: parseInt(proj.durationDays) || 30, techIdeas: proj.techIdeas || '', features: proj.features || [], studentSkills: profile?.skills || {}, feasibilityReport: chainedFeasReport, scopeReport: proj.scopeReport });
+      const techStackReport = await fetchTechStackReport({ idea_id: String(proj.id || proj.idea_id || ''), student_email: email || '', title: proj.title || 'Academic Project', desc: proj.desc || '', domain: (proj.domain || 'web').toLowerCase(), teamSize: String(proj.teamSize || 3), durationDays: parseInt(proj.durationDays) || 30, techIdeas: proj.techIdeas || '', features: proj.features || [], studentSkills: profile?.skills || {}, feasibilityReport: chainedFeasReport, scopeReport: proj.scopeReport });
       let currentProjs = email ? Store.getUserProjects(email) : [...projects];
       let targetIdx = pIndex;
       if (targetIdx === null) targetIdx = currentProjs.findIndex(p => p.title === proj.title || (p.id && p.id === proj.id));
@@ -2846,7 +2846,7 @@ export default function StudentDashboard() {
     setTrackingProjectTitle(proj.title);
     try {
       const trackingReport = await fetchTrackingReport({
-        idea_id: proj.id || proj.idea_id || '',
+        idea_id: String(proj.id || proj.idea_id || ''),
         student_email: email,
         title: proj.title || 'Academic Project',
         desc: proj.desc || '',

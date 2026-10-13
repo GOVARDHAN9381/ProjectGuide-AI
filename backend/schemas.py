@@ -61,17 +61,17 @@ class FileUpload(BaseModel):
 
 
 class FeasibilityRequest(BaseModel):
-    idea_id: Optional[str] = ""
+    idea_id: Optional[Union[str, int]] = ""
     student_email: Optional[str] = ""
-    title: str
-    desc: str
+    title: str = "Academic Project"
+    desc: Optional[str] = ""
     domain: Optional[str] = "web"
-    teamSize: Optional[str] = "3"
-    durationDays: Optional[int] = 30
+    teamSize: Optional[Union[str, int]] = "3"
+    durationDays: Optional[Union[int, str]] = 30
     techIdeas: Optional[str] = ""
-    features: Optional[List[str]] = []
-    studentSkills: Optional[Dict[str, int]] = {}
-    uploadedFiles: Optional[List[FileUpload]] = []
+    features: Optional[List[Any]] = []
+    studentSkills: Optional[Dict[str, Any]] = {}
+    uploadedFiles: Optional[List[Any]] = []
 
 
 class FeasibilityMetrics(BaseModel):
@@ -91,19 +91,19 @@ class FeasibilityResponse(BaseModel):
     aiGenerated: Optional[bool] = False
 
 class ScopeRequest(BaseModel):
-    idea_id: Optional[str] = ""
+    idea_id: Optional[Union[str, int]] = ""
     student_email: Optional[str] = ""
-    title: str
-    desc: str
+    title: str = "Academic Project"
+    desc: Optional[str] = ""
     domain: Optional[str] = "web"
-    teamSize: Optional[str] = "3"
-    durationDays: Optional[int] = 30
+    teamSize: Optional[Union[str, int]] = "3"
+    durationDays: Optional[Union[int, str]] = 30
     techIdeas: Optional[str] = ""
-    features: Optional[List[str]] = []
-    studentSkills: Optional[Dict[str, int]] = {}
-    uploadedFiles: Optional[List[FileUpload]] = []
+    features: Optional[List[Any]] = []
+    studentSkills: Optional[Dict[str, Any]] = {}
+    uploadedFiles: Optional[List[Any]] = []
     # Agent chaining: Feasibility report passed from Agent 1
-    feasibilityReport: Optional[Dict] = None
+    feasibilityReport: Optional[Any] = None
 
 
 class ScopeResponse(BaseModel):
@@ -119,7 +119,7 @@ class ScopeResponse(BaseModel):
     metrics: Optional[Dict] = None
     # Agent chaining: Feasibility Agent (Agent 1) output is forwarded in the
     # scope response so the frontend and downstream agents always have it.
-    feasibilityReport: Optional[Dict] = None
+    feasibilityReport: Optional[Any] = None
     feasibilityAlignment: Optional[str] = None
     aiGenerated: Optional[bool] = False
 
@@ -127,19 +127,19 @@ class ScopeResponse(BaseModel):
 # ── Tech Stack Agent (Agent 3) ────────────────────────────────────────────────
 
 class TechStackRequest(BaseModel):
-    idea_id: Optional[str] = ""
+    idea_id: Optional[Union[str, int]] = ""
     student_email: Optional[str] = ""
-    title: str
-    desc: str
+    title: str = "Academic Project"
+    desc: Optional[str] = ""
     domain: Optional[str] = "web"
-    teamSize: Optional[str] = "3"
-    durationDays: Optional[int] = 30
+    teamSize: Optional[Union[str, int]] = "3"
+    durationDays: Optional[Union[int, str]] = 30
     techIdeas: Optional[str] = ""
-    features: Optional[List[str]] = []
-    studentSkills: Optional[Dict[str, int]] = {}
+    features: Optional[List[Any]] = []
+    studentSkills: Optional[Dict[str, Any]] = {}
     # Agent chaining: outputs from Agent 1 and Agent 2 are required
-    feasibilityReport: Dict  # required — output from Feasibility Agent
-    scopeReport: Dict        # required — output from Scope Agent
+    feasibilityReport: Optional[Any] = None  # output from Feasibility Agent
+    scopeReport: Optional[Any] = None        # output from Scope Agent
 
 
 class TechStackLayer(BaseModel):
@@ -184,20 +184,20 @@ class TrackingMilestoneItem(BaseModel):
 
 
 class TrackingRequest(BaseModel):
-    idea_id: Optional[str] = ""
+    idea_id: Optional[Union[str, int]] = ""
     student_email: Optional[str] = ""
-    title: str
-    desc: str
+    title: str = "Academic Project"
+    desc: Optional[str] = ""
     domain: Optional[str] = "web"
-    teamSize: Optional[str] = "3"
-    durationDays: Optional[int] = 30
+    teamSize: Optional[Union[str, int]] = "3"
+    durationDays: Optional[Union[int, str]] = 30
     techIdeas: Optional[str] = ""
-    features: Optional[List[str]] = []
-    studentSkills: Optional[Dict[str, int]] = {}
+    features: Optional[List[Any]] = []
+    studentSkills: Optional[Dict[str, Any]] = {}
     # Agent chaining: upstream reports from Agents 1, 2, and 3
-    feasibilityReport: Optional[Dict] = None
-    scopeReport: Optional[Dict] = None
-    techStackReport: Optional[Dict] = None
+    feasibilityReport: Optional[Any] = None
+    scopeReport: Optional[Any] = None
+    techStackReport: Optional[Any] = None
 
 
 class TrackingResponse(BaseModel):
@@ -213,7 +213,7 @@ class TrackingResponse(BaseModel):
 
 
 class MilestoneToggleRequest(BaseModel):
-    idea_id: Optional[str] = ""
+    idea_id: Optional[Union[str, int]] = ""
     title: Optional[str] = ""
     milestone_id: int
     completed: bool
