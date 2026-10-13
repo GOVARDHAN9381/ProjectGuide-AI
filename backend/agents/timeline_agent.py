@@ -41,7 +41,7 @@ def _get_llm() -> LLM:
         or ""
     )
 
-    model_name = os.getenv("GROQ_MODEL", "groq/llama-3.3-70b-versatile")
+    model_name = os.getenv("GROQ_MODEL", "groq/qwen/qwen3.8-27b")
     if not model_name.startswith("groq/"):
         model_name = f"groq/{model_name}"
 

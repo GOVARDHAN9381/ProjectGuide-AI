@@ -191,7 +191,7 @@ def _get_llm():
 
     from crewai import LLM
 
-    model_name = os.getenv("GROQ_MODEL", "groq/llama-3.3-70b-versatile")
+    model_name = os.getenv("GROQ_MODEL", "groq/qwen/qwen3.8-27b")
     return LLM(
         model=model_name,
         api_key=api_key,
@@ -200,32 +200,59 @@ def _get_llm():
 
 
 def _call_groq_direct(system_prompt: str, user_prompt: str, api_key: str, model: str = None) -> dict:
-    """Directly invoke Groq chat completion API using httpx if CrewAI is unavailable."""
+    """Directly invoke Groq chat completion API using httpx with automatic model rotation."""
     import httpx
-    if model and model.startswith("groq/"):
-        model = model[5:]
-    if not model:
-        model = "llama-3.3-70b-versatile"
+    import time
+
+    candidates = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"]
+    if model:
+        clean = model[5:] if model.startswith("groq/") else model
+        if "llama" not in clean.lower() and "mixtral" not in clean.lower():
+            if clean in candidates:
+                candidates.remove(clean)
+            candidates.insert(0, clean)
 
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        "temperature": 0.3,
-        "response_format": {"type": "json_object"},
-    }
-    with httpx.Client(timeout=45.0) as client:
-        resp = client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
-        resp.raise_for_status()
-        data = resp.json()
-        content = data["choices"][0]["message"]["content"]
-        return _parse_json_from_text(content)
+
+    last_err = None
+    for cand in candidates:
+        payload = {
+            "model": cand,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            "temperature": 0.3,
+            "max_tokens": 1200,
+            "response_format": {"type": "json_object"},
+        }
+        for attempt in range(2):
+            try:
+                with httpx.Client(timeout=45.0) as client:
+                    resp = client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        content = data["choices"][0]["message"]["content"]
+                        parsed = _parse_json_from_text(content)
+                        if parsed:
+                            return parsed
+                    elif resp.status_code == 429:
+                        print(f"[FEASIBILITY AGENT] 429 rate limit on {cand}, retrying or switching...")
+                        time.sleep(1.5)
+                    else:
+                        print(f"[FEASIBILITY AGENT] HTTP {resp.status_code} on {cand}: {resp.text[:120]}")
+                        break
+            except Exception as e:
+                last_err = e
+                break
+
+    if last_err:
+        raise last_err
+    return {}
+
 
 
 # ---------------------------------------------------------------------------
@@ -526,7 +553,7 @@ domain challenges, proposed technology stack, and any insights from uploaded doc
                 "experience evaluating student project ideas. Produce rigorous feasibility reports "
                 "with overallScore, verdict, metrics, strengths, and bottlenecks."
             )
-            model_name = os.getenv("GROQ_MODEL", "groq/llama-3.3-70b-versatile")
+            model_name = os.getenv("GROQ_MODEL", "groq/qwen/qwen3.8-27b")
             parsed = _call_groq_direct(sys_prompt, task_description, api_key, model_name)
         except Exception as e:
             print(f"[FEASIBILITY AGENT] Groq direct API call failed: {e}")

@@ -25,7 +25,7 @@ def _get_llm():
     if not api_key:
         raise ValueError("GROQ_API_KEY not found")
     from crewai import LLM
-    model_name = os.getenv("GROQ_MODEL", "groq/llama-3.3-70b-versatile")
+    model_name = os.getenv("GROQ_MODEL", "groq/qwen/qwen3.8-27b")
     return LLM(model=model_name, api_key=api_key, temperature=0.4)
 
 

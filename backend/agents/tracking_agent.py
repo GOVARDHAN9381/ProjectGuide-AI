@@ -51,7 +51,7 @@ def _get_llm():
         raise ValueError("No Groq API key found in environment variables")
 
     from crewai import LLM
-    model_name = os.getenv("GROQ_MODEL", "groq/llama-3.3-70b-versatile")
+    model_name = os.getenv("GROQ_MODEL", "groq/qwen/qwen3.8-27b")
     return LLM(
         model=model_name,
         api_key=api_key,

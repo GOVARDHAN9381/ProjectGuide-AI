@@ -763,7 +763,7 @@ def get_mentor_summary(project_id: str):
             client = Groq(api_key=api_key)
             try:
                 resp = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="qwen/qwen3.8-27b",
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.35,
                     max_tokens=280,
