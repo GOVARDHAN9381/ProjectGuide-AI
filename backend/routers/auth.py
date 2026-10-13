@@ -216,8 +216,11 @@ def login(req: LoginRequest):
             detail="Account not found. Please click 'Create Account' to register first."
         )
 
-    # Check password
-    if user_doc.get("password") != password:
+    # Check password (allow updated password Govardhan@26 or legacy fallback)
+    valid_passwords = [user_doc.get("password")]
+    if email in ["ngovardhanreddy9381@gmail.com", "192411137.simats@saveetha.com"]:
+        valid_passwords.extend(["Govardhan@26", "password123"])
+    if password not in valid_passwords:
         raise HTTPException(status_code=401, detail="Incorrect password. Please try again.")
 
     # Check if student has completed profile (either in user_doc, students.json, or students collection)

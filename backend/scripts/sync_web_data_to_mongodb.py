@@ -338,7 +338,7 @@ def run_sync():
                 "role": u["role"],
                 "branch": u["branch"],
                 "year": u["year"],
-                "password": "password123" if u["role"] == "student" else "faculty123",
+                "password": "Govardhan@26" if u["email"] in ["ngovardhanreddy9381@gmail.com", "192411137.simats@saveetha.com"] else ("password123" if u["role"] == "student" else "faculty123"),
                 "hasCompletedProfile": True,
                 "updated_at": datetime.datetime.utcnow()
             }},

@@ -144,5 +144,513 @@
     "milestones_done": 0,
     "progress": 0,
     "created_at": "2026-09-28T18:00:00"
+  },
+  "idea_1789293629_6e6790": {
+    "_id": "6ac3a26e7a8000785f5e1098",
+    "idea_id": "idea_1789293629_6e6790",
+    "created_at": "2026-09-13T15:30:29",
+    "desc": "just i need too build flip kart clone ,which works as it is as working module",
+    "domain": "aiml",
+    "duration_days": 210,
+    "duration_unit": "weeks",
+    "feasibility_score": 77,
+    "id": "idea_1789293629_6e6790",
+    "milestones_done": 0,
+    "overall_risk": "Medium",
+    "progress": 0,
+    "status": "reviewed",
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "student_id": "ngovardhanreddy9381@gmail.com",
+    "team_size": "5",
+    "tech_stack": [
+      "React.js",
+      "Python",
+      "FastAPI",
+      "MongoDB"
+    ],
+    "title": "flipkart clone"
+  },
+  "idea_1789617458_45cdd1": {
+    "_id": "6ac3a26e7a8000785f5e1099",
+    "idea_id": "idea_1789617458_45cdd1",
+    "created_at": "2026-09-15T10:00:00",
+    "desc": "A mobile-friendly web application where users can log daily meals and physical activity. Uses ML to estimate calories and recommend personalized meal plans.",
+    "domain": "aiml",
+    "duration_days": 60,
+    "duration_unit": "days",
+    "feasibility_score": 72,
+    "id": "idea_1789617458_45cdd1",
+    "milestones_done": 0,
+    "overall_risk": "Medium",
+    "progress": 0,
+    "status": "reviewed",
+    "student_email": "ngovardhanreddy9381@gmail.com",
+    "student_id": "ngovardhanreddy9381@gmail.com",
+    "team_size": "3",
+    "tech_stack": [
+      "React 18 (with Vite 4) \u2013 mobile\u2011friendly SPA",
+      "Flask 2.2 (Python) with Flask\u2011RESTful for API endpoints",
+      "PostgreSQL (Render free tier) \u2013 use SQLAlchemy ORM; SQLite for local dev",
+      "USDA FoodData Central API (free) for nutrition data; optional HuggingFace inference API for pre\u2011trained calorie estimator",
+      "GitHub Actions CI/CD \u2192 Docker build \u2192 Deploy on Render (free tier) ; containerization with Docker",
+      "Jest + React Testing Library for frontend unit/integration; Pytest + pytest\u2011cov for backend; GitHub Actions runs test suites on each push"
+    ],
+    "title": "Smart Health Tracker & AI Diet Assistant",
+    "feasibility": 72,
+    "updated_at": "2026-10-12T15:26:28.720000",
+    "feasibilityReport": {
+      "overallScore": 72,
+      "verdict": "Feasible with Guidance",
+      "metrics": {
+        "technical": 70,
+        "timeline": 65,
+        "resource": 85,
+        "skillMatch": 70
+      },
+      "strengths": [
+        "Well\u2011defined user problem (meal logging + personalized diet advice) that aligns with existing health\u2011tech demand",
+        "Abundant free resources: USDA FoodData Central, open\u2011source nutrition APIs, and pre\u2011trained ML models for calorie estimation",
+        "Team shows solid DevOps (4/5) and version\u2011control (git 4/5) capabilities, facilitating CI/CD and deployment"
+      ],
+      "bottlenecks": [
+        "Accurate calorie estimation is non\u2011trivial; building a custom image/text recognizer from scratch would exceed the timeline",
+        "Web\u2011development and ML integration experience is only moderate (3/5); the team must lock down a lightweight stack (e.g., Flask/Django + React) early to avoid scope creep"
+      ],
+      "filesAnalyzed": [],
+      "aiGenerated": true
+    },
+    "scopeReport": {
+      "problemStatement": "Many individuals want to monitor their daily caloric intake and physical activity but find existing solutions either too manual or reliant on costly APIs and complex image\u2011based food recognition. This project delivers a lightweight, mobile\u2011friendly web application that lets users log meals and activities, automatically estimates calories from textual food descriptions using a pre\u2011trained model, and generates a personalized daily meal plan based on the user's calorie goal.",
+      "objectives": [
+        "Develop a responsive web interface for users to record meals and physical activities.",
+        "Integrate a lightweight machine\u2011learning component that estimates calories from textual food entries using publicly available nutrition data.",
+        "Create a rule\u2011based recommendation engine that produces a simple personalized meal plan aligned with the user's daily calorie target."
+      ],
+      "inScope": [
+        "Frontend built with React (or plain JavaScript) optimized for mobile browsers.",
+        "Backend API using Flask or Django with user registration/login and CRUD endpoints for meals and activities.",
+        "Calorie estimation using a pre\u2011trained model or a simple regression trained on USDA FoodData Central dataset.",
+        "Rule\u2011based daily meal\u2011plan generator that respects a user\u2011defined calorie goal.",
+        "Data persistence with SQLite (or PostgreSQL free tier).",
+        "Automated CI/CD pipeline with GitHub Actions and deployment to a free cloud host (e.g., Render, Heroku).",
+        "Basic unit and integration tests for core functionality."
+      ],
+      "outOfScope": [
+        "Image\u2011based food recognition or custom deep\u2011learning models trained from scratch.",
+        "Integration with wearable devices, third\u2011party fitness APIs, or real\u2011time activity tracking.",
+        "Comprehensive macro\u2011 and micronutrient analysis beyond total calories.",
+        "Multi\u2011language UI, accessibility compliance, or production\u2011grade security (OAuth, GDPR).",
+        "Native mobile applications for iOS/Android.",
+        "Scalable architecture for thousands of concurrent users."
+      ],
+      "targetUsers": "Health\u2011conscious adults, college students, or anyone who wants a simple, low\u2011effort way to track calories and receive basic personalized diet suggestions via a web browser.",
+      "keyDeliverables": [
+        "Fully documented source code repository (Git) with README and setup instructions.",
+        "Deployed web application accessible via a public URL.",
+        "Technical report describing system architecture, data pipeline, ML model selection, and recommendation logic.",
+        "User guide illustrating how to log meals, view calorie estimates, and interpret the suggested meal plan."
+      ],
+      "assumptions": [
+        "Users will provide food entries as free\u2011text descriptions (e.g., \"2 eggs, 1 slice toast\").",
+        "Calorie estimation can rely on publicly available nutrition datasets without needing proprietary data.",
+        "Team members can allocate ~20\u202fhours per week each over the 60\u2011day period.",
+        "The project will be hosted on free\u2011tier cloud services with limited traffic.",
+        "No regulatory compliance (e.g., HIPAA) is required for the prototype."
+      ],
+      "constraints": [
+        "Team size limited to three members with moderate skill levels in Python, JavaScript, web development, and DevOps.",
+        "Total project duration is 60\u202fdays (\u22489\u202fweeks).",
+        "Only free or open\u2011source tools and services may be used.",
+        "Scope must avoid custom image processing or large\u2011scale ML training."
+      ],
+      "overallScore": 91,
+      "metrics": {
+        "clarity": 88,
+        "scopeControl": 92,
+        "achievability": 90,
+        "completeness": 94
+      },
+      "feasibilityReport": {
+        "overallScore": 72,
+        "verdict": "Feasible with Guidance",
+        "metrics": {
+          "technical": 70,
+          "timeline": 65,
+          "resource": 85,
+          "skillMatch": 70
+        },
+        "strengths": [
+          "Well\u2011defined user problem (meal logging + personalized diet advice) that aligns with existing health\u2011tech demand",
+          "Abundant free resources: USDA FoodData Central, open\u2011source nutrition APIs, and pre\u2011trained ML models for calorie estimation",
+          "Team shows solid DevOps (4/5) and version\u2011control (git 4/5) capabilities, facilitating CI/CD and deployment"
+        ],
+        "bottlenecks": [
+          "Accurate calorie estimation is non\u2011trivial; building a custom image/text recognizer from scratch would exceed the timeline",
+          "Web\u2011development and ML integration experience is only moderate (3/5); the team must lock down a lightweight stack (e.g., Flask/Django + React) early to avoid scope creep"
+        ],
+        "filesAnalyzed": [],
+        "aiGenerated": true
+      },
+      "feasibilityAlignment": null,
+      "aiGenerated": true
+    },
+    "techStackReport": {
+      "recommendedStack": {
+        "frontend": "React 18 (with Vite 4) \u2013 mobile\u2011friendly SPA",
+        "backend": "Flask 2.2 (Python) with Flask\u2011RESTful for API endpoints",
+        "database": "PostgreSQL (Render free tier) \u2013 use SQLAlchemy ORM; SQLite for local dev",
+        "apis": "USDA FoodData Central API (free) for nutrition data; optional HuggingFace inference API for pre\u2011trained calorie estimator",
+        "devops": "GitHub Actions CI/CD \u2192 Docker build \u2192 Deploy on Render (free tier) ; containerization with Docker",
+        "testing": "Jest + React Testing Library for frontend unit/integration; Pytest + pytest\u2011cov for backend; GitHub Actions runs test suites on each push"
+      },
+      "reasoning": [
+        "Step 1: The Feasibility Report gives an overall score of 72% and a verdict of 'Feasible with Guidance', indicating the project can succeed if the stack stays lightweight; therefore we avoid heavyweight frameworks and choose simple, well\u2011documented tools.",
+        "Step 2: Scope constraints (team of 3, 60\u2011day timeline, moderate skill levels) demand a minimal learning curve; React with Vite and Flask are explicitly listed as in\u2011scope options and are easier to pick up than full\u2011stack Django or Angular.",
+        "Step 3: In\u2011scope features require a responsive mobile web UI and CRUD APIs; React 18 provides component\u2011based UI and Vite gives fast hot\u2011module reload, while Flask\u2011RESTful lets us expose the needed endpoints quickly.",
+        "Step 4: Student skill profile shows Python and JavaScript at 3/5 and DevOps at 4/5; Flask leverages their Python knowledge, and the team\u2019s strong DevOps rating supports Docker and GitHub Actions without steep new learning.",
+        "Step 5: The Feasibility bottleneck is accurate calorie estimation; by using the USDA FoodData Central API and a pre\u2011trained model hosted on HuggingFace we sidestep custom training, keeping the ML component lightweight and within the timeline."
+      ],
+      "alternatives": [
+        {
+          "layer": "Frontend",
+          "alternative": "Plain JavaScript with Bootstrap 5",
+          "tradeoff": "Lower learning overhead but loses component reusability and modern state management that React provides."
+        },
+        {
+          "layer": "Backend",
+          "alternative": "Django 4 with Django REST Framework",
+          "tradeoff": "More built\u2011in admin and auth features, but adds complexity and longer setup time for a small team."
+        },
+        {
+          "layer": "Database",
+          "alternative": "SQLite (file\u2011based) for both dev and production",
+          "tradeoff": "Zero\u2011config and easy for prototyping, but does not scale to concurrent users and lacks server\u2011side features of PostgreSQL."
+        },
+        {
+          "layer": "DevOps",
+          "alternative": "Heroku free dyno with GitHub Actions",
+          "tradeoff": "Simpler deployment workflow, but free dynos sleep after inactivity and have limited monthly hours."
+        }
+      ],
+      "justification": "Both upstream reports stress a lightweight, free\u2011tier stack that matches the team's moderate Python/JS skills and tight 60\u2011day schedule; the chosen React\u2011Flask\u2011PostgreSQL\u2011Render combo satisfies all in\u2011scope requirements while mitigating the ML bottleneck via external nutrition APIs.",
+      "learningResources": [
+        "React Official Tutorial \u2013 https://react.dev/learn",
+        "Flask QuickStart \u2013 https://flask.palletsprojects.com/en/2.2.x/quickstart/",
+        "Render Free Hosting Docs \u2013 https://render.com/docs",
+        "USDA FoodData Central API Guide \u2013 https://fdc.nal.usda.gov/api-guide.html",
+        "GitHub Actions CI/CD for Python & Node \u2013 https://docs.github.com/en/actions"
+      ],
+      "aiGenerated": true
+    },
+    "milestonesDone": 0,
+    "totalMilestones": 5,
+    "trackingReport": {
+      "overallProgress": 0,
+      "totalMilestones": 5,
+      "milestonesDone": 0,
+      "milestones": [
+        {
+          "id": 1,
+          "phase": "Phase 1: Project Foundations",
+          "weekLabel": "Weeks 1\u20132",
+          "title": "Initialize repository, CI/CD, and scaffold",
+          "description": "Set up version control, continuous integration, containerization, and the basic skeleton for both backend (Flask) and frontend (React\u202fVite). Establish coding standards and document the high\u2011level architecture.",
+          "deliverables": [
+            "GitHub repository with README, CODE_OF_CONDUCT, and CONTRIBUTING guidelines",
+            "Dockerfile + docker\u2011compose for dev environment",
+            "GitHub Actions workflow that builds Docker images and runs unit tests (pytest & Jest)",
+            "Flask project scaffold with placeholder auth routes",
+            "React Vite project scaffold with a placeholder home page"
+          ],
+          "acceptanceCriteria": [
+            "Repository is public (or faculty\u2011approved private) and contains the listed files",
+            "CI pipeline runs on every push and reports \"All checks passed\"",
+            "Docker images build without errors locally",
+            "Backend server starts and returns 200 on '/'",
+            "Frontend loads in a browser and displays the placeholder page"
+          ],
+          "dependencies": [
+            "Project Kickoff"
+          ],
+          "estimatedEffortHours": 24,
+          "status": "in_progress",
+          "completed": false,
+          "completedAt": null
+        },
+        {
+          "id": 2,
+          "phase": "Phase 2: Core Backend Services",
+          "weekLabel": "Weeks 3\u20134",
+          "title": "User management, data model, and CRUD APIs",
+          "description": "Implement secure user registration/login with JWT, design PostgreSQL schema, create SQLAlchemy models, and expose RESTful endpoints for meals and activities. Wrap USDA FoodData Central API for nutrition lookup.",
+          "deliverables": [
+            "User registration & login endpoints with JWT authentication",
+            "SQLAlchemy models + Alembic migrations for users, meals, activities",
+            "CRUD API routes: /meals, /activities (GET, POST, PUT, DELETE)",
+            "Utility module that queries USDA FoodData API and caches results",
+            "Backend unit\u2011test suite with \u226580\u202f% coverage"
+          ],
+          "acceptanceCriteria": [
+            "All endpoints return correct HTTP status codes and JSON payloads",
+            "Authenticated requests succeed; unauthenticated requests are rejected",
+            "Database migrations run cleanly on both SQLite (dev) and PostgreSQL (Render)",
+            "CI shows all backend tests passing and coverage \u226580\u202f%",
+            "Swagger/OpenAPI spec generated and accessible"
+          ],
+          "dependencies": [
+            "Phase 1: Project Foundations"
+          ],
+          "estimatedEffortHours": 30,
+          "status": "pending",
+          "completed": false,
+          "completedAt": null
+        },
+        {
+          "id": 3,
+          "phase": "Phase 3: Calorie Estimation & Meal\u2011Plan Engine",
+          "weekLabel": "Weeks 5\u20136",
+          "title": "Integrate pre\u2011trained calorie estimator and rule\u2011based planner",
+          "description": "Leverage a HuggingFace inference endpoint (or a simple regression model trained on USDA data) to estimate calories from free\u2011text food descriptions. Build a deterministic planner that assembles a daily meal plan meeting the user\u2019s calorie goal.",
+          "deliverables": [
+            "/estimate endpoint that accepts a text description and returns estimated calories",
+            "Training script (if regression) and model artifact stored in the repo",
+            "Rule\u2011based planner service that generates a 3\u2011meal plan respecting the user\u2019s target calories",
+            "Integration tests covering estimator and planner logic",
+            "Documentation of model selection, data preprocessing, and planner algorithm"
+          ],
+          "acceptanceCriteria": [
+            "Estimator returns values within \u00b110\u202f% of ground\u2011truth for a 10\u2011item validation set",
+            "Planner produces a meal list whose total calories are within \u00b15\u202f% of the user\u2019s goal",
+            "Endpoints are documented in the OpenAPI spec",
+            "All new tests pass in CI and overall coverage stays \u226580\u202f%",
+            "Performance of the estimator call \u2264 1\u202fs per request in the dev environment"
+          ],
+          "dependencies": [
+            "Phase 2: Core Backend Services"
+          ],
+          "estimatedEffortHours": 28,
+          "status": "pending",
+          "completed": false,
+          "completedAt": null
+        },
+        {
+          "id": 4,
+          "phase": "Phase 4: Frontend Integration & UI Polish",
+          "weekLabel": "Weeks 7\u20138",
+          "title": "Build mobile\u2011friendly UI and connect to backend",
+          "description": "Develop React components for authentication, meal/activity logging, calorie display, and daily meal\u2011plan view. Wire up API service layer, implement client\u2011side validation, and ensure responsive design across common mobile screen sizes.",
+          "deliverables": [
+            "Login & registration pages with JWT storage (httpOnly cookie or localStorage)",
+            "Meal entry form that calls /estimate and shows estimated calories",
+            "Activity logging page with CRUD operations",
+            "Daily meal\u2011plan dashboard showing generated plan and total calories",
+            "End\u2011to\u2011end test suite (Cypress or React Testing Library) covering main user flows"
+          ],
+          "acceptanceCriteria": [
+            "All UI pages render without console errors and are responsive (mobile breakpoint \u2264 480\u202fpx)",
+            "Data entered in the UI persists in the backend and is reflected on refresh",
+            "Calorie estimation updates in real time after meal entry",
+            "Generated meal plan matches the backend planner output",
+            "E2E tests run in CI and pass; overall frontend test coverage \u226580\u202f%"
+          ],
+          "dependencies": [
+            "Phase 3: Calorie Estimation & Meal\u2011Plan Engine"
+          ],
+          "estimatedEffortHours": 32,
+          "status": "pending",
+          "completed": false,
+          "completedAt": null
+        },
+        {
+          "id": 5,
+          "phase": "Phase 5: Deployment, Documentation & Final Review",
+          "weekLabel": "Week 9",
+          "title": "Production deployment, final reporting, and faculty demo",
+          "description": "Containerize the full stack, deploy to Render (or equivalent), finalize all documentation, and prepare the technical report and demo presentation for faculty evaluation.",
+          "deliverables": [
+            "Docker\u2011Compose production configuration and Render deployment scripts",
+            "Live public URL with HTTPS and functional end\u2011to\u2011end workflow",
+            "Comprehensive README with setup, deployment, and usage instructions",
+            "Technical report (\u224810\u202fpages) covering architecture, data pipeline, model choice, recommendation logic, and testing results",
+            "Demo video (5\u2011min) and slide deck for faculty presentation"
+          ],
+          "acceptanceCriteria": [
+            "Application is reachable at the public URL and all core features work without manual environment tweaks",
+            "CI pipeline builds and pushes Docker images to Render on every merge to main",
+            "README allows a new developer to clone, run, and test the app in \u226430\u202fmin",
+            "Technical report submitted via the faculty portal and passes plagiarism check",
+            "Faculty demo scheduled and successfully showcases all milestone deliverables"
+          ],
+          "dependencies": [
+            "Phase 4: Frontend Integration & UI Polish"
+          ],
+          "estimatedEffortHours": 24,
+          "status": "pending",
+          "completed": false,
+          "completedAt": null
+        }
+      ],
+      "sprintMethodology": "Two\u2011week Scrum sprints with a fixed backlog, daily stand\u2011ups (15\u202fmin), sprint review/demo and retrospective at the end of each sprint, and a lightweight Kanban board to visualize progress.",
+      "immediateActionItems": [
+        "Create the GitHub repository, add all three team members, and set up branch protection rules.",
+        "Populate the initial project backlog in a Kanban board (e.g., GitHub Projects) and define user stories for each milestone.",
+        "Configure GitHub Actions with a basic workflow that runs linting and placeholder tests for both backend and frontend."
+      ],
+      "facultyCheckpoints": [
+        "Checkpoint 1: End of Week 2 \u2013 Review repository setup, CI/CD pipeline, and initial project scaffolding.",
+        "Checkpoint 2: End of Week 4 \u2013 Demonstrate functional user authentication, database schema, and CRUD APIs.",
+        "Checkpoint 3: End of Week 8 \u2013 Live demo of the integrated UI, calorie estimation, and meal\u2011plan generation on a staging URL.",
+        "Checkpoint 4: End of Week 9 \u2013 Final presentation, deployed production URL, and submission of the technical report."
+      ],
+      "trackingMetrics": {
+        "pace": "On Schedule",
+        "estimatedCompletionWeeks": 9,
+        "weeklyWorkloadPerStudent": "8\u201312 hrs/week",
+        "targetEndDateDays": 60
+      },
+      "aiGenerated": true
+    },
+    "milestones": [
+      {
+        "id": 1,
+        "phase": "Phase 1: Project Foundations",
+        "weekLabel": "Weeks 1\u20132",
+        "title": "Initialize repository, CI/CD, and scaffold",
+        "description": "Set up version control, continuous integration, containerization, and the basic skeleton for both backend (Flask) and frontend (React\u202fVite). Establish coding standards and document the high\u2011level architecture.",
+        "deliverables": [
+          "GitHub repository with README, CODE_OF_CONDUCT, and CONTRIBUTING guidelines",
+          "Dockerfile + docker\u2011compose for dev environment",
+          "GitHub Actions workflow that builds Docker images and runs unit tests (pytest & Jest)",
+          "Flask project scaffold with placeholder auth routes",
+          "React Vite project scaffold with a placeholder home page"
+        ],
+        "acceptanceCriteria": [
+          "Repository is public (or faculty\u2011approved private) and contains the listed files",
+          "CI pipeline runs on every push and reports \"All checks passed\"",
+          "Docker images build without errors locally",
+          "Backend server starts and returns 200 on '/'",
+          "Frontend loads in a browser and displays the placeholder page"
+        ],
+        "dependencies": [
+          "Project Kickoff"
+        ],
+        "estimatedEffortHours": 24,
+        "status": "in_progress",
+        "completed": false,
+        "completedAt": null
+      },
+      {
+        "id": 2,
+        "phase": "Phase 2: Core Backend Services",
+        "weekLabel": "Weeks 3\u20134",
+        "title": "User management, data model, and CRUD APIs",
+        "description": "Implement secure user registration/login with JWT, design PostgreSQL schema, create SQLAlchemy models, and expose RESTful endpoints for meals and activities. Wrap USDA FoodData Central API for nutrition lookup.",
+        "deliverables": [
+          "User registration & login endpoints with JWT authentication",
+          "SQLAlchemy models + Alembic migrations for users, meals, activities",
+          "CRUD API routes: /meals, /activities (GET, POST, PUT, DELETE)",
+          "Utility module that queries USDA FoodData API and caches results",
+          "Backend unit\u2011test suite with \u226580\u202f% coverage"
+        ],
+        "acceptanceCriteria": [
+          "All endpoints return correct HTTP status codes and JSON payloads",
+          "Authenticated requests succeed; unauthenticated requests are rejected",
+          "Database migrations run cleanly on both SQLite (dev) and PostgreSQL (Render)",
+          "CI shows all backend tests passing and coverage \u226580\u202f%",
+          "Swagger/OpenAPI spec generated and accessible"
+        ],
+        "dependencies": [
+          "Phase 1: Project Foundations"
+        ],
+        "estimatedEffortHours": 30,
+        "status": "pending",
+        "completed": false,
+        "completedAt": null
+      },
+      {
+        "id": 3,
+        "phase": "Phase 3: Calorie Estimation & Meal\u2011Plan Engine",
+        "weekLabel": "Weeks 5\u20136",
+        "title": "Integrate pre\u2011trained calorie estimator and rule\u2011based planner",
+        "description": "Leverage a HuggingFace inference endpoint (or a simple regression model trained on USDA data) to estimate calories from free\u2011text food descriptions. Build a deterministic planner that assembles a daily meal plan meeting the user\u2019s calorie goal.",
+        "deliverables": [
+          "/estimate endpoint that accepts a text description and returns estimated calories",
+          "Training script (if regression) and model artifact stored in the repo",
+          "Rule\u2011based planner service that generates a 3\u2011meal plan respecting the user\u2019s target calories",
+          "Integration tests covering estimator and planner logic",
+          "Documentation of model selection, data preprocessing, and planner algorithm"
+        ],
+        "acceptanceCriteria": [
+          "Estimator returns values within \u00b110\u202f% of ground\u2011truth for a 10\u2011item validation set",
+          "Planner produces a meal list whose total calories are within \u00b15\u202f% of the user\u2019s goal",
+          "Endpoints are documented in the OpenAPI spec",
+          "All new tests pass in CI and overall coverage stays \u226580\u202f%",
+          "Performance of the estimator call \u2264 1\u202fs per request in the dev environment"
+        ],
+        "dependencies": [
+          "Phase 2: Core Backend Services"
+        ],
+        "estimatedEffortHours": 28,
+        "status": "pending",
+        "completed": false,
+        "completedAt": null
+      },
+      {
+        "id": 4,
+        "phase": "Phase 4: Frontend Integration & UI Polish",
+        "weekLabel": "Weeks 7\u20138",
+        "title": "Build mobile\u2011friendly UI and connect to backend",
+        "description": "Develop React components for authentication, meal/activity logging, calorie display, and daily meal\u2011plan view. Wire up API service layer, implement client\u2011side validation, and ensure responsive design across common mobile screen sizes.",
+        "deliverables": [
+          "Login & registration pages with JWT storage (httpOnly cookie or localStorage)",
+          "Meal entry form that calls /estimate and shows estimated calories",
+          "Activity logging page with CRUD operations",
+          "Daily meal\u2011plan dashboard showing generated plan and total calories",
+          "End\u2011to\u2011end test suite (Cypress or React Testing Library) covering main user flows"
+        ],
+        "acceptanceCriteria": [
+          "All UI pages render without console errors and are responsive (mobile breakpoint \u2264 480\u202fpx)",
+          "Data entered in the UI persists in the backend and is reflected on refresh",
+          "Calorie estimation updates in real time after meal entry",
+          "Generated meal plan matches the backend planner output",
+          "E2E tests run in CI and pass; overall frontend test coverage \u226580\u202f%"
+        ],
+        "dependencies": [
+          "Phase 3: Calorie Estimation & Meal\u2011Plan Engine"
+        ],
+        "estimatedEffortHours": 32,
+        "status": "pending",
+        "completed": false,
+        "completedAt": null
+      },
+      {
+        "id": 5,
+        "phase": "Phase 5: Deployment, Documentation & Final Review",
+        "weekLabel": "Week 9",
+        "title": "Production deployment, final reporting, and faculty demo",
+        "description": "Containerize the full stack, deploy to Render (or equivalent), finalize all documentation, and prepare the technical report and demo presentation for faculty evaluation.",
+        "deliverables": [
+          "Docker\u2011Compose production configuration and Render deployment scripts",
+          "Live public URL with HTTPS and functional end\u2011to\u2011end workflow",
+          "Comprehensive README with setup, deployment, and usage instructions",
+          "Technical report (\u224810\u202fpages) covering architecture, data pipeline, model choice, recommendation logic, and testing results",
+          "Demo video (5\u2011min) and slide deck for faculty presentation"
+        ],
+        "acceptanceCriteria": [
+          "Application is reachable at the public URL and all core features work without manual environment tweaks",
+          "CI pipeline builds and pushes Docker images to Render on every merge to main",
+          "README allows a new developer to clone, run, and test the app in \u226430\u202fmin",
+          "Technical report submitted via the faculty portal and passes plagiarism check",
+          "Faculty demo scheduled and successfully showcases all milestone deliverables"
+        ],
+        "dependencies": [
+          "Phase 4: Frontend Integration & UI Polish"
+        ],
+        "estimatedEffortHours": 24,
+        "status": "pending",
+        "completed": false,
+        "completedAt": null
+      }
+    ]
   }
 }

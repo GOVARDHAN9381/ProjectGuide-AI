@@ -57,11 +57,25 @@
 
 | Document / Asset | Format | Description |
 |---|---|---|
+| [**Agile Documentation Workbook**](file:///c:/infosys%20project/ai-mentor-platform/ProjectGuide_AI_Agile_Documentation.xlsx) | `.xlsx` | Product Backlog, 4-Sprint Backlogs with 14-day Burndown, Daily Standups & Retrospectives |
+| [**Defect Tracker Workbook**](file:///c:/infosys%20project/ai-mentor-platform/ProjectGuide_AI_Defect_Tracker.xlsx) | `.xlsx` | 12 Logged & Verified Defects across Sprints 1–4 with balanced ownership |
+| [**Unit Test Plan Workbook**](file:///c:/infosys%20project/ai-mentor-platform/ProjectGuide_AI_Unit_Test_Plan.xlsx) | `.xlsx` | 25 Automated & Functional Unit Test Cases covering all modules (100% Pass) |
+| [**Comprehensive Agile Documentation**](file:///c:/infosys%20project/ai-mentor-platform/AGILE_DOCUMENTATION.md) | `.md` | Agile Charter, RACI, User Stories (Gherkin), Sprints 1–4 logs, Velocity, Burndown, Retrospectives & RTM |
 | [**PowerPoint Presentation (PPT)**](file:///c:/infosys%20project/ai-mentor-platform/ProjectGuide_AI_Capstone_Presentation.pptx) | `.pptx` | 16-Slide High-Aesthetic 16:9 Presentation Deck for Viva Defense |
 | [**Interactive Browser Slide Deck**](file:///c:/infosys%20project/ai-mentor-platform/PRESENTATION.html) | `.html` | Standalone browser presentation with keyboard shortcuts, speaker notes, and fullscreen mode |
 | [**Master Presentation Guide**](file:///c:/infosys%20project/ai-mentor-platform/PRESENTATION_DECK.md) | `.md` | Slide-by-slide visual layout, 15-minute speaker script, and Top 10 Viva Q&A answers |
-| [**Comprehensive Agile Documentation**](file:///c:/infosys%20project/ai-mentor-platform/AGILE_DOCUMENTATION.md) | `.md` | Agile Charter, RACI, User Stories (Gherkin), Sprints 1–4 logs, Velocity, Burndown, Retrospectives & RTM |
 | [**15-Minute Live Demo Script**](file:///c:/infosys%20project/ai-mentor-platform/DEMO_SCRIPT_AND_CODE_WALKTHROUGH.md) | `.md` | Step-by-step UI and VS Code code walkthrough script for project reviewers |
+
+---
+
+## 👥 Team Members & Balanced Agile Roles
+
+| Member | Primary Agile Role | Assigned Modules & Scope | Story Points & Workload |
+|---|---|---|:---:|
+| **Karthik** | **Backend Lead** | FastAPI REST Server, JWT Auth, LLM Rate Limiting, Docker & E2E Testing | **37 SP (25%)** |
+| **Govardhan** | **Frontend & AI Agents** | React 19 Client, Student Dashboard, Chatbot Voice, Feasibility & Scope Agents | **38 SP (25%)** |
+| **Supriya** | **Faculty Dashboard & AI Agents** | Faculty Cohort Hub, At-Risk Flags, Sign-offs, Tech Stack & Risk Agents, Replanner | **38 SP (25%)** |
+| **Hemapriya** | **Database & Project Docs (PD)** | MongoDB Atlas Cloud, Normalization, Doc Generator Agent & Agile Excel Workbooks | **35 SP (25%)** |
 
 ---
 
