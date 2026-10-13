@@ -354,7 +354,15 @@ def _call_groq(system_prompt: str, history: list, user_message: str, ctx: dict =
     """Call Groq LLM with full conversation context and robust error fallback."""
     from groq import Groq
 
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = None
+    for var in ["GROQ_API_KEY", "GROQ_API_KEY_FEASIBILITY", "GROQ_API_KEY_SCOPE", "GROQ_API_KEY_TECH_STACK", "GROQ_API_KEY_RISK", "GROQ_API_KEY_TRACKING"]:
+        cand = os.getenv(var, "").strip()
+        if cand and "your" not in cand.lower() and len(cand) >= 20:
+            api_key = cand
+            break
+    if not api_key:
+        api_key = os.getenv("GROQ_API_KEY", "")
+
     if not api_key:
         raise ValueError("GROQ_API_KEY not configured")
 
@@ -365,14 +373,10 @@ def _call_groq(system_prompt: str, history: list, user_message: str, ctx: dict =
         messages.append({"role": h.get("role", "user"), "content": h.get("content", "")})
     messages.append({"role": "user", "content": user_message})
 
-    chat_model_env = os.getenv("GROQ_CHAT_MODEL", "qwen/qwen3.8-27b").replace("groq/", "")
     models_to_try = [
-        chat_model_env,
         "qwen/qwen3.8-27b",
         "openai/gpt-oss-120b",
         "openai/gpt-oss-20b",
-        "qwen/qwen3.8-27b",
-        "llama-3.1-8b-instant",
     ]
     seen = set()
     models = [m for m in models_to_try if not (m in seen or seen.add(m))]
